@@ -3,247 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подключение кошелька</title>
+    <title>Phantom Bazaar | NFT Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        :root {
+            --tg-theme-bg-color: #17212b;
+            --tg-theme-text-color: #ffffff;
+            --tg-theme-hint-color: #708499;
+            --tg-theme-link-color: #5ac8fa;
+            --tg-theme-button-color: #5288c1;
+            --tg-theme-button-text-color: #ffffff;
+            --accent-red: #ff4757;
+            --accent-green: #2ed573;
+        }
+        
+        * {
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
             min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            color: var(--tg-theme-button-color);
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #5ac8fa, #2ed573);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-wallet {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .user-wallet:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5ac8fa, #2ed573);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .user-balance {
+            font-weight: 600;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: var(--tg-theme-button-color);
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color);
+            margin-top: 5px;
+        }
+        
+        /* NFT Grid */
+        .section-title {
+            font-size: 18px;
+            margin: 25px 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .see-all {
+            color: var(--tg-theme-link-color);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .nft-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .nft-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .nft-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+        }
+        
+        .nft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .nft-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+        
+        .nft-info {
+            padding: 15px;
+        }
+        
+        .nft-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .nft-collection {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color);
+            margin-bottom: 10px;
+        }
+        
+        .nft-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .price-amount {
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        .price-currency {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color);
+        }
+        
+        .buy-button {
+            background: var(--tg-theme-button-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .buy-button:hover {
+            opacity: 0.9;
+        }
+        
+        /* My NFTs Section */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--tg-theme-hint-color);
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        /* List for Sale Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal {
+            background: var(--tg-theme-bg-color);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modal-nft {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .modal-nft-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            margin: 0 auto 15px;
+            object-fit: cover;
+        }
+        
+        .price-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .price-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-link-color);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-button {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        
+        .modal-button.cancel {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .modal-button.confirm {
+            background: var(--accent-green);
             color: white;
         }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: var(--tg-theme-hint-color);
         }
-        button {
-            background: white;
-            color: #667eea;
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 50px;
+        
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--tg-theme-link-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Admin Panel (hidden) */
+        .admin-panel {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 9999;
+        }
+        
+        .admin-toggle {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            margin: 10px 0;
-            width: 100%;
-            font-weight: bold;
-            transition: transform 0.2s;
+            font-size: 20px;
         }
-        button:hover {
-            transform: translateY(-2px);
-        }
-        .hidden {
+        
+        .admin-window {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            width: 300px;
+            background: rgba(23, 33, 43, 0.95);
+            border: 1px solid var(--accent-red);
+            border-radius: 12px;
+            padding: 15px;
             display: none;
         }
-        #walletInfo {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            word-break: break-all;
+        
+        .admin-window.active {
+            display: block;
         }
-        .telegram-button {
-            background: #0088cc;
-            color: white;
+        
+        .admin-title {
+            color: var(--accent-red);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .admin-log {
+            height: 200px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+        
+        .log-entry {
+            color: #2ed573;
+            margin-bottom: 5px;
+        }
+        
+        .log-entry.error {
+            color: #ff4757;
+        }
+        
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+        }
+        
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .footer-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--tg-theme-hint-color);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .footer-tab.active {
+            color: var(--tg-theme-link-color);
+        }
+        
+        .footer-icon {
+            font-size: 20px;
+        }
+        
+        .footer-label {
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔗 Подключение кошелька</h1>
-        <p>Привяжите крипто-кошелек к вашему Telegram аккаунту</p>
-        
-        <!-- Кнопки для разных кошельков -->
-        <button id="connectMetaMask" class="hidden">🦊 Подключить MetaMask</button>
-        <button id="connectWalletConnect" class="hidden">🔗 WalletConnect</button>
-        <button id="connectPhantom" class="hidden">👻 Phantom (Solana)</button>
-        
-        <div id="telegramAuth" class="hidden">
-            <button id="getTelegramData" class="telegram-button">📱 Получить данные Telegram</button>
-            <div id="telegramData"></div>
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-ghost"></i></div>
+                <div class="logo-text">Phantom Bazaar</div>
+            </div>
+            <div class="user-wallet" id="userWallet">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-balance" id="userBalance">0 TON</div>
+            </div>
         </div>
-        
-        <div id="walletInfo" class="hidden">
-            <h3>✅ Кошелек подключен!</h3>
-            <p><strong>Адрес:</strong> <span id="walletAddress"></span></p>
-            <p><strong>Баланс:</strong> <span id="walletBalance"></span></p>
-            <p><strong>Сеть:</strong> <span id="networkInfo"></span></p>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="tab active" data-tab="market">Market</div>
+            <div class="tab" data-tab="my">My NFTs</div>
+            <div class="tab" data-tab="activity">Activity</div>
+            <div class="tab" data-tab="stats">Stats</div>
         </div>
-        
-        <button id="sendToBot" class="hidden">📤 Отправить данные боту</button>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-card">
+                <div class="stat-value">2.4K</div>
+                <div class="stat-label">NFTs Sold</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">48.5K</div>
+                <div class="stat-label">Total Volume</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1.2K</div>
+                <div class="stat-label">Users Online</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">15.7K</div>
+                <div class="stat-label">Visitors Today</div>
+            </div>
+        </div>
+
+        <!-- Trending NFTs -->
+        <div class="section-title">
+            <span>🔥 Trending Now</span>
+            <span class="see-all">See All</span>
+        </div>
+        <div class="nft-grid" id="trendingGrid">
+            <!-- Динамически загружается -->
+        </div>
+
+        <!-- New Drops -->
+        <div class="section-title">
+            <span>🎉 New Drops</span>
+            <span class="see-all">See All</span>
+        </div>
+        <div class="nft-grid" id="newDropsGrid">
+            <!-- Динамически загружается -->
+        </div>
+
+        <!-- My NFTs (скрыто по умолчанию) -->
+        <div id="myNftsSection" style="display: none;">
+            <div class="section-title">
+                <span>👤 My Collection</span>
+                <span class="see-all">Refresh</span>
+            </div>
+            <div class="nft-grid" id="myNftsGrid">
+                <!-- Динамически загружается -->
+            </div>
+        </div>
+
+        <!-- Activity (скрыто) -->
+        <div id="activitySection" style="display: none;">
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-chart-line"></i></div>
+                <div>No activity yet</div>
+            </div>
+        </div>
+
+        <!-- Stats (скрыто) -->
+        <div id="statsSection" style="display: none;">
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-chart-pie"></i></div>
+                <div>Statistics will appear here</div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loading">
+            <div class="loader"></div>
+            <div>Connecting to Phantom Network...</div>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1/dist/umd/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <!-- Footer Navigation -->
+    <div class="footer">
+        <div class="footer-nav">
+            <div class="footer-tab active" data-tab="market">
+                <div class="footer-icon"><i class="fas fa-store"></i></div>
+                <div class="footer-label">Market</div>
+            </div>
+            <div class="footer-tab" data-tab="my">
+                <div class="footer-icon"><i class="fas fa-user"></i></div>
+                <div class="footer-label">My NFTs</div>
+            </div>
+            <div class="footer-tab" data-tab="activity">
+                <div class="footer-icon"><i class="fas fa-history"></i></div>
+                <div class="footer-label">Activity</div>
+            </div>
+            <div class="footer-tab" data-tab="stats">
+                <div class="footer-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="footer-label">Stats</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Listing NFT -->
+    <div class="modal-overlay" id="listModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-title">List NFT for Sale</div>
+            <div class="modal-nft">
+                <img src="" alt="NFT" class="modal-nft-image" id="modalNftImage">
+                <div id="modalNftName">Unknown NFT</div>
+            </div>
+            <input type="number" class="price-input" id="priceInput" placeholder="Price in TON" min="0.1" step="0.1">
+            <div class="modal-buttons">
+                <div class="modal-button cancel" id="cancelList">Cancel</div>
+                <div class="modal-button confirm" id="confirmList">List for Sale</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Admin Panel -->
+    <div class="admin-panel">
+        <div class="admin-toggle" id="adminToggle">
+            <i class="fas fa-skull"></i>
+        </div>
+        <div class="admin-window" id="adminWindow">
+            <div class="admin-title">👁️ Stalker Log</div>
+            <div class="admin-log" id="adminLog">
+                <!-- Log entries appear here -->
+            </div>
+            <button class="buy-button" style="width:100%;" id="exportLog">Export Log</button>
+        </div>
+    </div>
+
+    <!-- Backend API URL -->
     <script>
-        // Telegram Web App API
-        const tg = window.Telegram.WebApp;
-        
-        // Инициализация Telegram Web App
-        tg.expand();
-        tg.MainButton.setText("Готово").hide();
-        
-        // Получаем данные Telegram пользователя
-        function getTelegramUserData() {
-            const user = tg.initDataUnsafe.user;
-            if (user) {
-                return {
-                    id: user.id,
-                    username: user.username,
-                    firstName: user.first_name,
-                    lastName: user.last_name
-                };
-            }
-            return null;
-        }
-        
-        // Показываем кнопки кошельков
-        document.addEventListener('DOMContentLoaded', function() {
-            const telegramData = getTelegramUserData();
-            if (telegramData) {
-                document.getElementById('telegramData').innerHTML = `
-                    <p>ID: ${telegramData.id}</p>
-                    <p>Имя: ${telegramData.firstName}</p>
-                    ${telegramData.username ? `<p>@${telegramData.username}</p>` : ''}
-                `;
-                document.getElementById('telegramAuth').classList.remove('hidden');
-            }
-            
-            // Определяем доступные кошельки
-            detectWallets();
-        });
-        
-        function detectWallets() {
-            // MetaMask
-            if (typeof window.ethereum !== 'undefined') {
-                document.getElementById('connectMetaMask').classList.remove('hidden');
-            }
-            
-            // Для других кошельков можно добавить аналогичные проверки
-            document.getElementById('connectWalletConnect').classList.remove('hidden');
-            document.getElementById('connectPhantom').classList.remove('hidden');
-        }
-        
-        // Подключение MetaMask
-        document.getElementById('connectMetaMask').addEventListener('click', async () => {
-            try {
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                
-                const address = accounts[0];
-                const web3 = new Web3(window.ethereum);
-                
-                const balance = await web3.eth.getBalance(address);
-                const balanceEth = web3.utils.fromWei(balance, 'ether');
-                
-                const networkId = await web3.eth.net.getId();
-                
-                // Показываем информацию
-                document.getElementById('walletAddress').textContent = 
-                    `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-                document.getElementById('walletBalance').textContent = 
-                    `${parseFloat(balanceEth).toFixed(4)} ETH`;
-                document.getElementById('networkInfo').textContent = 
-                    getNetworkName(networkId);
-                
-                document.getElementById('walletInfo').classList.remove('hidden');
-                document.getElementById('sendToBot').classList.remove('hidden');
-                
-                // Сохраняем данные
-                window.walletData = {
-                    address: address,
-                    balance: balanceEth,
-                    network: networkId,
-                    provider: 'MetaMask'
-                };
-                
-            } catch (error) {
-                alert('Ошибка подключения: ' + error.message);
-            }
-        });
-        
-        // Отправка данных боту
-        document.getElementById('sendToBot').addEventListener('click', () => {
-            const telegramUser = getTelegramUserData();
-            const walletData = window.walletData;
-            
-            if (!telegramUser || !walletData) {
-                alert('Нет данных для отправки');
-                return;
-            }
-            
-            // Отправляем данные обратно в бот
-            const data = {
-                telegram: telegramUser,
-                wallet: walletData,
-                timestamp: Date.now()
-            };
-            
-            // Метод 1: Отправка через Telegram Web App
-            tg.sendData(JSON.stringify(data));
-            
-            // Метод 2: Можно показать MainButton для подтверждения
-            tg.MainButton.setText("✅ Подтвердить подключение")
-                .onClick(() => {
-                    tg.sendData(JSON.stringify(data));
-                    tg.close();
-                })
-                .show();
-        });
-        
-        function getNetworkName(networkId) {
-            const networks = {
-                1: 'Ethereum Mainnet',
-                3: 'Ropsten',
-                4: 'Rinkeby',
-                5: 'Goerli',
-                56: 'BNB Smart Chain',
-                137: 'Polygon',
-                42161: 'Arbitrum',
-                10: 'Optimism'
-            };
-            return networks[networkId] || `Сеть #${networkId}`;
-        }
-        
-        // WalletConnect интеграция (упрощенная)
-        document.getElementById('connectWalletConnect').addEventListener('click', () => {
-            alert('Для WalletConnect потребуется дополнительная настройка с проектом на walletconnect.com');
-            // Реализация через WalletConnect требует создания проекта
-        });
-        
-        // Phantom Wallet для Solana
-        document.getElementById('connectPhantom').addEventListener('click', async () => {
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    const resp = await window.solana.connect();
-                    const address = resp.publicKey.toString();
-                    
-                    // Для Solana нужен другой подход
-                    alert(`Phantom подключен! Адрес: ${address.substring(0, 6)}...`);
-                    
-                    window.walletData = {
-                        address: address,
-                        provider: 'Phantom',
-                        blockchain: 'Solana'
-                    };
-                    
-                    document.getElementById('sendToBot').classList.remove('hidden');
-                    
-                } catch (err) {
-                    alert('Ошибка подключения Phantom: ' + err.message);
-                }
-            } else {
-                alert('Установите Phantom Wallet для Solana');
-                window.open('https://phantom.app/', '_blank');
-            }
-        });
+        const BACKEND_URL = 'https://phantom-bazaar-api.onixar.digital';
+        const OWNER_TELEGRAM_ID = '8115722673';
+        const OWNER_WALLET = 'EQD___________________________________________'; // Твой TON кошелек
     </script>
+    
+    <!-- Main JavaScript -->
+    <script src="app.js"></script>
 </body>
 </html>
