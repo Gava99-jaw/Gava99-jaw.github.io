@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Токен бота (получите у @BotFather)
-BOT_TOKEN = "ВАШ_ТОКЕН_БОТА"
+BOT_TOKEN = "8512122183:AAEBm7X0pRM7V4gFaChfLH3IHJiJ7qyVvro"
 
 async def start(update: Update, context):
     """Обработчик команды /start"""
