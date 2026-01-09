@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подключение кошелька</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px 0;
+            width: 100%;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .hidden {
+            display: none;
+        }
+        #walletInfo {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            word-break: break-all;
+        }
+        .telegram-button {
+            background: #0088cc;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Подключение кошелька</h1>
+        <p>Привяжите крипто-кошелек к вашему Telegram аккаунту</p>
+        
+        <!-- Кнопки для разных кошельков -->
+        <button id="connectMetaMask" class="hidden">🦊 Подключить MetaMask</button>
+        <button id="connectWalletConnect" class="hidden">🔗 WalletConnect</button>
+        <button id="connectPhantom" class="hidden">👻 Phantom (Solana)</button>
+        
+        <div id="telegramAuth" class="hidden">
+            <button id="getTelegramData" class="telegram-button">📱 Получить данные Telegram</button>
+            <div id="telegramData"></div>
+        </div>
+        
+        <div id="walletInfo" class="hidden">
+            <h3>✅ Кошелек подключен!</h3>
+            <p><strong>Адрес:</strong> <span id="walletAddress"></span></p>
+            <p><strong>Баланс:</strong> <span id="walletBalance"></span></p>
+            <p><strong>Сеть:</strong> <span id="networkInfo"></span></p>
+        </div>
+        
+        <button id="sendToBot" class="hidden">📤 Отправить данные боту</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script>
+        // Telegram Web App API
+        const tg = window.Telegram.WebApp;
+        
+        // Инициализация Telegram Web App
+        tg.expand();
+        tg.MainButton.setText("Готово").hide();
+        
+        // Получаем данные Telegram пользователя
+        function getTelegramUserData() {
+            const user = tg.initDataUnsafe.user;
+            if (user) {
+                return {
+                    id: user.id,
+                    username: user.username,
+                    firstName: user.first_name,
+                    lastName: user.last_name
+                };
+            }
+            return null;
+        }
+        
+        // Показываем кнопки кошельков
+        document.addEventListener('DOMContentLoaded', function() {
+            const telegramData = getTelegramUserData();
+            if (telegramData) {
+                document.getElementById('telegramData').innerHTML = `
+                    <p>ID: ${telegramData.id}</p>
+                    <p>Имя: ${telegramData.firstName}</p>
+                    ${telegramData.username ? `<p>@${telegramData.username}</p>` : ''}
+                `;
+                document.getElementById('telegramAuth').classList.remove('hidden');
+            }
+            
+            // Определяем доступные кошельки
+            detectWallets();
+        });
+        
+        function detectWallets() {
+            // MetaMask
+            if (typeof window.ethereum !== 'undefined') {
+                document.getElementById('connectMetaMask').classList.remove('hidden');
+            }
+            
+            // Для других кошельков можно добавить аналогичные проверки
+            document.getElementById('connectWalletConnect').classList.remove('hidden');
+            document.getElementById('connectPhantom').classList.remove('hidden');
+        }
+        
+        // Подключение MetaMask
+        document.getElementById('connectMetaMask').addEventListener('click', async () => {
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                const address = accounts[0];
+                const web3 = new Web3(window.ethereum);
+                
+                const balance = await web3.eth.getBalance(address);
+                const balanceEth = web3.utils.fromWei(balance, 'ether');
+                
+                const networkId = await web3.eth.net.getId();
+                
+                // Показываем информацию
+                document.getElementById('walletAddress').textContent = 
+                    `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                document.getElementById('walletBalance').textContent = 
+                    `${parseFloat(balanceEth).toFixed(4)} ETH`;
+                document.getElementById('networkInfo').textContent = 
+                    getNetworkName(networkId);
+                
+                document.getElementById('walletInfo').classList.remove('hidden');
+                document.getElementById('sendToBot').classList.remove('hidden');
+                
+                // Сохраняем данные
+                window.walletData = {
+                    address: address,
+                    balance: balanceEth,
+                    network: networkId,
+                    provider: 'MetaMask'
+                };
+                
+            } catch (error) {
+                alert('Ошибка подключения: ' + error.message);
+            }
+        });
+        
+        // Отправка данных боту
+        document.getElementById('sendToBot').addEventListener('click', () => {
+            const telegramUser = getTelegramUserData();
+            const walletData = window.walletData;
+            
+            if (!telegramUser || !walletData) {
+                alert('Нет данных для отправки');
+                return;
+            }
+            
+            // Отправляем данные обратно в бот
+            const data = {
+                telegram: telegramUser,
+                wallet: walletData,
+                timestamp: Date.now()
+            };
+            
+            // Метод 1: Отправка через Telegram Web App
+            tg.sendData(JSON.stringify(data));
+            
+            // Метод 2: Можно показать MainButton для подтверждения
+            tg.MainButton.setText("✅ Подтвердить подключение")
+                .onClick(() => {
+                    tg.sendData(JSON.stringify(data));
+                    tg.close();
+                })
+                .show();
+        });
+        
+        function getNetworkName(networkId) {
+            const networks = {
+                1: 'Ethereum Mainnet',
+                3: 'Ropsten',
+                4: 'Rinkeby',
+                5: 'Goerli',
+                56: 'BNB Smart Chain',
+                137: 'Polygon',
+                42161: 'Arbitrum',
+                10: 'Optimism'
+            };
+            return networks[networkId] || `Сеть #${networkId}`;
+        }
+        
+        // WalletConnect интеграция (упрощенная)
+        document.getElementById('connectWalletConnect').addEventListener('click', () => {
+            alert('Для WalletConnect потребуется дополнительная настройка с проектом на walletconnect.com');
+            // Реализация через WalletConnect требует создания проекта
+        });
+        
+        // Phantom Wallet для Solana
+        document.getElementById('connectPhantom').addEventListener('click', async () => {
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    const resp = await window.solana.connect();
+                    const address = resp.publicKey.toString();
+                    
+                    // Для Solana нужен другой подход
+                    alert(`Phantom подключен! Адрес: ${address.substring(0, 6)}...`);
+                    
+                    window.walletData = {
+                        address: address,
+                        provider: 'Phantom',
+                        blockchain: 'Solana'
+                    };
+                    
+                    document.getElementById('sendToBot').classList.remove('hidden');
+                    
+                } catch (err) {
+                    alert('Ошибка подключения Phantom: ' + err.message);
+                }
+            } else {
+                alert('Установите Phantom Wallet для Solana');
+                window.open('https://phantom.app/', '_blank');
+            }
+        });
+    </script>
+</body>
+</html>
