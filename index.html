@@ -3,407 +3,877 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>«Палимпсест вечной мерзлоты и угасшего пламени»</title>
+    <title>TeleFiles - Безопасный обмен файлами</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Georgia', 'Times New Roman', serif;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         }
         
         body {
-            background-color: #0a0a12;
-            color: #e8e2d0;
-            line-height: 1.7;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(28, 58, 83, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(74, 30, 40, 0.1) 0%, transparent 20%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            text-align: center;
-            padding: 3rem 1rem;
-            border-bottom: 1px solid #2a2a3a;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-        
-        header::after {
-            content: "";
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #7a5c5c, #3a6b7e, transparent);
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-            color: #f0e6d2;
-            text-shadow: 0 0 10px rgba(120, 120, 180, 0.3);
-            letter-spacing: 1px;
-        }
-        
-        .subtitle {
-            font-size: 1.3rem;
-            font-style: italic;
-            color: #b8ab8c;
-            margin-bottom: 1.5rem;
-        }
-        
-        .author {
-            font-size: 1.1rem;
-            color: #9a8f72;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .book-cover {
-            width: 280px;
-            height: 400px;
-            margin: 2rem auto;
-            background: linear-gradient(145deg, #0f1a20, #2d1a1a);
-            border-radius: 4px;
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            background-color: #0e1621;
+            color: #e3e3e3;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+        }
+        
+        /* Стили верхней панели как в Telegram */
+        .header {
+            background-color: #17212b;
+            display: flex;
             align-items: center;
-            padding: 30px;
-            position: relative;
+            padding: 12px 20px;
+            border-bottom: 1px solid #0e1621;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+        
+        .logo-icon i {
+            font-size: 22px;
+            color: white;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e3e3e3;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            margin-left: auto;
+        }
+        
+        .nav-links a {
+            color: #7a8a9a;
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: #6ab3f3;
+        }
+        
+        /* Основной контент */
+        .container {
+            display: flex;
+            flex: 1;
             overflow: hidden;
         }
         
-        .book-cover::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #7a5c5c, transparent);
+        /* Боковая панель как в Telegram */
+        .sidebar {
+            width: 320px;
+            background-color: #17212b;
+            border-right: 1px solid #0e1621;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
         }
         
-        .cover-title {
-            font-size: 1.8rem;
-            text-align: center;
-            color: #f0e6d2;
-            margin-bottom: 1rem;
-            line-height: 1.3;
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #0e1621;
         }
         
-        .cover-subtitle {
-            font-size: 1rem;
-            text-align: center;
-            color: #b8ab8c;
-            font-style: italic;
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #e3e3e3;
         }
         
-        .content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-            margin: 3rem 0;
+        .sidebar-subtitle {
+            font-size: 14px;
+            color: #7a8a9a;
         }
         
-        @media (min-width: 768px) {
-            .content {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        
-        .section {
-            background-color: rgba(18, 18, 28, 0.7);
-            border-radius: 8px;
-            padding: 2rem;
-            border-left: 3px solid #7a5c5c;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .section:nth-child(2) {
-            border-left-color: #3a6b7e;
-        }
-        
-        .section:nth-child(3) {
-            border-left-color: #5c7a5c;
-        }
-        
-        .section:nth-child(4) {
-            border-left-color: #8a6b3a;
-        }
-        
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #d4c19c;
-            border-bottom: 1px solid #33334a;
-            padding-bottom: 0.5rem;
-        }
-        
-        h3 {
-            font-size: 1.3rem;
-            margin: 1.5rem 0 0.8rem;
-            color: #c9b178;
-        }
-        
-        p {
-            margin-bottom: 1.2rem;
-            text-align: justify;
-        }
-        
-        ul {
-            padding-left: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        li {
-            margin-bottom: 0.5rem;
+        .search-box {
+            margin: 15px 20px;
             position: relative;
         }
         
-        li::before {
-            content: "▸";
-            color: #7a5c5c;
-            position: absolute;
-            left: -1.2rem;
-        }
-        
-        .quote {
-            font-style: italic;
-            color: #b8ab8c;
-            border-left: 2px solid #5c7a5c;
-            padding-left: 1.5rem;
-            margin: 1.5rem 0;
-            font-size: 1.1rem;
-        }
-        
-        .volumes {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        
-        .volume {
-            background-color: rgba(30, 30, 40, 0.7);
-            padding: 1rem;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            border: 1px solid #33334a;
-        }
-        
-        .volume-title {
-            font-weight: bold;
-            color: #d4c19c;
-            margin-bottom: 0.3rem;
-        }
-        
-        .cta-section {
-            text-align: center;
-            padding: 3rem 1rem;
-            margin: 3rem 0;
-            background-color: rgba(18, 18, 28, 0.8);
-            border-radius: 8px;
-            border: 1px solid #33334a;
-        }
-        
-        .cta-title {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: #f0e6d2;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: linear-gradient(to right, #7a5c5c, #3a6b7e);
-            color: #f0e6d2;
-            padding: 1rem 2.5rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin: 1rem;
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            background-color: #242f3d;
             border: none;
+            border-radius: 8px;
+            color: #e3e3e3;
+            font-size: 14px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7a8a9a;
+        }
+        
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 10px 20px 10px;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.2s;
         }
         
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(to right, #8a6c6c, #4a7b8e);
+        .file-item:hover {
+            background-color: #242f3d;
         }
         
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid #7a5c5c;
+        .file-item.active {
+            background-color: #2b5278;
         }
         
-        .btn-secondary:hover {
-            background: rgba(122, 92, 92, 0.1);
+        .file-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
         }
         
-        footer {
+        .file-icon.exe {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+        
+        .file-icon.zip {
+            background: linear-gradient(135deg, #ffa726, #ff9800);
+        }
+        
+        .file-icon.doc {
+            background: linear-gradient(135deg, #42a5f5, #2196f3);
+        }
+        
+        .file-icon.img {
+            background: linear-gradient(135deg, #66bb6a, #4caf50);
+        }
+        
+        .file-icon i {
+            font-size: 20px;
+            color: white;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #e3e3e3;
+        }
+        
+        .file-meta {
+            font-size: 13px;
+            color: #7a8a9a;
+        }
+        
+        /* Основная область */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .upload-area {
+            background-color: #17212b;
+            border-radius: 12px;
+            padding: 40px;
             text-align: center;
-            padding: 2rem;
-            border-top: 1px solid #2a2a3a;
-            margin-top: 3rem;
-            color: #9a8f72;
-            font-size: 0.9rem;
+            border: 2px dashed #2b5278;
+            margin-bottom: 30px;
+            transition: all 0.3s;
         }
         
+        .upload-area:hover {
+            background-color: #1a2532;
+            border-color: #3d6b99;
+        }
+        
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .upload-icon i {
+            font-size: 36px;
+            color: white;
+        }
+        
+        .upload-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #e3e3e3;
+        }
+        
+        .upload-subtitle {
+            font-size: 15px;
+            color: #7a8a9a;
+            margin-bottom: 25px;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 183, 241, 0.3);
+        }
+        
+        .file-details {
+            background-color: #17212b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .details-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #e3e3e3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .detail-item {
+            background-color: #242f3d;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-size: 13px;
+            color: #7a8a9a;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            color: #e3e3e3;
+            font-weight: 500;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: #242f3d;
+            color: #ff6b6b;
+            border: 1px solid #3a4656;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .download-btn:hover {
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .delete-btn:hover {
+            background-color: #2b3848;
+        }
+        
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: #17212b;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #e3e3e3;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: #7a8a9a;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: #e3e3e3;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #7a8a9a;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #242f3d;
+            border: 1px solid #3a4656;
+            border-radius: 8px;
+            color: #e3e3e3;
+            font-size: 15px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3d6b99;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 100%;
+                display: none;
+            }
+            
+            .sidebar.active {
+                display: flex;
+            }
+            
+            .menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: #7a8a9a;
+                font-size: 20px;
+                cursor: pointer;
+                margin-right: 15px;
+            }
+        }
+        
+        .menu-toggle {
+            display: none;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 13px;
+            color: #7a8a9a;
+            background-color: #17212b;
+            border-top: 1px solid #0e1621;
+        }
+        
+        /* Предупреждение */
         .warning {
-            background-color: rgba(74, 30, 30, 0.2);
-            border-left: 3px solid #8a3a3a;
-            padding: 1.5rem;
-            margin: 2rem 0;
-            border-radius: 4px;
+            background-color: #242f3d;
+            border-left: 4px solid #ffa726;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
         }
         
-        .warning-title {
-            color: #d49c9c;
-            margin-bottom: 0.5rem;
+        .warning i {
+            color: #ffa726;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
+    <!-- Верхняя панель -->
+    <header class="header">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fab fa-telegram"></i>
+            </div>
+            <div class="logo-text">TeleFiles</div>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="active"><i class="fas fa-cloud-upload-alt"></i> Загрузка</a>
+            <a href="#"><i class="fas fa-folder"></i> Мои файлы</a>
+            <a href="#"><i class="fas fa-share-alt"></i> Общий доступ</a>
+            <a href="#"><i class="fas fa-cog"></i> Настройки</a>
+        </nav>
+    </header>
+    
+    <!-- Основной контейнер -->
     <div class="container">
-        <header>
-            <h1>«ПАЛИМПСЕСТ ВЕЧНОЙ МЕРЗЛОТЫ И УГАСШЕГО ПЛАМЕНИ: АНАМНЕЗИС АНАЛЕММЫ»</h1>
-            <div class="subtitle">Философско-мистическая фэнтези о памяти, времени и конце миров</div>
-            <div class="author">Анонимный автор</div>
-            
-            <div class="book-cover">
-                <div class="cover-title">ПАЛИМПСЕСТ ВЕЧНОЙ МЕРЗЛОТЫ</div>
-                <div class="cover-subtitle">и угасшего пламени</div>
+        <!-- Боковая панель -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Последние файлы</h2>
+                <p class="sidebar-subtitle">Загружено 24 файла, 156.8 MB</p>
             </div>
-        </header>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Поиск файлов...">
+            </div>
+            
+            <div class="file-list" id="fileList">
+                <!-- Список файлов будет заполнен JavaScript -->
+            </div>
+        </aside>
         
-        <div class="content">
-            <div class="section">
-                <h2>О Книге</h2>
-                <p>Это не просто история. Это <strong>архив утраченных цивилизаций</strong>, записанный во льдах и пепле. Мир, где память стала материей, а забвение — реальной угрозой.</p>
-                
-                <p>Действие происходит в постапокалиптической реальности, где время и пространство подверглись деконструкции. Лёд хранит не воду, а воспоминания; пепел — не результат огня, а итог эрозии времени.</p>
-                
-                <div class="quote">
-                    "Он шёл по Долине Павших Солнц, но солнц не было. Была лишь бледная, перламутровая плёнка на небе, за которой что-то медленно и неотвратимо шевелилось."
-                </div>
-                
-                <p>Главные герои — Арвен и Алина — представляют две фундаментальные силы: ледяную вечность памяти и пламя, пожирающее будущее ради хрупкого настоящего.</p>
+        <!-- Основная область -->
+        <main class="main-content">
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Загружайте только легальные файлы. Распространение вредоносного ПО является нарушением закона.</span>
             </div>
             
-            <div class="section">
-                <h2>Тома</h2>
-                <p>Семитомная структура произведения отражает этапы распада и трансформации реальности:</p>
-                
-                <div class="volumes">
-                    <div class="volume">
-                        <div class="volume-title">Том I: Пыль Былых Солнц</div>
-                        Арвен возвращается в угасший мир.
-                    </div>
-                    <div class="volume">
-                        <div class="volume-title">Том II: Чернильные Реки Библиотеки</div>
-                        Алина и организм-библиотека.
-                    </div>
-                    <div class="volume">
-                        <div class="volume-title">Том III: Сломанное Зеркало Эльдорана</div>
-                        Воспоминания-осколки и прошлые жизни.
-                    </div>
-                    <div class="volume">
-                        <div class="volume-title">Том IV: Тюрьма Мгновения</div>
-                        Арвен запечатан в точке времени.
-                    </div>
-                    <div class="volume">
-                        <div class="volume-title">Том V: Летопись Великого Забытья</div>
-                        Эпохи механики, пара, ржавого металла.
-                    </div>
-                    <div class="volume">
-                        <div class="volume-title">Том VI: Симфония Распада</div>
-                        Битва как деконструкция языка реальности.
-                    </div>
-                    <div class="volume">
-                        <div class="volume-title">Том VII: Слово, Проросшее Сквозь Камень</div>
-                        Рождение нового языка после аннигиляции.
-                    </div>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h2 class="upload-title">Загрузите файлы</h2>
+                <p class="upload-subtitle">Перетащите файлы сюда или нажмите кнопку ниже</p>
+                <button class="upload-btn" id="uploadBtn">
+                    <i class="fas fa-plus"></i> Выбрать файл
+                </button>
+                <input type="file" id="fileInput" multiple style="display: none;">
+            </div>
+            
+            <div class="file-details" id="fileDetails" style="display: none;">
+                <h3 class="details-title">
+                    <i class="fas fa-file"></i> Детали файла
+                </h3>
+                <div class="details-grid" id="detailsGrid">
+                    <!-- Детали файла будут заполнены JavaScript -->
+                </div>
+                <div class="actions">
+                    <button class="action-btn download-btn">
+                        <i class="fas fa-download"></i> Скачать
+                    </button>
+                    <button class="action-btn delete-btn" id="deleteBtn">
+                        <i class="fas fa-trash"></i> Удалить
+                    </button>
                 </div>
             </div>
-            
-            <div class="section">
-                <h2>Ключевые Темы</h2>
-                
-                <h3>Память как архив и тюрьма</h3>
-                <p>В мире книги лёд — не просто вода, а физическое хранилище воспоминаний. Каждый пузырёк воздуха содержит "последний вздох исчезнувшей цивилизации".</p>
-                
-                <h3>Язык как основа реальности</h3>
-                <p>Библиотека — живой организм, переваривающий знания. Финальная битва ведётся не магией, а "тезисами" и "антитезисами", разбирая на атомы сам язык мироздания.</p>
-                
-                <h3>Забвение как конец мира</h3>
-                <p>Мир угасает "не с грохотом, а с шёпотом". История распадается на хроники, которые отрицают друг друга, пока не наступает Великое Затишье.</p>
-                
-                <h3>Любовь как диагноз, война как симптом</h3>
-                <p>Отношения Арвена и Алины — не роман, а "диагноз". Их конфликт — не битва идеалов, а "симптом болезни мира".</p>
-            </div>
-            
-            <div class="section">
-                <h2>Для Кого Эта Книга?</h2>
-                
-                <p>Это произведение для читателей, которые ценят:</p>
-                
-                <ul>
-                    <li>Философскую глубину в фэнтези</li>
-                    <li>Поэтичный, метафоричный язык</li>
-                    <li>Сложные, неоднозначные персонажи</li>
-                    <li>Идеи о природе памяти, времени и реальности</li>
-                    <li>Атмосферу меланхолии и угасания миров</li>
-                </ul>
-                
-                <div class="warning">
-                    <div class="warning-title">Важное предупреждение</div>
-                    <p>Это <strong>не</strong> типичное фэнтези с простым сюжетом и ясной моралью. Здесь нет однозначных героев и злодеев, а концовка оставляет пространство для размышлений.</p>
-                    <p>Книга требует вдумчивого чтения и восприятия текста как многомерной метафоры.</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="cta-section">
-            <h2 class="cta-title">Начать Чтение</h2>
-            <p>Полное произведение доступно для ознакомления. Помните, что это уникальный литературный эксперимент, не имеющий аналогов в современной фантастике.</p>
-            
-            <p><strong>Внимание:</strong> На этом сайте нет полного текста книги, только описание и анализ.</p>
-            
-            <a href="https://docs.google.com/document/d/1QJRyUPzqdXGSRdgF7ICjNU77ke68V2HMYCge981OpN0/edit?usp=drivesdk" class="btn" target="_blank">Читать книгу (Google Docs)</a>
-            
-            <p style="margin-top: 2rem; color: #b8ab8c; font-size: 0.9rem;">
-                Ссылка ведёт на внешний ресурс с полным текстом произведения.
-            </p>
-        </div>
-        
-        <footer>
-            <p>Сайт создан для продвижения книги «Палимпсест вечной мерзлоты и угасшего пламени: Анамнезис аналеммы»</p>
-            <p>© Все права на произведение принадлежат автору. 2025</p>
-            <p>Этот сайт не содержит полного текста книги, только информацию о ней.</p>
-        </footer>
+        </main>
     </div>
+    
+    <!-- Модальное окно для информации о загрузке -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Загрузка файла</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Название файла</label>
+                <input type="text" class="form-input" id="fileName" placeholder="Введите название файла">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Описание (необязательно)</label>
+                <textarea class="form-input" id="fileDescription" rows="3" placeholder="Добавьте описание файла"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn delete-btn" id="cancelUpload">Отмена</button>
+                <button class="action-btn download-btn" id="confirmUpload">Загрузить</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Футер -->
+    <footer class="footer">
+        <p>TeleFiles &copy; 2023 | Только для легального обмена файлами</p>
+    </footer>
+    
+    <script>
+        // Данные о файлах (имитация базы данных)
+        const filesData = [
+            { id: 1, name: "game_patch.exe", type: "exe", size: "15.2 MB", date: "12.10.2023", desc: "Патч для игры" },
+            { id: 2, name: "project_files.zip", type: "zip", size: "42.7 MB", date: "10.10.2023", desc: "Архив с проектом" },
+            { id: 3, name: "documentation.pdf", type: "doc", size: "3.1 MB", date: "08.10.2023", desc: "Техническая документация" },
+            { id: 4, name: "screenshot.png", type: "img", size: "1.8 MB", date: "05.10.2023", desc: "Скриншот интерфейса" },
+            { id: 5, name: "setup_tool.exe", type: "exe", size: "8.9 MB", date: "02.10.2023", desc: "Установочный файл" },
+            { id: 6, name: "data_backup.zip", type: "zip", size: "64.3 MB", date: "28.09.2023", desc: "Резервная копия данных" },
+            { id: 7, name: "manual.docx", type: "doc", size: "2.4 MB", date: "25.09.2023", desc: "Руководство пользователя" },
+            { id: 8, name: "diagram.jpg", type: "img", size: "4.7 MB", date: "20.09.2023", desc: "Схема работы системы" }
+        ];
+        
+        // DOM элементы
+        const fileList = document.getElementById('fileList');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileDetails = document.getElementById('fileDetails');
+        const detailsGrid = document.getElementById('detailsGrid');
+        const uploadModal = document.getElementById('uploadModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelUpload = document.getElementById('cancelUpload');
+        const confirmUpload = document.getElementById('confirmUpload');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const deleteBtn = document.getElementById('deleteBtn');
+        
+        // Текущий выбранный файл
+        let selectedFile = null;
+        
+        // Инициализация списка файлов
+        function initFileList() {
+            fileList.innerHTML = '';
+            
+            filesData.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.dataset.id = file.id;
+                
+                let iconClass = '';
+                let icon = '';
+                
+                switch(file.type) {
+                    case 'exe':
+                        iconClass = 'exe';
+                        icon = 'fas fa-cog';
+                        break;
+                    case 'zip':
+                        iconClass = 'zip';
+                        icon = 'fas fa-file-archive';
+                        break;
+                    case 'doc':
+                        iconClass = 'doc';
+                        icon = 'fas fa-file-alt';
+                        break;
+                    case 'img':
+                        iconClass = 'img';
+                        icon = 'fas fa-file-image';
+                        break;
+                }
+                
+                fileItem.innerHTML = `
+                    <div class="file-icon ${iconClass}">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">${file.size} • ${file.date}</div>
+                    </div>
+                `;
+                
+                fileItem.addEventListener('click', () => selectFile(file.id));
+                fileList.appendChild(fileItem);
+            });
+        }
+        
+        // Выбор файла
+        function selectFile(fileId) {
+            // Убираем активный класс у всех файлов
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Добавляем активный класс выбранному файлу
+            const selectedItem = document.querySelector(`.file-item[data-id="${fileId}"]`);
+            selectedItem.classList.add('active');
+            
+            // Находим файл в данных
+            selectedFile = filesData.find(file => file.id === fileId);
+            
+            // Показываем детали файла
+            showFileDetails(selectedFile);
+        }
+        
+        // Показать детали файла
+        function showFileDetails(file) {
+            fileDetails.style.display = 'block';
+            
+            // Определяем тип файла для отображения
+            let typeName = '';
+            switch(file.type) {
+                case 'exe': typeName = 'Исполняемый файл (.exe)'; break;
+                case 'zip': typeName = 'Архив (.zip)'; break;
+                case 'doc': typeName = 'Документ'; break;
+                case 'img': typeName = 'Изображение'; break;
+            }
+            
+            detailsGrid.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">Имя файла</div>
+                    <div class="detail-value">${file.name}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Тип файла</div>
+                    <div class="detail-value">${typeName}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Размер</div>
+                    <div class="detail-value">${file.size}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Дата загрузки</div>
+                    <div class="detail-value">${file.date}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Описание</div>
+                    <div class="detail-value">${file.desc}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Статус</div>
+                    <div class="detail-value" style="color: #66bb6a;">Безопасен</div>
+                </div>
+            `;
+            
+            // Прокручиваем к деталям файла
+            fileDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Обработчики событий для загрузки файла
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#3d6b99';
+            uploadArea.style.backgroundColor = '#1a2532';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#2b5278';
+            uploadArea.style.backgroundColor = '#17212b';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#2b5278';
+            uploadArea.style.backgroundColor = '#17212b';
+            
+            if (e.dataTransfer.files.length > 0) {
+                openUploadModal(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                openUploadModal(fileInput.files[0]);
+            }
+        });
+        
+        // Открыть модальное окно загрузки
+        function openUploadModal(file) {
+            document.getElementById('fileName').value = file.name;
+            document.getElementById('fileDescription').value = '';
+            uploadModal.style.display = 'flex';
+        }
+        
+        // Закрыть модальное окно
+        function closeUploadModal() {
+            uploadModal.style.display = 'none';
+            fileInput.value = '';
+        }
+        
+        // Обработчики для модального окна
+        closeModal.addEventListener('click', closeUploadModal);
+        cancelUpload.addEventListener('click', closeUploadModal);
+        
+        // Подтверждение загрузки
+        confirmUpload.addEventListener('click', () => {
+            const fileName = document.getElementById('fileName').value;
+            const fileDescription = document.getElementById('fileDescription').value;
+            
+            if (!fileName.trim()) {
+                alert('Введите название файла');
+                return;
+            }
+            
+            // Имитация загрузки файла
+            const newFile = {
+                id: filesData.length + 1,
+                name: fileName,
+                type: 'exe',
+                size: '12.5 MB',
+                date: new Date().toLocaleDateString('ru-RU'),
+                desc: fileDescription || 'Без описания'
+            };
+            
+            filesData.unshift(newFile);
+            initFileList();
+            selectFile(newFile.id);
+            
+            // Показать уведомление
+            alert('Файл успешно загружен!');
+            
+            // Закрыть модальное окно
+            closeUploadModal();
+        });
+        
+        // Удаление файла
+        deleteBtn.addEventListener('click', () => {
+            if (selectedFile) {
+                if (confirm(`Вы уверены, что хотите удалить файл "${selectedFile.name}"?`)) {
+                    const index = filesData.findIndex(file => file.id === selectedFile.id);
+                    if (index !== -1) {
+                        filesData.splice(index, 1);
+                        initFileList();
+                        fileDetails.style.display = 'none';
+                        selectedFile = null;
+                    }
+                }
+            }
+        });
+        
+        // Переключение боковой панели на мобильных устройствах
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Закрытие боковой панели при клике вне её на мобильных
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 900 && 
+                !sidebar.contains(e.target) && 
+                !menuToggle.contains(e.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            initFileList();
+            // Выбираем первый файл по умолчанию
+            if (filesData.length > 0) {
+                selectFile(filesData[0].id);
+            }
+            
+            // Добавляем эффект при наведении на элементы
+            const fileItems = document.querySelectorAll('.file-item, .upload-btn, .action-btn');
+            fileItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+        
+        // Имитация загрузки файла при клике на область загрузки
+        uploadArea.addEventListener('click', (e) => {
+            if (e.target === uploadArea || e.target.classList.contains('upload-title') || 
+                e.target.classList.contains('upload-subtitle') || e.target.classList.contains('upload-icon')) {
+                fileInput.click();
+            }
+        });
+    </script>
 </body>
 </html>
