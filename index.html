@@ -22,7 +22,6 @@
             flex-direction: column;
         }
         
-        /* Стили верхней панели как в Telegram */
         .header {
             background-color: #17212b;
             display: flex;
@@ -78,14 +77,12 @@
             color: #6ab3f3;
         }
         
-        /* Основной контент */
         .container {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
         
-        /* Боковая панель как в Telegram */
         .sidebar {
             width: 320px;
             background-color: #17212b;
@@ -185,6 +182,10 @@
             background: linear-gradient(135deg, #66bb6a, #4caf50);
         }
         
+        .file-icon.other {
+            background: linear-gradient(135deg, #ab47bc, #9c27b0);
+        }
+        
         .file-icon i {
             font-size: 20px;
             color: white;
@@ -205,7 +206,6 @@
             color: #7a8a9a;
         }
         
-        /* Основная область */
         .main-content {
             flex: 1;
             display: flex;
@@ -227,6 +227,12 @@
         .upload-area:hover {
             background-color: #1a2532;
             border-color: #3d6b99;
+        }
+        
+        .upload-area.drag-over {
+            background-color: #1a2532;
+            border-color: #3d6b99;
+            transform: scale(1.01);
         }
         
         .upload-icon {
@@ -361,7 +367,6 @@
             background-color: #2b3848;
         }
         
-        /* Модальное окно */
         .modal {
             display: none;
             position: fixed;
@@ -443,7 +448,6 @@
             margin-top: 25px;
         }
         
-        /* Адаптивность */
         @media (max-width: 900px) {
             .sidebar {
                 width: 100%;
@@ -478,23 +482,97 @@
             border-top: 1px solid #0e1621;
         }
         
-        /* Предупреждение */
         .warning {
             background-color: #242f3d;
             border-left: 4px solid #ffa726;
             padding: 15px;
             border-radius: 0 8px 8px 0;
             margin-bottom: 25px;
+            display: flex;
+            align-items: center;
         }
         
         .warning i {
             color: #ffa726;
             margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2e7d32;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification.error {
+            background-color: #c62828;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #7a8a9a;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #3a4656;
+        }
+        
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #e3e3e3;
+        }
+        
+        .storage-info {
+            background-color: #242f3d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 20px;
+        }
+        
+        .storage-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .storage-bar {
+            height: 6px;
+            background-color: #0e1621;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .storage-used {
+            height: 100%;
+            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
+            border-radius: 3px;
+            transition: width 0.5s;
         }
     </style>
 </head>
 <body>
-    <!-- Верхняя панель -->
     <header class="header">
         <button class="menu-toggle" id="menuToggle">
             <i class="fas fa-bars"></i>
@@ -513,30 +591,41 @@
         </nav>
     </header>
     
-    <!-- Основной контейнер -->
     <div class="container">
-        <!-- Боковая панель -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2 class="sidebar-title">Последние файлы</h2>
-                <p class="sidebar-subtitle">Загружено 24 файла, 156.8 MB</p>
+                <h2 class="sidebar-title">Мои файлы</h2>
+                <p class="sidebar-subtitle" id="fileCount">Загружено 0 файлов, 0 MB</p>
+            </div>
+            
+            <div class="storage-info">
+                <div class="storage-label">
+                    <span>Использовано хранилища</span>
+                    <span id="storagePercent">0%</span>
+                </div>
+                <div class="storage-bar">
+                    <div class="storage-used" id="storageBar" style="width: 0%"></div>
+                </div>
             </div>
             
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Поиск файлов...">
+                <input type="text" id="searchInput" placeholder="Поиск файлов...">
             </div>
             
             <div class="file-list" id="fileList">
-                <!-- Список файлов будет заполнен JavaScript -->
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-folder-open"></i>
+                    <h3>Нет загруженных файлов</h3>
+                    <p>Загрузите первый файл, используя область справа</p>
+                </div>
             </div>
         </aside>
         
-        <!-- Основная область -->
         <main class="main-content">
             <div class="warning">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span>Загружайте только легальные файлы. Распространение вредоносного ПО является нарушением закона.</span>
+                <span>TeleFiles предназначен только для легального обмена файлами. Запрещено распространять вредоносное ПО.</span>
             </div>
             
             <div class="upload-area" id="uploadArea">
@@ -545,6 +634,7 @@
                 </div>
                 <h2 class="upload-title">Загрузите файлы</h2>
                 <p class="upload-subtitle">Перетащите файлы сюда или нажмите кнопку ниже</p>
+                <p class="upload-subtitle" id="supportedFormats">Поддерживаемые форматы: .exe, .zip, .doc, .pdf, .jpg, .png</p>
                 <button class="upload-btn" id="uploadBtn">
                     <i class="fas fa-plus"></i> Выбрать файл
                 </button>
@@ -559,7 +649,7 @@
                     <!-- Детали файла будут заполнены JavaScript -->
                 </div>
                 <div class="actions">
-                    <button class="action-btn download-btn">
+                    <button class="action-btn download-btn" id="downloadBtn">
                         <i class="fas fa-download"></i> Скачать
                     </button>
                     <button class="action-btn delete-btn" id="deleteBtn">
@@ -592,23 +682,75 @@
         </div>
     </div>
     
-    <!-- Футер -->
     <footer class="footer">
-        <p>TeleFiles &copy; 2023 | Только для легального обмена файлами</p>
+        <p>TeleFiles &copy; 2023 | Все данные сохраняются в вашем браузере</p>
     </footer>
     
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Файл успешно загружен!</span>
+    </div>
+    
     <script>
-        // Данные о файлах (имитация базы данных)
-        const filesData = [
-            { id: 1, name: "game_patch.exe", type: "exe", size: "15.2 MB", date: "12.10.2023", desc: "Патч для игры" },
-            { id: 2, name: "project_files.zip", type: "zip", size: "42.7 MB", date: "10.10.2023", desc: "Архив с проектом" },
-            { id: 3, name: "documentation.pdf", type: "doc", size: "3.1 MB", date: "08.10.2023", desc: "Техническая документация" },
-            { id: 4, name: "screenshot.png", type: "img", size: "1.8 MB", date: "05.10.2023", desc: "Скриншот интерфейса" },
-            { id: 5, name: "setup_tool.exe", type: "exe", size: "8.9 MB", date: "02.10.2023", desc: "Установочный файл" },
-            { id: 6, name: "data_backup.zip", type: "zip", size: "64.3 MB", date: "28.09.2023", desc: "Резервная копия данных" },
-            { id: 7, name: "manual.docx", type: "doc", size: "2.4 MB", date: "25.09.2023", desc: "Руководство пользователя" },
-            { id: 8, name: "diagram.jpg", type: "img", size: "4.7 MB", date: "20.09.2023", desc: "Схема работы системы" }
-        ];
+        // Ключ для localStorage
+        const STORAGE_KEY = 'telefiles_data';
+        const MAX_STORAGE_MB = 100; // Максимальный размер хранилища в MB
+        
+        // Инициализация данных
+        let filesData = [];
+        let selectedFile = null;
+        
+        // Загрузка данных из localStorage
+        function loadFromStorage() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    filesData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error('Ошибка загрузки данных:', e);
+                    filesData = [];
+                }
+            }
+            
+            // Если данных нет, создаем начальные
+            if (filesData.length === 0) {
+                filesData = [
+                    { id: 1, name: "game_patch.exe", type: "exe", size: 15.2, date: "12.10.2023", desc: "Патч для игры", uploaded: "2023-10-12" },
+                    { id: 2, name: "project_files.zip", type: "zip", size: 42.7, date: "10.10.2023", desc: "Архив с проектом", uploaded: "2023-10-10" },
+                    { id: 3, name: "documentation.pdf", type: "doc", size: 3.1, date: "08.10.2023", desc: "Техническая документация", uploaded: "2023-10-08" },
+                    { id: 4, name: "screenshot.png", type: "img", size: 1.8, date: "05.10.2023", desc: "Скриншот интерфейса", uploaded: "2023-10-05" }
+                ];
+                saveToStorage();
+            }
+        }
+        
+        // Сохранение данных в localStorage
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(filesData));
+            updateStorageInfo();
+        }
+        
+        // Обновление информации о хранилище
+        function updateStorageInfo() {
+            const totalSize = filesData.reduce((sum, file) => sum + file.size, 0);
+            const fileCount = filesData.length;
+            const percent = Math.min((totalSize / MAX_STORAGE_MB) * 100, 100);
+            
+            document.getElementById('fileCount').textContent = 
+                `Загружено ${fileCount} файлов, ${totalSize.toFixed(1)} MB`;
+            document.getElementById('storagePercent').textContent = `${percent.toFixed(1)}%`;
+            document.getElementById('storageBar').style.width = `${percent}%`;
+            
+            // Изменение цвета при заполнении
+            const storageBar = document.getElementById('storageBar');
+            if (percent > 90) {
+                storageBar.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
+            } else if (percent > 70) {
+                storageBar.style.background = 'linear-gradient(135deg, #ffa726, #ff9800)';
+            } else {
+                storageBar.style.background = 'linear-gradient(135deg, #34b7f1, #2ea6e9)';
+            }
+        }
         
         // DOM элементы
         const fileList = document.getElementById('fileList');
@@ -624,40 +766,78 @@
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const deleteBtn = document.getElementById('deleteBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const searchInput = document.getElementById('searchInput');
+        const emptyState = document.getElementById('emptyState');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
         
-        // Текущий выбранный файл
-        let selectedFile = null;
+        // Показать уведомление
+        function showNotification(message, isError = false) {
+            notificationText.textContent = message;
+            notification.className = `notification ${isError ? 'error' : ''}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Генератор ID
+        function generateId() {
+            return filesData.length > 0 ? Math.max(...filesData.map(f => f.id)) + 1 : 1;
+        }
+        
+        // Определение типа файла по расширению
+        function getFileType(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            if (['exe', 'msi', 'bat', 'cmd'].includes(ext)) return 'exe';
+            if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'zip';
+            if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext)) return 'doc';
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(ext)) return 'img';
+            return 'other';
+        }
+        
+        // Получение иконки для типа файла
+        function getFileIcon(type) {
+            switch(type) {
+                case 'exe': return 'fas fa-cog';
+                case 'zip': return 'fas fa-file-archive';
+                case 'doc': return 'fas fa-file-alt';
+                case 'img': return 'fas fa-file-image';
+                default: return 'fas fa-file';
+            }
+        }
         
         // Инициализация списка файлов
-        function initFileList() {
+        function initFileList(filter = '') {
             fileList.innerHTML = '';
             
-            filesData.forEach(file => {
+            let filteredFiles = filesData;
+            if (filter) {
+                filteredFiles = filesData.filter(file => 
+                    file.name.toLowerCase().includes(filter.toLowerCase()) ||
+                    file.desc.toLowerCase().includes(filter.toLowerCase())
+                );
+            }
+            
+            if (filteredFiles.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Сортировка по дате (новые сверху)
+            filteredFiles.sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
+            
+            filteredFiles.forEach(file => {
                 const fileItem = document.createElement('div');
-                fileItem.className = 'file-item';
+                fileItem.className = `file-item ${selectedFile && selectedFile.id === file.id ? 'active' : ''}`;
                 fileItem.dataset.id = file.id;
                 
-                let iconClass = '';
-                let icon = '';
-                
-                switch(file.type) {
-                    case 'exe':
-                        iconClass = 'exe';
-                        icon = 'fas fa-cog';
-                        break;
-                    case 'zip':
-                        iconClass = 'zip';
-                        icon = 'fas fa-file-archive';
-                        break;
-                    case 'doc':
-                        iconClass = 'doc';
-                        icon = 'fas fa-file-alt';
-                        break;
-                    case 'img':
-                        iconClass = 'img';
-                        icon = 'fas fa-file-image';
-                        break;
-                }
+                const iconClass = file.type;
+                const icon = getFileIcon(file.type);
                 
                 fileItem.innerHTML = `
                     <div class="file-icon ${iconClass}">
@@ -665,7 +845,7 @@
                     </div>
                     <div class="file-info">
                         <div class="file-name">${file.name}</div>
-                        <div class="file-meta">${file.size} • ${file.date}</div>
+                        <div class="file-meta">${file.size.toFixed(1)} MB • ${file.date}</div>
                     </div>
                 `;
                 
@@ -676,19 +856,16 @@
         
         // Выбор файла
         function selectFile(fileId) {
-            // Убираем активный класс у всех файлов
-            document.querySelectorAll('.file-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Добавляем активный класс выбранному файлу
-            const selectedItem = document.querySelector(`.file-item[data-id="${fileId}"]`);
-            selectedItem.classList.add('active');
-            
-            // Находим файл в данных
             selectedFile = filesData.find(file => file.id === fileId);
             
-            // Показываем детали файла
+            // Обновляем активный класс
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.remove('active');
+                if (parseInt(item.dataset.id) === fileId) {
+                    item.classList.add('active');
+                }
+            });
+            
             showFileDetails(selectedFile);
         }
         
@@ -696,14 +873,23 @@
         function showFileDetails(file) {
             fileDetails.style.display = 'block';
             
-            // Определяем тип файла для отображения
             let typeName = '';
             switch(file.type) {
                 case 'exe': typeName = 'Исполняемый файл (.exe)'; break;
                 case 'zip': typeName = 'Архив (.zip)'; break;
                 case 'doc': typeName = 'Документ'; break;
                 case 'img': typeName = 'Изображение'; break;
+                default: typeName = 'Другой тип файла'; break;
             }
+            
+            const date = new Date(file.uploaded);
+            const uploadDate = date.toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
             
             detailsGrid.innerHTML = `
                 <div class="detail-item">
@@ -716,57 +902,24 @@
                 </div>
                 <div class="detail-item">
                     <div class="detail-label">Размер</div>
-                    <div class="detail-value">${file.size}</div>
+                    <div class="detail-value">${file.size.toFixed(1)} MB</div>
                 </div>
                 <div class="detail-item">
                     <div class="detail-label">Дата загрузки</div>
-                    <div class="detail-value">${file.date}</div>
+                    <div class="detail-value">${uploadDate}</div>
                 </div>
                 <div class="detail-item">
                     <div class="detail-label">Описание</div>
-                    <div class="detail-value">${file.desc}</div>
+                    <div class="detail-value">${file.desc || 'Без описания'}</div>
                 </div>
                 <div class="detail-item">
                     <div class="detail-label">Статус</div>
-                    <div class="detail-value" style="color: #66bb6a;">Безопасен</div>
+                    <div class="detail-value" style="color: #66bb6a;">
+                        <i class="fas fa-shield-alt"></i> Безопасен
+                    </div>
                 </div>
             `;
-            
-            // Прокручиваем к деталям файла
-            fileDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
-        // Обработчики событий для загрузки файла
-        uploadBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#3d6b99';
-            uploadArea.style.backgroundColor = '#1a2532';
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#2b5278';
-            uploadArea.style.backgroundColor = '#17212b';
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#2b5278';
-            uploadArea.style.backgroundColor = '#17212b';
-            
-            if (e.dataTransfer.files.length > 0) {
-                openUploadModal(e.dataTransfer.files[0]);
-            }
-        });
-        
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                openUploadModal(fileInput.files[0]);
-            }
-        });
         
         // Открыть модальное окно загрузки
         function openUploadModal(file) {
@@ -781,99 +934,181 @@
             fileInput.value = '';
         }
         
-        // Обработчики для модального окна
-        closeModal.addEventListener('click', closeUploadModal);
-        cancelUpload.addEventListener('click', closeUploadModal);
-        
-        // Подтверждение загрузки
-        confirmUpload.addEventListener('click', () => {
-            const fileName = document.getElementById('fileName').value;
-            const fileDescription = document.getElementById('fileDescription').value;
+        // Добавить файл
+        function addFile(name, description, size, type) {
+            const totalSize = filesData.reduce((sum, file) => sum + file.size, 0);
             
-            if (!fileName.trim()) {
-                alert('Введите название файла');
-                return;
+            if (totalSize + size > MAX_STORAGE_MB) {
+                showNotification(`Недостаточно места! Максимальный размер хранилища: ${MAX_STORAGE_MB}MB`, true);
+                return false;
             }
             
-            // Имитация загрузки файла
             const newFile = {
-                id: filesData.length + 1,
-                name: fileName,
-                type: 'exe',
-                size: '12.5 MB',
+                id: generateId(),
+                name: name,
+                type: type,
+                size: parseFloat(size.toFixed(1)),
                 date: new Date().toLocaleDateString('ru-RU'),
-                desc: fileDescription || 'Без описания'
+                desc: description || 'Без описания',
+                uploaded: new Date().toISOString()
             };
             
             filesData.unshift(newFile);
-            initFileList();
+            saveToStorage();
+            initFileList(searchInput.value);
             selectFile(newFile.id);
             
-            // Показать уведомление
-            alert('Файл успешно загружен!');
+            return true;
+        }
+        
+        // Удалить файл
+        function removeFile(fileId) {
+            const index = filesData.findIndex(file => file.id === fileId);
+            if (index !== -1) {
+                const removedFile = filesData.splice(index, 1)[0];
+                saveToStorage();
+                initFileList(searchInput.value);
+                fileDetails.style.display = 'none';
+                selectedFile = null;
+                showNotification(`Файл "${removedFile.name}" удален`);
+                return true;
+            }
+            return false;
+        }
+        
+        // Обработчики событий
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        
+        // Drag and drop
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                
+                if (eventName === 'drop' && e.dataTransfer.files.length > 0) {
+                    const file = e.dataTransfer.files[0];
+                    openUploadModal(file);
+                }
+            });
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                openUploadModal(file);
+            }
+        });
+        
+        // Поиск
+        searchInput.addEventListener('input', () => {
+            initFileList(searchInput.value);
+        });
+        
+        // Модальное окно
+        closeModal.addEventListener('click', closeUploadModal);
+        cancelUpload.addEventListener('click', closeUploadModal);
+        
+        confirmUpload.addEventListener('click', () => {
+            const fileName = document.getElementById('fileName').value.trim();
+            const fileDescription = document.getElementById('fileDescription').value.trim();
             
-            // Закрыть модальное окно
-            closeUploadModal();
+            if (!fileName) {
+                showNotification('Введите название файла', true);
+                return;
+            }
+            
+            // Имитация размера файла (от 0.1 до 20 MB)
+            const fileSize = Math.random() * 20 + 0.1;
+            const fileType = getFileType(fileName);
+            
+            if (addFile(fileName, fileDescription, fileSize, fileType)) {
+                showNotification('Файл успешно загружен!');
+                closeUploadModal();
+            }
         });
         
         // Удаление файла
         deleteBtn.addEventListener('click', () => {
             if (selectedFile) {
                 if (confirm(`Вы уверены, что хотите удалить файл "${selectedFile.name}"?`)) {
-                    const index = filesData.findIndex(file => file.id === selectedFile.id);
-                    if (index !== -1) {
-                        filesData.splice(index, 1);
-                        initFileList();
-                        fileDetails.style.display = 'none';
-                        selectedFile = null;
-                    }
+                    removeFile(selectedFile.id);
                 }
             }
         });
         
-        // Переключение боковой панели на мобильных устройствах
+        // Скачивание файла (имитация)
+        downloadBtn.addEventListener('click', () => {
+            if (selectedFile) {
+                showNotification(`Начато скачивание файла "${selectedFile.name}"`);
+                // В реальном приложении здесь был бы запрос к серверу
+            }
+        });
+        
+        // Переключение боковой панели
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
         
-        // Закрытие боковой панели при клике вне её на мобильных
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 900 && 
-                !sidebar.contains(e.target) && 
-                !menuToggle.contains(e.target) && 
-                sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-            }
-        });
-        
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
             initFileList();
-            // Выбираем первый файл по умолчанию
+            updateStorageInfo();
+            
+            // Выбираем первый файл если есть
             if (filesData.length > 0) {
                 selectFile(filesData[0].id);
             }
-            
-            // Добавляем эффект при наведении на элементы
-            const fileItems = document.querySelectorAll('.file-item, .upload-btn, .action-btn');
-            fileItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
         });
         
-        // Имитация загрузки файла при клике на область загрузки
-        uploadArea.addEventListener('click', (e) => {
-            if (e.target === uploadArea || e.target.classList.contains('upload-title') || 
-                e.target.classList.contains('upload-subtitle') || e.target.classList.contains('upload-icon')) {
-                fileInput.click();
-            }
-        });
+        // Экспорт данных (для отладки)
+        window.exportData = () => {
+            const dataStr = JSON.stringify(filesData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'telefiles_data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        };
+        
+        // Импорт данных (для отладки)
+        window.importData = () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        if (Array.isArray(importedData)) {
+                            filesData = importedData;
+                            saveToStorage();
+                            initFileList();
+                            showNotification('Данные успешно импортированы!');
+                        }
+                    } catch (err) {
+                        showNotification('Ошибка импорта данных', true);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        };
     </script>
 </body>
 </html>
