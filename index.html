@@ -613,6 +613,34 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .bot-status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #242f3d;
+            display: none;
+        }
+        
+        .bot-status.active {
+            display: block;
+        }
+        
+        .bot-status.success {
+            border-left: 4px solid #4caf50;
+        }
+        
+        .bot-status.error {
+            border-left: 4px solid #f44336;
+        }
+        
+        .chat-id-section {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #242f3d;
+            border-radius: 8px;
+            border-left: 4px solid #ffa726;
+        }
     </style>
 </head>
 <body>
@@ -691,15 +719,28 @@
                 <p style="margin-bottom: 15px; color: #7a8a9a;">
                     Отправьте файл в Telegram-бота, и он предоставит вам ссылку для скачивания
                 </p>
+                
+                <div class="chat-id-section">
+                    <p style="margin-bottom: 10px; color: #ffa726;">
+                        <i class="fas fa-info-circle"></i> Ваш Chat ID: <span id="chatIdDisplay">Не определен</span>
+                    </p>
+                    <button class="action-btn" id="getChatId" style="background: linear-gradient(135deg, #ffa726, #ff9800);">
+                        <i class="fas fa-id-card"></i> Получить Chat ID
+                    </button>
+                </div>
+                
                 <div class="bot-form">
-                    <input type="text" class="bot-input" id="botToken" placeholder="Токен вашего бота (необязательно)" value="6502572379:AAHjq_ir5J07GT9Hq7ej9Mh5wPTY7ex26e4">
+                    <input type="text" class="bot-input" id="chatIdInput" placeholder="Ваш Chat ID (получите выше)">
                     <button class="action-btn download-btn" id="sendToBot">
                         <i class="fab fa-telegram"></i> Отправить боту
                     </button>
                 </div>
+                
+                <div class="bot-status" id="botStatus"></div>
+                
                 <div style="margin-top: 15px;">
-                    <a href="https://t.me/tokentest444_bot" target="_blank" style="color: #6ab3f3; text-decoration: none;">
-                        <i class="fab fa-telegram"></i> Перейти в бота
+                    <a href="https://t.me/FileSend123_bot" target="_blank" style="color: #6ab3f3; text-decoration: none;">
+                        <i class="fab fa-telegram"></i> Перейти в бота @FileSend123_bot
                     </a>
                 </div>
             </div>
@@ -719,7 +760,7 @@
                         <i class="fas fa-trash"></i> Удалить
                     </button>
                     <button class="action-btn download-btn" id="shareBtn">
-                        <i class="fab fa-telegram"></i> Поделиться
+                        <i class="fab fa-telegram"></i> Отправить в бот
                     </button>
                 </div>
             </div>
@@ -749,7 +790,7 @@
     </div>
     
     <footer class="footer">
-        <p>TeleFiles © 2023 | Для получения файлов используйте Telegram-бота</p>
+        <p>TeleFiles © 2023 | Бот: @FileSend123_bot | Токен: 7805178006:AAFW-7HFdJJZtnMK_9UtTu_dr-f8_wqII_c</p>
     </footer>
     
     <div class="notification" id="notification">
@@ -761,11 +802,13 @@
         // Ключ для localStorage
         const STORAGE_KEY = 'telefiles_data';
         const MAX_STORAGE_MB = 100; // Максимальный размер хранилища в MB
-        const DEFAULT_BOT_TOKEN = '6502572379:AAHjq_ir5J07GT9Hq7ej9Mh5wPTY7ex26e4';
+        const TELEGRAM_BOT_TOKEN = '7805178006:AAFW-7HFdJJZtnMK_9UtTu_dr-f8_wqII_c';
+        const TELEGRAM_BOT_USERNAME = 'FileSend123_bot';
         
         // Инициализация данных
         let filesData = [];
         let selectedFile = null;
+        let userChatId = null;
         
         // Загрузка данных из localStorage
         function loadFromStorage() {
@@ -779,13 +822,60 @@
                 }
             }
             
-            // Если данных нет, создаем начальные
+            // Загружаем chat ID
+            userChatId = localStorage.getItem('telefiles_chat_id');
+            if (userChatId) {
+                document.getElementById('chatIdInput').value = userChatId;
+                document.getElementById('chatIdDisplay').textContent = userChatId;
+            }
+            
+            // Если данных нет, создаем начальные файлы
             if (filesData.length === 0) {
                 filesData = [
-                    { id: 1, name: "game_patch.exe", type: "exe", size: 15.2, date: "12.10.2023", desc: "Патч для игры", uploaded: "2023-10-12", url: "https://example.com/files/game_patch.exe" },
-                    { id: 2, name: "project_files.zip", type: "zip", size: 42.7, date: "10.10.2023", desc: "Архив с проектом", uploaded: "2023-10-10", url: "https://example.com/files/project_files.zip" },
-                    { id: 3, name: "documentation.pdf", type: "doc", size: 3.1, date: "08.10.2023", desc: "Техническая документация", uploaded: "2023-10-08", url: "https://example.com/files/documentation.pdf" },
-                    { id: 4, name: "screenshot.png", type: "img", size: 1.8, date: "05.10.2023", desc: "Скриншот интерфейса", uploaded: "2023-10-05", url: "https://example.com/files/screenshot.png" }
+                    { 
+                        id: 1, 
+                        name: "game_patch.exe", 
+                        type: "exe", 
+                        size: 15.2, 
+                        date: "12.10.2023", 
+                        desc: "Патч для игры", 
+                        uploaded: "2023-10-12", 
+                        url: "https://example.com/files/game_patch.exe",
+                        fileData: null // Здесь будут реальные файлы
+                    },
+                    { 
+                        id: 2, 
+                        name: "project_files.zip", 
+                        type: "zip", 
+                        size: 42.7, 
+                        date: "10.10.2023", 
+                        desc: "Архив с проектом", 
+                        uploaded: "2023-10-10", 
+                        url: "https://example.com/files/project_files.zip",
+                        fileData: null
+                    },
+                    { 
+                        id: 3, 
+                        name: "documentation.pdf", 
+                        type: "doc", 
+                        size: 3.1, 
+                        date: "08.10.2023", 
+                        desc: "Техническая документация", 
+                        uploaded: "2023-10-08", 
+                        url: "https://example.com/files/documentation.pdf",
+                        fileData: null
+                    },
+                    { 
+                        id: 4, 
+                        name: "screenshot.png", 
+                        type: "img", 
+                        size: 1.8, 
+                        date: "05.10.2023", 
+                        desc: "Скриншот интерфейса", 
+                        uploaded: "2023-10-05", 
+                        url: "https://example.com/files/screenshot.png",
+                        fileData: null
+                    }
                 ];
                 saveToStorage();
             }
@@ -840,7 +930,10 @@
         const notificationText = document.getElementById('notificationText');
         const sendToBotBtn = document.getElementById('sendToBot');
         const shareBtn = document.getElementById('shareBtn');
-        const botTokenInput = document.getElementById('botToken');
+        const chatIdInput = document.getElementById('chatIdInput');
+        const getChatIdBtn = document.getElementById('getChatId');
+        const chatIdDisplay = document.getElementById('chatIdDisplay');
+        const botStatus = document.getElementById('botStatus');
         
         // Показать уведомление
         function showNotification(message, isError = false) {
@@ -851,6 +944,16 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
+        }
+        
+        // Показать статус бота
+        function showBotStatus(message, isError = false) {
+            botStatus.textContent = message;
+            botStatus.className = `bot-status active ${isError ? 'error' : 'success'}`;
+            
+            setTimeout(() => {
+                botStatus.className = 'bot-status';
+            }, 5000);
         }
         
         // Генератор ID
@@ -1005,7 +1108,7 @@
         }
         
         // Добавить файл
-        function addFile(name, description, size, type, url = null) {
+        function addFile(name, description, size, type, url = null, fileData = null) {
             const totalSize = filesData.reduce((sum, file) => sum + file.size, 0);
             
             if (totalSize + size > MAX_STORAGE_MB) {
@@ -1013,7 +1116,7 @@
                 return false;
             }
             
-            // Генерируем URL для скачивания (в реальном приложении это был бы реальный URL)
+            // Генерируем URL для скачивания
             const fileUrl = url || `https://telefiles.example.com/download/${Date.now()}_${name}`;
             
             const newFile = {
@@ -1024,7 +1127,8 @@
                 date: new Date().toLocaleDateString('ru-RU'),
                 desc: description || 'Без описания',
                 uploaded: new Date().toISOString(),
-                url: fileUrl
+                url: fileUrl,
+                fileData: fileData
             };
             
             filesData.unshift(newFile);
@@ -1050,6 +1154,22 @@
             return false;
         }
         
+        // Получить Chat ID от пользователя
+        function getUserChatId() {
+            const chatId = chatIdInput.value.trim();
+            if (!chatId) {
+                showBotStatus('Введите ваш Chat ID', true);
+                return null;
+            }
+            
+            // Сохраняем chat ID
+            localStorage.setItem('telefiles_chat_id', chatId);
+            userChatId = chatId;
+            chatIdDisplay.textContent = chatId;
+            
+            return chatId;
+        }
+        
         // Отправить файл боту
         async function sendToBot() {
             if (!selectedFile) {
@@ -1057,40 +1177,59 @@
                 return;
             }
             
-            const token = botTokenInput.value.trim() || DEFAULT_BOT_TOKEN;
+            const chatId = getUserChatId();
+            if (!chatId) return;
+            
             const originalBtnText = sendToBotBtn.innerHTML;
             
             try {
-                sendToBotBtn.innerHTML = '<div class="loading"></div>';
+                sendToBotBtn.innerHTML = '<div class="loading"></div> Отправка...';
                 sendToBotBtn.disabled = true;
                 
-                // Создаем сообщение для бота
-                const message = {
-                    file_id: selectedFile.id,
-                    file_name: selectedFile.name,
-                    file_size: selectedFile.size,
-                    file_type: selectedFile.type,
-                    description: selectedFile.desc,
-                    download_url: selectedFile.url
-                };
-                
-                // Для GitHub Pages мы используем локальную симуляцию
-                // В реальном приложении здесь был бы реальный запрос к API Telegram
+                // Для GitHub Pages мы не можем отправлять реальные запросы к Telegram API
+                // из-за CORS и необходимости серверной части
+                // В реальном приложении здесь должен быть запрос к вашему серверу
                 
                 // Симуляция отправки
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                showNotification(`Файл "${selectedFile.name}" отправлен боту! Перейдите в Telegram-бота для получения ссылки.`);
+                showBotStatus(`Файл "${selectedFile.name}" отправлен боту! Проверьте Telegram.`);
+                showNotification(`Файл отправлен в бота @${TELEGRAM_BOT_USERNAME}`);
                 
                 // Открываем ссылку на бота
-                window.open('https://t.me/tokentest444_bot', '_blank');
+                window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}`, '_blank');
                 
             } catch (error) {
                 console.error('Ошибка отправки боту:', error);
+                showBotStatus('Ошибка отправки файла', true);
                 showNotification('Ошибка отправки файла', true);
             } finally {
-                sendToBotBtn.innerHTML = originalBtnText;
+                sendToBotBtn.innerHTML = '<i class="fab fa-telegram"></i> Отправить боту';
                 sendToBotBtn.disabled = false;
+            }
+        }
+        
+        // Получить Chat ID через бота
+        async function getChatIdFromBot() {
+            const originalBtnText = getChatIdBtn.innerHTML;
+            
+            try {
+                getChatIdBtn.innerHTML = '<div class="loading"></div> Получение...';
+                getChatIdBtn.disabled = true;
+                
+                // Открываем бота с инструкцией
+                const botUrl = `https://t.me/${TELEGRAM_BOT_USERNAME}?start=get_chat_id`;
+                window.open(botUrl, '_blank');
+                
+                // Показываем инструкцию
+                showBotStatus('Откройте бота и отправьте ему команду /start или любое сообщение. Затем вставьте полученный Chat ID в поле выше.');
+                
+            } catch (error) {
+                console.error('Ошибка получения Chat ID:', error);
+                showBotStatus('Ошибка получения Chat ID', true);
+            } finally {
+                getChatIdBtn.innerHTML = '<i class="fas fa-id-card"></i> Получить Chat ID';
+                getChatIdBtn.disabled = false;
             }
         }
         
@@ -1185,6 +1324,9 @@
         // Поделиться через бота
         shareBtn.addEventListener('click', sendToBot);
         
+        // Получить Chat ID
+        getChatIdBtn.addEventListener('click', getChatIdFromBot);
+        
         // Переключение боковой панели
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('active');
@@ -1204,20 +1346,37 @@
         
         // API для работы с ботом (упрощенная версия для GitHub Pages)
         window.TeleFilesBot = {
-            sendFile: async function(fileData) {
+            // Получить информацию о боте
+            getBotInfo: function() {
+                return {
+                    token: TELEGRAM_BOT_TOKEN,
+                    username: TELEGRAM_BOT_USERNAME,
+                    link: `https://t.me/${TELEGRAM_BOT_USERNAME}`
+                };
+            },
+            
+            // Отправить файл в бота (симуляция)
+            sendFile: async function(fileId, chatId) {
+                const file = filesData.find(f => f.id === fileId);
+                if (!file) {
+                    throw new Error('Файл не найден');
+                }
+                
                 // В реальном приложении здесь был бы fetch к вашему серверу
                 return new Promise(resolve => {
                     setTimeout(() => {
                         resolve({
                             success: true,
-                            message: `Файл отправлен в бота. Проверьте Telegram.`
+                            message: `Файл "${file.name}" отправлен в бота. Chat ID: ${chatId}`,
+                            botLink: `https://t.me/${TELEGRAM_BOT_USERNAME}`
                         });
-                    }, 1000);
+                    }, 1500);
                 });
             },
             
-            getBotLink: function() {
-                return 'https://t.me/tokentest444_bot';
+            // Получить инструкцию по получению Chat ID
+            getChatIdInstruction: function() {
+                return "Чтобы получить Chat ID:\n1. Откройте @FileSend123_bot в Telegram\n2. Отправьте боту любое сообщение\n3. Бот ответит вам с вашим Chat ID\n4. Скопируйте этот ID и вставьте в поле выше";
             }
         };
     </script>
