@@ -570,6 +570,49 @@
             border-radius: 3px;
             transition: width 0.5s;
         }
+        
+        .bot-section {
+            background-color: #17212b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .bot-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .bot-input {
+            flex: 1;
+            padding: 12px 15px;
+            background-color: #242f3d;
+            border: 1px solid #3a4656;
+            border-radius: 8px;
+            color: #e3e3e3;
+            font-size: 15px;
+        }
+        
+        .bot-input:focus {
+            outline: none;
+            border-color: #3d6b99;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #34b7f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -586,7 +629,7 @@
         <nav class="nav-links">
             <a href="#" class="active"><i class="fas fa-cloud-upload-alt"></i> Загрузка</a>
             <a href="#"><i class="fas fa-folder"></i> Мои файлы</a>
-            <a href="#"><i class="fas fa-share-alt"></i> Общий доступ</a>
+            <a href="#"><i class="fas fa-robot"></i> Бот</a>
             <a href="#"><i class="fas fa-cog"></i> Настройки</a>
         </nav>
     </header>
@@ -641,6 +684,26 @@
                 <input type="file" id="fileInput" multiple style="display: none;">
             </div>
             
+            <div class="bot-section">
+                <h3 class="details-title">
+                    <i class="fas fa-robot"></i> Получить файл через Telegram-бота
+                </h3>
+                <p style="margin-bottom: 15px; color: #7a8a9a;">
+                    Отправьте файл в Telegram-бота, и он предоставит вам ссылку для скачивания
+                </p>
+                <div class="bot-form">
+                    <input type="text" class="bot-input" id="botToken" placeholder="Токен вашего бота (необязательно)" value="6502572379:AAHjq_ir5J07GT9Hq7ej9Mh5wPTY7ex26e4">
+                    <button class="action-btn download-btn" id="sendToBot">
+                        <i class="fab fa-telegram"></i> Отправить боту
+                    </button>
+                </div>
+                <div style="margin-top: 15px;">
+                    <a href="https://t.me/tokentest444_bot" target="_blank" style="color: #6ab3f3; text-decoration: none;">
+                        <i class="fab fa-telegram"></i> Перейти в бота
+                    </a>
+                </div>
+            </div>
+            
             <div class="file-details" id="fileDetails" style="display: none;">
                 <h3 class="details-title">
                     <i class="fas fa-file"></i> Детали файла
@@ -655,6 +718,9 @@
                     <button class="action-btn delete-btn" id="deleteBtn">
                         <i class="fas fa-trash"></i> Удалить
                     </button>
+                    <button class="action-btn download-btn" id="shareBtn">
+                        <i class="fab fa-telegram"></i> Поделиться
+                    </button>
                 </div>
             </div>
         </main>
@@ -665,7 +731,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Загрузка файла</h3>
-                <button class="close-modal" id="closeModal">&times;</button>
+                <button class="close-modal" id="closeModal">×</button>
             </div>
             <div class="form-group">
                 <label class="form-label">Название файла</label>
@@ -683,7 +749,7 @@
     </div>
     
     <footer class="footer">
-        <p>TeleFiles &copy; 2023 | Все данные сохраняются в вашем браузере</p>
+        <p>TeleFiles © 2023 | Для получения файлов используйте Telegram-бота</p>
     </footer>
     
     <div class="notification" id="notification">
@@ -695,6 +761,7 @@
         // Ключ для localStorage
         const STORAGE_KEY = 'telefiles_data';
         const MAX_STORAGE_MB = 100; // Максимальный размер хранилища в MB
+        const DEFAULT_BOT_TOKEN = '6502572379:AAHjq_ir5J07GT9Hq7ej9Mh5wPTY7ex26e4';
         
         // Инициализация данных
         let filesData = [];
@@ -715,10 +782,10 @@
             // Если данных нет, создаем начальные
             if (filesData.length === 0) {
                 filesData = [
-                    { id: 1, name: "game_patch.exe", type: "exe", size: 15.2, date: "12.10.2023", desc: "Патч для игры", uploaded: "2023-10-12" },
-                    { id: 2, name: "project_files.zip", type: "zip", size: 42.7, date: "10.10.2023", desc: "Архив с проектом", uploaded: "2023-10-10" },
-                    { id: 3, name: "documentation.pdf", type: "doc", size: 3.1, date: "08.10.2023", desc: "Техническая документация", uploaded: "2023-10-08" },
-                    { id: 4, name: "screenshot.png", type: "img", size: 1.8, date: "05.10.2023", desc: "Скриншот интерфейса", uploaded: "2023-10-05" }
+                    { id: 1, name: "game_patch.exe", type: "exe", size: 15.2, date: "12.10.2023", desc: "Патч для игры", uploaded: "2023-10-12", url: "https://example.com/files/game_patch.exe" },
+                    { id: 2, name: "project_files.zip", type: "zip", size: 42.7, date: "10.10.2023", desc: "Архив с проектом", uploaded: "2023-10-10", url: "https://example.com/files/project_files.zip" },
+                    { id: 3, name: "documentation.pdf", type: "doc", size: 3.1, date: "08.10.2023", desc: "Техническая документация", uploaded: "2023-10-08", url: "https://example.com/files/documentation.pdf" },
+                    { id: 4, name: "screenshot.png", type: "img", size: 1.8, date: "05.10.2023", desc: "Скриншот интерфейса", uploaded: "2023-10-05", url: "https://example.com/files/screenshot.png" }
                 ];
                 saveToStorage();
             }
@@ -771,6 +838,9 @@
         const emptyState = document.getElementById('emptyState');
         const notification = document.getElementById('notification');
         const notificationText = document.getElementById('notificationText');
+        const sendToBotBtn = document.getElementById('sendToBot');
+        const shareBtn = document.getElementById('shareBtn');
+        const botTokenInput = document.getElementById('botToken');
         
         // Показать уведомление
         function showNotification(message, isError = false) {
@@ -935,13 +1005,16 @@
         }
         
         // Добавить файл
-        function addFile(name, description, size, type) {
+        function addFile(name, description, size, type, url = null) {
             const totalSize = filesData.reduce((sum, file) => sum + file.size, 0);
             
             if (totalSize + size > MAX_STORAGE_MB) {
                 showNotification(`Недостаточно места! Максимальный размер хранилища: ${MAX_STORAGE_MB}MB`, true);
                 return false;
             }
+            
+            // Генерируем URL для скачивания (в реальном приложении это был бы реальный URL)
+            const fileUrl = url || `https://telefiles.example.com/download/${Date.now()}_${name}`;
             
             const newFile = {
                 id: generateId(),
@@ -950,7 +1023,8 @@
                 size: parseFloat(size.toFixed(1)),
                 date: new Date().toLocaleDateString('ru-RU'),
                 desc: description || 'Без описания',
-                uploaded: new Date().toISOString()
+                uploaded: new Date().toISOString(),
+                url: fileUrl
             };
             
             filesData.unshift(newFile);
@@ -974,6 +1048,50 @@
                 return true;
             }
             return false;
+        }
+        
+        // Отправить файл боту
+        async function sendToBot() {
+            if (!selectedFile) {
+                showNotification('Сначала выберите файл', true);
+                return;
+            }
+            
+            const token = botTokenInput.value.trim() || DEFAULT_BOT_TOKEN;
+            const originalBtnText = sendToBotBtn.innerHTML;
+            
+            try {
+                sendToBotBtn.innerHTML = '<div class="loading"></div>';
+                sendToBotBtn.disabled = true;
+                
+                // Создаем сообщение для бота
+                const message = {
+                    file_id: selectedFile.id,
+                    file_name: selectedFile.name,
+                    file_size: selectedFile.size,
+                    file_type: selectedFile.type,
+                    description: selectedFile.desc,
+                    download_url: selectedFile.url
+                };
+                
+                // Для GitHub Pages мы используем локальную симуляцию
+                // В реальном приложении здесь был бы реальный запрос к API Telegram
+                
+                // Симуляция отправки
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                showNotification(`Файл "${selectedFile.name}" отправлен боту! Перейдите в Telegram-бота для получения ссылки.`);
+                
+                // Открываем ссылку на бота
+                window.open('https://t.me/tokentest444_bot', '_blank');
+                
+            } catch (error) {
+                console.error('Ошибка отправки боту:', error);
+                showNotification('Ошибка отправки файла', true);
+            } finally {
+                sendToBotBtn.innerHTML = originalBtnText;
+                sendToBotBtn.disabled = false;
+            }
         }
         
         // Обработчики событий
@@ -1028,8 +1146,11 @@
             const fileSize = Math.random() * 20 + 0.1;
             const fileType = getFileType(fileName);
             
-            if (addFile(fileName, fileDescription, fileSize, fileType)) {
-                showNotification('Файл успешно загружен!');
+            // Создаем URL для скачивания
+            const fileUrl = `https://telefiles.example.com/download/${Date.now()}_${encodeURIComponent(fileName)}`;
+            
+            if (addFile(fileName, fileDescription, fileSize, fileType, fileUrl)) {
+                showNotification('Файл успешно загружен! Теперь вы можете отправить его боту.');
                 closeUploadModal();
             }
         });
@@ -1046,10 +1167,23 @@
         // Скачивание файла (имитация)
         downloadBtn.addEventListener('click', () => {
             if (selectedFile) {
+                // Создаем временную ссылку для скачивания
+                const link = document.createElement('a');
+                link.href = selectedFile.url;
+                link.download = selectedFile.name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
                 showNotification(`Начато скачивание файла "${selectedFile.name}"`);
-                // В реальном приложении здесь был бы запрос к серверу
             }
         });
+        
+        // Отправить файл боту
+        sendToBotBtn.addEventListener('click', sendToBot);
+        
+        // Поделиться через бота
+        shareBtn.addEventListener('click', sendToBot);
         
         // Переключение боковой панели
         menuToggle.addEventListener('click', () => {
@@ -1068,46 +1202,23 @@
             }
         });
         
-        // Экспорт данных (для отладки)
-        window.exportData = () => {
-            const dataStr = JSON.stringify(filesData, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = 'telefiles_data.json';
+        // API для работы с ботом (упрощенная версия для GitHub Pages)
+        window.TeleFilesBot = {
+            sendFile: async function(fileData) {
+                // В реальном приложении здесь был бы fetch к вашему серверу
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({
+                            success: true,
+                            message: `Файл отправлен в бота. Проверьте Telegram.`
+                        });
+                    }, 1000);
+                });
+            },
             
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        };
-        
-        // Импорт данных (для отладки)
-        window.importData = () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            
-            input.onchange = e => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = event => {
-                    try {
-                        const importedData = JSON.parse(event.target.result);
-                        if (Array.isArray(importedData)) {
-                            filesData = importedData;
-                            saveToStorage();
-                            initFileList();
-                            showNotification('Данные успешно импортированы!');
-                        }
-                    } catch (err) {
-                        showNotification('Ошибка импорта данных', true);
-                    }
-                };
-                
-                reader.readAsText(file);
-            };
-            
-            input.click();
+            getBotLink: function() {
+                return 'https://t.me/tokentest444_bot';
+            }
         };
     </script>
 </body>
