@@ -3,1471 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeleFiles - Безопасный обмен файлами</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Маме · Важное сообщение</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         }
-        
+
         body {
-            background-color: #0e1621;
-            color: #e3e3e3;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .header {
-            background-color: #17212b;
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid #0e1621;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            margin-right: 20px;
-        }
-        
-        .logo-icon {
-            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            background: linear-gradient(145deg, #fae6e0 0%, #f2d9d0 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-        }
-        
-        .logo-icon i {
-            font-size: 22px;
-            color: white;
-        }
-        
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: #e3e3e3;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            margin-left: auto;
-        }
-        
-        .nav-links a {
-            color: #7a8a9a;
-            text-decoration: none;
-            font-size: 15px;
-            transition: color 0.2s;
-        }
-        
-        .nav-links a:hover, .nav-links a.active {
-            color: #6ab3f3;
-        }
-        
-        .container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        
-        .sidebar {
-            width: 320px;
-            background-color: #17212b;
-            border-right: 1px solid #0e1621;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        
-        .sidebar-header {
             padding: 20px;
-            border-bottom: 1px solid #0e1621;
+            margin: 0;
         }
-        
-        .sidebar-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #e3e3e3;
-        }
-        
-        .sidebar-subtitle {
-            font-size: 14px;
-            color: #7a8a9a;
-        }
-        
-        .search-box {
-            margin: 15px 20px;
-            position: relative;
-        }
-        
-        .search-box input {
+
+        .card {
+            max-width: 760px;
             width: 100%;
-            padding: 12px 15px 12px 40px;
-            background-color: #242f3d;
-            border: none;
-            border-radius: 8px;
-            color: #e3e3e3;
-            font-size: 14px;
+            background: rgba(255, 250, 245, 0.9);
+            backdrop-filter: blur(4px);
+            background-color: #fffcf9;
+            border-radius: 44px 44px 36px 36px;
+            box-shadow: 0 30px 50px rgba(140, 80, 50, 0.25), 0 10px 20px rgba(0,0,0,0.1);
+            padding: 2.2rem 2rem 2.5rem 2rem;
+            border: 1px solid #ffe8de;
+            transition: all 0.2s ease;
         }
-        
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7a8a9a;
-        }
-        
-        .file-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 10px 20px 10px;
-        }
-        
-        .file-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .file-item:hover {
-            background-color: #242f3d;
-        }
-        
-        .file-item.active {
-            background-color: #2b5278;
-        }
-        
-        .file-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-        }
-        
-        .file-icon.exe {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-        }
-        
-        .file-icon.zip {
-            background: linear-gradient(135deg, #ffa726, #ff9800);
-        }
-        
-        .file-icon.doc {
-            background: linear-gradient(135deg, #42a5f5, #2196f3);
-        }
-        
-        .file-icon.img {
-            background: linear-gradient(135deg, #66bb6a, #4caf50);
-        }
-        
-        .file-icon.other {
-            background: linear-gradient(135deg, #ab47bc, #9c27b0);
-        }
-        
-        .file-icon i {
-            font-size: 20px;
-            color: white;
-        }
-        
-        .file-info {
-            flex: 1;
-        }
-        
-        .file-name {
-            font-weight: 600;
-            margin-bottom: 3px;
-            color: #e3e3e3;
-        }
-        
-        .file-meta {
-            font-size: 13px;
-            color: #7a8a9a;
-        }
-        
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 30px;
-            overflow-y: auto;
-        }
-        
-        .upload-area {
-            background-color: #17212b;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            border: 2px dashed #2b5278;
-            margin-bottom: 30px;
-            transition: all 0.3s;
-        }
-        
-        .upload-area:hover {
-            background-color: #1a2532;
-            border-color: #3d6b99;
-        }
-        
-        .upload-area.drag-over {
-            background-color: #1a2532;
-            border-color: #3d6b99;
-            transform: scale(1.01);
-        }
-        
-        .upload-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-        
-        .upload-icon i {
-            font-size: 36px;
-            color: white;
-        }
-        
-        .upload-title {
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: #e3e3e3;
-        }
-        
-        .upload-subtitle {
-            font-size: 15px;
-            color: #7a8a9a;
-            margin-bottom: 25px;
-        }
-        
-        .upload-btn {
-            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 30px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 183, 241, 0.3);
-        }
-        
-        .file-details {
-            background-color: #17212b;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-        
-        .details-title {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #e3e3e3;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .detail-item {
-            background-color: #242f3d;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        
-        .detail-label {
-            font-size: 13px;
-            color: #7a8a9a;
-            margin-bottom: 5px;
-        }
-        
-        .detail-value {
-            font-size: 16px;
-            color: #e3e3e3;
+
+        /* обращение «Мам» */
+        .greeting {
+            font-size: 2.8rem;
             font-weight: 500;
+            color: #4d2e1b;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            border-left: 10px solid #d9885c;
+            padding-left: 1.3rem;
+            word-break: break-word;
         }
-        
-        .actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
+
+        .greeting span {
+            background: #ffdcc9;
+            padding: 0.2rem 0.8rem 0.2rem 0.4rem;
+            border-radius: 60px;
+            font-size: 2rem;
+            font-weight: 350;
+            display: inline-block;
         }
-        
-        .action-btn {
-            padding: 12px 25px;
-            border-radius: 8px;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
+
+        /* основной текст-инструкция */
+        .instruction {
+            font-size: 1.7rem;
+            color: #2b1a0f;
+            margin-bottom: 2rem;
+            background: #ffefe4;
+            padding: 1.2rem 1.8rem;
+            border-radius: 40px 40px 40px 16px;
+            display: inline-block;
+            box-shadow: 0 4px 8px #edd3c0;
+            font-weight: 400;
+            line-height: 1.4;
         }
-        
-        .download-btn {
-            background: linear-gradient(135deg, #4caf50, #66bb6a);
+
+        .instruction .button-like {
+            background: #c46b4a;
             color: white;
-        }
-        
-        .delete-btn {
-            background-color: #242f3d;
-            color: #ff6b6b;
-            border: 1px solid #3a4656;
-        }
-        
-        .action-btn:hover {
+            font-weight: 600;
+            padding: 0.3rem 1.3rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin: 0 8px 0 4px;
+            box-shadow: 0 6px 0 #7b3e25;
             transform: translateY(-2px);
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+            border: 2px solid #ffb08a;
         }
-        
-        .download-btn:hover {
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-        }
-        
-        .delete-btn:hover {
-            background-color: #2b3848;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background-color: #17212b;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #e3e3e3;
-        }
-        
-        .close-modal {
-            background: none;
+
+        /* КНОПКА */
+        .secret-button {
+            background: #d4643c;
             border: none;
-            color: #7a8a9a;
-            font-size: 24px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        
-        .close-modal:hover {
-            color: #e3e3e3;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #7a8a9a;
-            font-size: 14px;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: #242f3d;
-            border: 1px solid #3a4656;
-            border-radius: 8px;
-            color: #e3e3e3;
-            font-size: 15px;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #3d6b99;
-        }
-        
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        
-        @media (max-width: 900px) {
-            .sidebar {
-                width: 100%;
-                display: none;
-            }
-            
-            .sidebar.active {
-                display: flex;
-            }
-            
-            .menu-toggle {
-                display: block;
-                background: none;
-                border: none;
-                color: #7a8a9a;
-                font-size: 20px;
-                cursor: pointer;
-                margin-right: 15px;
-            }
-        }
-        
-        .menu-toggle {
-            display: none;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 13px;
-            color: #7a8a9a;
-            background-color: #17212b;
-            border-top: 1px solid #0e1621;
-        }
-        
-        .warning {
-            background-color: #242f3d;
-            border-left: 4px solid #ffa726;
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .warning i {
-            color: #ffa726;
-            margin-right: 10px;
-            font-size: 18px;
-        }
-        
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #2e7d32;
+            border-bottom: 8px solid #964b2e;
             color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: transform 0.3s, opacity 0.3s;
+            font-size: 2.2rem;
+            font-weight: 700;
+            padding: 1.2rem 2rem;
+            border-radius: 100px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.08s linear;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            box-shadow: 0 12px 20px -10px #ac6b4b;
+            margin: 20px 0 16px 0;
+            font-family: inherit;
+            transform: scale(1);
+            outline: 2px solid #ffb693;
         }
-        
-        .notification.show {
-            transform: translateY(0);
-            opacity: 1;
+
+        .secret-button:active {
+            border-bottom-width: 2px;
+            transform: translateY(6px);
+            background: #c4532b;
+            box-shadow: 0 6px 12px -6px #7b432b;
         }
-        
-        .notification.error {
-            background-color: #c62828;
+
+        /* скрытый блок (изначально спрятан) */
+        .hidden-message {
+            background: #f9e9df;
+            border-radius: 32px 32px 24px 24px;
+            padding: 1.8rem 1.8rem 2rem 1.8rem;
+            margin: 24px 0 0 0;
+            border: 2px solid #eabb9d;
+            box-shadow: inset 0 0 0 2px #fff6ed, 0 15px 20px rgba(170, 120, 70, 0.25);
+            display: none;  /* скрыто по умолчанию */
         }
-        
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: #7a8a9a;
-        }
-        
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #3a4656;
-        }
-        
-        .empty-state h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #e3e3e3;
-        }
-        
-        .storage-info {
-            background-color: #242f3d;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 20px;
-        }
-        
-        .storage-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .storage-bar {
-            height: 6px;
-            background-color: #0e1621;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .storage-used {
-            height: 100%;
-            background: linear-gradient(135deg, #34b7f1, #2ea6e9);
-            border-radius: 3px;
-            transition: width 0.5s;
-        }
-        
-        .bot-section {
-            background-color: #17212b;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-        
-        .bot-form {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .bot-input {
-            flex: 1;
-            padding: 12px 15px;
-            background-color: #242f3d;
-            border: 1px solid #3a4656;
-            border-radius: 8px;
-            color: #e3e3e3;
-            font-size: 15px;
-        }
-        
-        .bot-input:focus {
-            outline: none;
-            border-color: #3d6b99;
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #34b7f1;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .bot-status {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            background-color: #242f3d;
-            display: none;
-        }
-        
-        .bot-status.active {
+
+        .hidden-message.show {
             display: block;
         }
-        
-        .bot-status.success {
-            border-left: 4px solid #4caf50;
-        }
-        
-        .bot-status.error {
-            border-left: 4px solid #f44336;
-        }
-        
-        .chat-id-display {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: #242f3d;
-            border-radius: 8px;
-            border-left: 4px solid #34b7f1;
-        }
-        
-        .chat-id-value {
-            font-weight: bold;
-            color: #34b7f1;
-            font-size: 18px;
-        }
-        
-        .cleepydance-section {
-            background-color: #17212b;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .paperclip-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 120px;
-            margin: 20px 0;
-            position: relative;
-        }
-        
-        .paperclip {
-            font-size: 60px;
-            cursor: pointer;
-            transition: all 0.5s ease;
+
+        /* надпись, которая была скрыта (появляется после нажатия) */
+        .revealed-quote {
+            background: #dcd0c2;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
             display: inline-block;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c1c12;
+            margin-bottom: 1.8rem;
+            border: 2px dashed #a6522e;
+            box-shadow: 0 4px 0 #976b50;
+            transform: rotate(-0.5deg);
         }
-        
-        .paperclip:hover {
-            animation: dance 2s ease-in-out infinite;
+
+        .revealed-quote::before {
+            content: "✧ ";
+            font-size: 1.8rem;
+            color: #aa4e2c;
         }
-        
-        @keyframes dance {
-            0%, 100% {
-                transform: scale(1) rotate(0deg);
-            }
-            25% {
-                transform: scale(1.5) rotate(90deg);
-            }
-            50% {
-                transform: scale(2) rotate(180deg);
-            }
-            75% {
-                transform: scale(1.5) rotate(270deg);
-            }
+
+        .revealed-quote::after {
+            content: " ✧";
+            color: #aa4e2c;
         }
-        
-        .article-section {
-            background-color: #17212b;
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-        
-        .article-content {
-            margin-top: 15px;
+
+        /* основной текст письма (после нажатия) */
+        .main-letter {
+            font-size: 1.25rem;
             line-height: 1.6;
+            color: #2e1c11;
+            background: #fffcf5;
+            padding: 1.5rem 1.8rem;
+            border-radius: 28px;
+            box-shadow: 0 10px 16px #eacebc;
+            border: 1px solid #f5c9b1;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
-        
-        .article-content a {
-            color: #6ab3f3;
-            text-decoration: none;
+
+        .main-letter p {
+            margin-bottom: 1.2rem;
         }
-        
-        .article-content a:hover {
-            text-decoration: underline;
+
+        .main-letter p:last-child {
+            margin-bottom: 0;
         }
-        
-        .article-content ul {
-            padding-left: 20px;
-            margin: 10px 0;
+
+        .emoji-line {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin: 1rem 0 0.8rem 0;
+            text-align: center;
+            opacity: 0.9;
         }
-        
-        .article-content li {
-            margin-bottom: 8px;
+
+        .ps {
+            margin-top: 1.5rem;
+            background: #ffe5d9;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            color: #733e25;
+            font-weight: 500;
+            border: 2px solid #c49478;
+            font-size: 1.2rem;
+        }
+
+        .signature-note {
+            font-style: italic;
+            border-top: 2px dotted #cfa48b;
+            padding-top: 1.2rem;
+            margin-top: 1.2rem;
+            color: #562f1b;
+        }
+
+        /* деликатная подсказка */
+        .footnote {
+            margin-top: 2rem;
+            font-size: 1rem;
+            color: #856b59;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        hr {
+            border: 1px solid #efcfbb;
+            margin: 1rem 0;
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <button class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="logo">
-            <div class="logo-icon">
-                <i class="fab fa-telegram"></i>
-            </div>
-            <div class="logo-text">TeleFiles</div>
+    <div class="card">
+        <!-- Заголовок "Мам, нажми пожалуйста..." -->
+        <div class="greeting">
+            <span>Мам</span>, нажми пожалуйста
         </div>
-        <nav class="nav-links">
-            <a href="#" class="active"><i class="fas fa-cloud-upload-alt"></i> Загрузка</a>
-            <a href="#"><i class="fas fa-folder"></i> Мои файлы</a>
-            <a href="#"><i class="fas fa-robot"></i> Бот</a>
-            <a href="#"><i class="fas fa-gamepad"></i> CleepyDance</a>
-        </nav>
-    </header>
-    
-    <div class="container">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2 class="sidebar-title">Мои файлы</h2>
-                <p class="sidebar-subtitle" id="fileCount">Загружено 0 файлов, 0 MB</p>
+        <div class="instruction">
+            <span class="button-like">на эту кнопку</span> чтобы узнать
+        </div>
+        <!-- кнопка -->
+        <button class="secret-button" id="revealBtn">▼ НАЖМИ МЕНЯ ▼</button>
+
+        <!-- скрытое содержимое (изначально display: none) -->
+        <div class="hidden-message" id="hiddenBlock">
+            <!-- фраза, которая была под замком (первая надпись) -->
+            <div class="revealed-quote">
+                Я у левки свин .
             </div>
-            
-            <div class="chat-id-display">
-                <div style="margin-bottom: 8px; color: #7a8a9a;">
-                    <i class="fas fa-id-card"></i> Ваш Chat ID:
+
+            <!-- полный текст письма -->
+            <div class="main-letter">
+                <p>мам, прости что так много ел. Левка часто говорит что я слишком много жру. От того что я 1 раз съел половину колбасы, то он наорал на меня. И теперь он каждый раз когда ты покупаешь колбасу, то у меня прокручиваются эти моменты.</p>
+                <div class="emoji-line">😐</div>
+                <p>Не говори об этом левке, мама. Он когда ты уйдешь, побьет меня.<br>
+                Сегодня он сжал мою руку и чуть вывернул мне ее. Я теперь хожу с болью в голове и руке.<br>
+                Меня все это время тошнит от того что я не поел. На уроках у меня болит голова, живот урчит, тошнит, я не могу из-за иссушения в горле нормально говорить.<br>
+                Спасибо что даёшь деньги на проезд.<br>
+                Если он скажет что он этого не делал — не верь. Он все время может все на меня свернуть или "А я этого не делал!" когда он врет и не краснеет.<br>
+                Он часто кричит на меня чтобы сье... ушел из комнаты.<br>
+                Он говорил своим дружкам что я дебил. 😐.<br>
+                он говорит чтобы я ему принес то, принес это. Он насмехается когда экспандером натренировался и теперь жмет до посинения руку мою.<br>
+                Он говорит мне "Илюха, потяни экспандер" а он поставил его на максималку. Я конечно не смогу его пожать. Он скажет "нормально сделай" когда я мог все силы туда вкласть.<br>
+                Он говорит чтобы я не трогал мусю когда я ее хочу погладить.<br>
+                Я эмоционально выгорел. Я часто плачу но беззвучно. Я могу меняться эмоциями в разные моменты.<br>
+                Мам, пойми меня пожалуйста, не говори левке об этом. Мне просто нужно кому то высказаться. Кому то родному.</p>
+
+                <div class="ps">
+                    P.S. не рассказывай подругам пожалуйста.
                 </div>
-                <div class="chat-id-value" id="chatIdDisplay">8115722673</div>
-                <div style="font-size: 12px; color: #7a8a9a; margin-top: 8px;">
-                    Этот ID используется для отправки файлов через бота
+                <div class="signature-note">
+                    ⸻  Твой ребенок
                 </div>
-            </div>
-            
-            <div class="storage-info">
-                <div class="storage-label">
-                    <span>Использовано хранилища</span>
-                    <span id="storagePercent">0%</span>
-                </div>
-                <div class="storage-bar">
-                    <div class="storage-used" id="storageBar" style="width: 0%"></div>
-                </div>
-            </div>
-            
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Поиск файлов...">
-            </div>
-            
-            <div class="file-list" id="fileList">
-                <div class="empty-state" id="emptyState">
-                    <i class="fas fa-folder-open"></i>
-                    <h3>Нет загруженных файлов</h3>
-                    <p>Загрузите первый файл, используя область справа</p>
-                </div>
-            </div>
-        </aside>
-        
-        <main class="main-content">
-            <div class="warning">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>TeleFiles предназначен только для легального обмена файлами. Запрещено распространять вредоносное ПО.</span>
-            </div>
-            
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </div>
-                <h2 class="upload-title">Загрузите файлы</h2>
-                <p class="upload-subtitle">Перетащите файлы сюда или нажмите кнопку ниже</p>
-                <p class="upload-subtitle" id="supportedFormats">Поддерживаемые форматы: .exe, .zip, .doc, .pdf, .jpg, .png</p>
-                <button class="upload-btn" id="uploadBtn">
-                    <i class="fas fa-plus"></i> Выбрать файл
-                </button>
-                <input type="file" id="fileInput" multiple style="display: none;">
-            </div>
-            
-            <div class="bot-section">
-                <h3 class="details-title">
-                    <i class="fas fa-robot"></i> Получить файл через Telegram-бота
-                </h3>
-                <p style="margin-bottom: 15px; color: #7a8a9a;">
-                    Отправьте файл в Telegram-бота, и он предоставит вам ссылку для скачивания
-                </p>
-                
-                <div class="bot-form">
-                    <input type="text" class="bot-input" id="chatIdInput" placeholder="Ваш Chat ID (установлен автоматически)" readonly value="8115722673">
-                    <button class="action-btn download-btn" id="sendToBot">
-                        <i class="fab fa-telegram"></i> Отправить боту
-                    </button>
-                </div>
-                
-                <div class="bot-status" id="botStatus"></div>
-                
-                <div style="margin-top: 15px;">
-                    <a href="https://t.me/file_upload_freebot" target="_blank" style="color: #6ab3f3; text-decoration: none;">
-                        <i class="fab fa-telegram"></i> Перейти в бота @file_upload_freebot
-                    </a>
-                </div>
-            </div>
-            
-            <div class="cleepydance-section">
-                <h3 class="details-title">
-                    <i class="fas fa-gamepad"></i> CleepyDance
-                </h3>
-                <p style="margin-bottom: 15px; color: #7a8a9a;">
-                    Наведите курсор на скрепку, чтобы увидеть танец!
-                </p>
-                
-                <div class="paperclip-container">
-                    <div class="paperclip" id="paperclip">
-                        📎
-                    </div>
-                </div>
-                
-                <p style="color: #7a8a9a; font-size: 14px;">
-                    Скрепочка танцует, когда вы наводите на неё курсор. Попробуйте!
-                </p>
-            </div>
-            
-            <div class="article-section">
-                <h3 class="details-title">
-                    <i class="fas fa-newspaper"></i> Статья о функциях бота
-                </h3>
-                <div class="article-content">
-                    <p>Читайте подробную статью о функциях нашего Telegram-бота на Telegra.ph:</p>
-                    <p style="margin: 15px 0;">
-                        <a href="https://telegra.ph/Funkcii-bota-02-01" target="_blank" style="display: inline-flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-external-link-alt"></i>
-                            https://telegra.ph/Funkcii-bota-02-01
-                        </a>
-                    </p>
-                    <p><strong>Основные функции бота:</strong></p>
-                    <ul>
-                        <li>Бесплатная загрузка файлов до 2 ГБ</li>
-                        <li>Автоматическое распознавание типов файлов</li>
-                        <li>Безопасное хранение файлов</li>
-                        <li>Быстрая отправка файлов пользователям</li>
-                        <li>Поддержка всех популярных форматов</li>
-                        <li>Интеграция с Telegram Cloud</li>
-                    </ul>
-                    <p>Бот работает 24/7 и доступен для всех пользователей Telegram. Просто отправьте ему файл, и он предоставит вам постоянную ссылку для скачивания.</p>
-                </div>
-            </div>
-            
-            <div class="file-details" id="fileDetails" style="display: none;">
-                <h3 class="details-title">
-                    <i class="fas fa-file"></i> Детали файла
-                </h3>
-                <div class="details-grid" id="detailsGrid">
-                    <!-- Детали файла будут заполнены JavaScript -->
-                </div>
-                <div class="actions">
-                    <button class="action-btn download-btn" id="downloadBtn">
-                        <i class="fas fa-download"></i> Скачать
-                    </button>
-                    <button class="action-btn delete-btn" id="deleteBtn">
-                        <i class="fas fa-trash"></i> Удалить
-                    </button>
-                    <button class="action-btn download-btn" id="shareBtn">
-                        <i class="fab fa-telegram"></i> Отправить в бот
-                    </button>
-                </div>
-            </div>
-        </main>
-    </div>
-    
-    <!-- Модальное окно для информации о загрузке -->
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Загрузка файла</h3>
-                <button class="close-modal" id="closeModal">×</button>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Название файла</label>
-                <input type="text" class="form-input" id="fileName" placeholder="Введите название файла">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Описание (необязательно)</label>
-                <textarea class="form-input" id="fileDescription" rows="3" placeholder="Добавьте описание файла"></textarea>
-            </div>
-            <div class="modal-actions">
-                <button class="action-btn delete-btn" id="cancelUpload">Отмена</button>
-                <button class="action-btn download-btn" id="confirmUpload">Загрузить</button>
             </div>
         </div>
+
+        <div class="footnote">
+            ❤️ только для маминых глаз
+        </div>
     </div>
-    
-    <footer class="footer">
-        <p>TeleFiles © 2023 | Telegram Bot: @file_upload_freebot | Ваш Chat ID: 8115722673</p>
-    </footer>
-    
-    <div class="notification" id="notification">
-        <i class="fas fa-check-circle"></i>
-        <span id="notificationText">Файл успешно загружен!</span>
-    </div>
-    
+
     <script>
-        // Ключ для localStorage
-        const STORAGE_KEY = 'telefiles_data';
-        const MAX_STORAGE_MB = 100; // Максимальный размер хранилища в MB
-        const TELEGRAM_BOT_USERNAME = 'file_upload_freebot';
-        const USER_CHAT_ID = '8115722673'; // Пример Chat ID
-        
-        // Инициализация данных
-        let filesData = [];
-        let selectedFile = null;
-        
-        // Загрузка данных из localStorage
-        function loadFromStorage() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                try {
-                    filesData = JSON.parse(savedData);
-                } catch (e) {
-                    console.error('Ошибка загрузки данных:', e);
-                    filesData = [];
+        (function() {
+            const revealButton = document.getElementById('revealBtn');
+            const hiddenBlock = document.getElementById('hiddenBlock');
+
+            // обработчик клика
+            revealButton.addEventListener('click', function() {
+                // если блок ещё не показан — показываем с эффектом
+                if (!hiddenBlock.classList.contains('show')) {
+                    hiddenBlock.classList.add('show');
+                    // чуть-чуть меняем текст кнопки (опционально)
+                    revealButton.textContent = '▼ ОТКРЫТО ▼';
+                    // можно добавить лёгкое затемнение фона кнопки после нажатия
+                    revealButton.style.background = '#b34f2f';
+                    revealButton.style.borderBottomColor = '#753c23';
                 }
-            }
-            
-            // Если данных нет, создаем начальные файлы
-            if (filesData.length === 0) {
-                filesData = [
-                    { 
-                        id: 1, 
-                        name: "game_patch.exe", 
-                        type: "exe", 
-                        size: 15.2, 
-                        date: "12.10.2023", 
-                        desc: "Патч для игры", 
-                        uploaded: "2023-10-12", 
-                        url: "https://example.com/files/game_patch.exe",
-                        fileData: null
-                    },
-                    { 
-                        id: 2, 
-                        name: "project_files.zip", 
-                        type: "zip", 
-                        size: 42.7, 
-                        date: "10.10.2023", 
-                        desc: "Архив с проектом", 
-                        uploaded: "2023-10-10", 
-                        url: "https://example.com/files/project_files.zip",
-                        fileData: null
-                    },
-                    { 
-                        id: 3, 
-                        name: "documentation.pdf", 
-                        type: "doc", 
-                        size: 3.1, 
-                        date: "08.10.2023", 
-                        desc: "Техническая документация", 
-                        uploaded: "2023-10-08", 
-                        url: "https://example.com/files/documentation.pdf",
-                        fileData: null
-                    },
-                    { 
-                        id: 4, 
-                        name: "screenshot.png", 
-                        type: "img", 
-                        size: 1.8, 
-                        date: "05.10.2023", 
-                        desc: "Скриншот интерфейса", 
-                        uploaded: "2023-10-05", 
-                        url: "https://example.com/files/screenshot.png",
-                        fileData: null
-                    }
-                ];
-                saveToStorage();
-            }
-        }
-        
-        // Сохранение данных в localStorage
-        function saveToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(filesData));
-            updateStorageInfo();
-        }
-        
-        // Обновление информации о хранилище
-        function updateStorageInfo() {
-            const totalSize = filesData.reduce((sum, file) => sum + file.size, 0);
-            const fileCount = filesData.length;
-            const percent = Math.min((totalSize / MAX_STORAGE_MB) * 100, 100);
-            
-            document.getElementById('fileCount').textContent = 
-                `Загружено ${fileCount} файлов, ${totalSize.toFixed(1)} MB`;
-            document.getElementById('storagePercent').textContent = `${percent.toFixed(1)}%`;
-            document.getElementById('storageBar').style.width = `${percent}%`;
-            
-            // Изменение цвета при заполнении
-            const storageBar = document.getElementById('storageBar');
-            if (percent > 90) {
-                storageBar.style.background = 'linear-gradient(135deg, #ff6b6b, #ee5a52)';
-            } else if (percent > 70) {
-                storageBar.style.background = 'linear-gradient(135deg, #ffa726, #ff9800)';
-            } else {
-                storageBar.style.background = 'linear-gradient(135deg, #34b7f1, #2ea6e9)';
-            }
-        }
-        
-        // DOM элементы
-        const fileList = document.getElementById('fileList');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const fileInput = document.getElementById('fileInput');
-        const uploadArea = document.getElementById('uploadArea');
-        const fileDetails = document.getElementById('fileDetails');
-        const detailsGrid = document.getElementById('detailsGrid');
-        const uploadModal = document.getElementById('uploadModal');
-        const closeModal = document.getElementById('closeModal');
-        const cancelUpload = document.getElementById('cancelUpload');
-        const confirmUpload = document.getElementById('confirmUpload');
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const deleteBtn = document.getElementById('deleteBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const searchInput = document.getElementById('searchInput');
-        const emptyState = document.getElementById('emptyState');
-        const notification = document.getElementById('notification');
-        const notificationText = document.getElementById('notificationText');
-        const sendToBotBtn = document.getElementById('sendToBot');
-        const shareBtn = document.getElementById('shareBtn');
-        const chatIdInput = document.getElementById('chatIdInput');
-        const chatIdDisplay = document.getElementById('chatIdDisplay');
-        const botStatus = document.getElementById('botStatus');
-        const paperclip = document.getElementById('paperclip');
-        
-        // Показать уведомление
-        function showNotification(message, isError = false) {
-            notificationText.textContent = message;
-            notification.className = `notification ${isError ? 'error' : ''}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Показать статус бота
-        function showBotStatus(message, isError = false) {
-            botStatus.textContent = message;
-            botStatus.className = `bot-status active ${isError ? 'error' : 'success'}`;
-            
-            setTimeout(() => {
-                botStatus.className = 'bot-status';
-            }, 5000);
-        }
-        
-        // Генератор ID
-        function generateId() {
-            return filesData.length > 0 ? Math.max(...filesData.map(f => f.id)) + 1 : 1;
-        }
-        
-        // Определение типа файла по расширению
-        function getFileType(fileName) {
-            const ext = fileName.split('.').pop().toLowerCase();
-            if (['exe', 'msi', 'bat', 'cmd'].includes(ext)) return 'exe';
-            if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'zip';
-            if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext)) return 'doc';
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(ext)) return 'img';
-            return 'other';
-        }
-        
-        // Получение иконки для типа файла
-        function getFileIcon(type) {
-            switch(type) {
-                case 'exe': return 'fas fa-cog';
-                case 'zip': return 'fas fa-file-archive';
-                case 'doc': return 'fas fa-file-alt';
-                case 'img': return 'fas fa-file-image';
-                default: return 'fas fa-file';
-            }
-        }
-        
-        // Инициализация списка файлов
-        function initFileList(filter = '') {
-            fileList.innerHTML = '';
-            
-            let filteredFiles = filesData;
-            if (filter) {
-                filteredFiles = filesData.filter(file => 
-                    file.name.toLowerCase().includes(filter.toLowerCase()) ||
-                    file.desc.toLowerCase().includes(filter.toLowerCase())
-                );
-            }
-            
-            if (filteredFiles.length === 0) {
-                emptyState.style.display = 'block';
-                return;
-            }
-            
-            emptyState.style.display = 'none';
-            
-            // Сортировка по дате (новые сверху)
-            filteredFiles.sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
-            
-            filteredFiles.forEach(file => {
-                const fileItem = document.createElement('div');
-                fileItem.className = `file-item ${selectedFile && selectedFile.id === file.id ? 'active' : ''}`;
-                fileItem.dataset.id = file.id;
-                
-                const iconClass = file.type;
-                const icon = getFileIcon(file.type);
-                
-                fileItem.innerHTML = `
-                    <div class="file-icon ${iconClass}">
-                        <i class="${icon}"></i>
-                    </div>
-                    <div class="file-info">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-meta">${file.size.toFixed(1)} MB • ${file.date}</div>
-                    </div>
-                `;
-                
-                fileItem.addEventListener('click', () => selectFile(file.id));
-                fileList.appendChild(fileItem);
+                // можно оставить и так, чтобы повторный клик не закрывал — по желанию
+                // если хочешь, чтобы закрывало — можно добавить toggle, но по задаче нужно просто показать однажды
             });
-        }
-        
-        // Выбор файла
-        function selectFile(fileId) {
-            selectedFile = filesData.find(file => file.id === fileId);
-            
-            // Обновляем активный класс
-            document.querySelectorAll('.file-item').forEach(item => {
-                item.classList.remove('active');
-                if (parseInt(item.dataset.id) === fileId) {
-                    item.classList.add('active');
-                }
-            });
-            
-            showFileDetails(selectedFile);
-        }
-        
-        // Показать детали файла
-        function showFileDetails(file) {
-            fileDetails.style.display = 'block';
-            
-            let typeName = '';
-            switch(file.type) {
-                case 'exe': typeName = 'Исполняемый файл (.exe)'; break;
-                case 'zip': typeName = 'Архив (.zip)'; break;
-                case 'doc': typeName = 'Документ'; break;
-                case 'img': typeName = 'Изображение'; break;
-                default: typeName = 'Другой тип файла'; break;
-            }
-            
-            const date = new Date(file.uploaded);
-            const uploadDate = date.toLocaleDateString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            detailsGrid.innerHTML = `
-                <div class="detail-item">
-                    <div class="detail-label">Имя файла</div>
-                    <div class="detail-value">${file.name}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Тип файла</div>
-                    <div class="detail-value">${typeName}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Размер</div>
-                    <div class="detail-value">${file.size.toFixed(1)} MB</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Дата загрузки</div>
-                    <div class="detail-value">${uploadDate}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Описание</div>
-                    <div class="detail-value">${file.desc || 'Без описания'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Статус</div>
-                    <div class="detail-value" style="color: #66bb6a;">
-                        <i class="fas fa-shield-alt"></i> Безопасен
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Открыть модальное окно загрузки
-        function openUploadModal(file) {
-            document.getElementById('fileName').value = file.name;
-            document.getElementById('fileDescription').value = '';
-            uploadModal.style.display = 'flex';
-        }
-        
-        // Закрыть модальное окно
-        function closeUploadModal() {
-            uploadModal.style.display = 'none';
-            fileInput.value = '';
-        }
-        
-        // Добавить файл
-        function addFile(name, description, size, type, url = null, fileData = null) {
-            const totalSize = filesData.reduce((sum, file) => sum + file.size, 0);
-            
-            if (totalSize + size > MAX_STORAGE_MB) {
-                showNotification(`Недостаточно места! Максимальный размер хранилища: ${MAX_STORAGE_MB}MB`, true);
-                return false;
-            }
-            
-            // Генерируем URL для скачивания
-            const fileUrl = url || `https://telefiles.example.com/download/${Date.now()}_${name}`;
-            
-            const newFile = {
-                id: generateId(),
-                name: name,
-                type: type,
-                size: parseFloat(size.toFixed(1)),
-                date: new Date().toLocaleDateString('ru-RU'),
-                desc: description || 'Без описания',
-                uploaded: new Date().toISOString(),
-                url: fileUrl,
-                fileData: fileData
-            };
-            
-            filesData.unshift(newFile);
-            saveToStorage();
-            initFileList(searchInput.value);
-            selectFile(newFile.id);
-            
-            return true;
-        }
-        
-        // Удалить файл
-        function removeFile(fileId) {
-            const index = filesData.findIndex(file => file.id === fileId);
-            if (index !== -1) {
-                const removedFile = filesData.splice(index, 1)[0];
-                saveToStorage();
-                initFileList(searchInput.value);
-                fileDetails.style.display = 'none';
-                selectedFile = null;
-                showNotification(`Файл "${removedFile.name}" удален`);
-                return true;
-            }
-            return false;
-        }
-        
-        // Отправить файл боту
-        async function sendToBot() {
-            if (!selectedFile) {
-                showNotification('Сначала выберите файл', true);
-                return;
-            }
-            
-            const chatId = USER_CHAT_ID;
-            const originalBtnText = sendToBotBtn.innerHTML;
-            
-            try {
-                sendToBotBtn.innerHTML = '<div class="loading"></div> Отправка...';
-                sendToBotBtn.disabled = true;
-                
-                // Симуляция отправки файла в бота
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                showBotStatus(`Файл "${selectedFile.name}" отправлен боту @${TELEGRAM_BOT_USERNAME}! Проверьте Telegram.`);
-                showNotification(`Файл отправлен в бота @${TELEGRAM_BOT_USERNAME}`);
-                
-                // Открываем ссылку на бота
-                window.open(`https://t.me/${TELEGRAM_BOT_USERNAME}`, '_blank');
-                
-            } catch (error) {
-                console.error('Ошибка отправки боту:', error);
-                showBotStatus('Ошибка отправки файла', true);
-                showNotification('Ошибка отправки файла', true);
-            } finally {
-                sendToBotBtn.innerHTML = '<i class="fab fa-telegram"></i> Отправить боту';
-                sendToBotBtn.disabled = false;
-            }
-        }
-        
-        // Анимация скрепки
-        function initPaperclipAnimation() {
-            // Добавляем дополнительную анимацию при клике
-            paperclip.addEventListener('click', function() {
-                this.style.animation = 'none';
-                setTimeout(() => {
-                    this.style.animation = 'dance 2s ease-in-out';
-                }, 10);
-            });
-            
-            // Автоматическая анимация каждые 30 секунд
-            setInterval(() => {
-                if (Math.random() > 0.7) { // 30% chance
-                    paperclip.style.animation = 'none';
-                    setTimeout(() => {
-                        paperclip.style.animation = 'dance 2s ease-in-out';
-                    }, 10);
-                }
-            }, 30000);
-        }
-        
-        // Обработчики событий
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        
-        // Drag and drop
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('drag-over');
-            });
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('drag-over');
-                
-                if (eventName === 'drop' && e.dataTransfer.files.length > 0) {
-                    const file = e.dataTransfer.files[0];
-                    openUploadModal(file);
-                }
-            });
-        });
-        
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                openUploadModal(file);
-            }
-        });
-        
-        // Поиск
-        searchInput.addEventListener('input', () => {
-            initFileList(searchInput.value);
-        });
-        
-        // Модальное окно
-        closeModal.addEventListener('click', closeUploadModal);
-        cancelUpload.addEventListener('click', closeUploadModal);
-        
-        confirmUpload.addEventListener('click', () => {
-            const fileName = document.getElementById('fileName').value.trim();
-            const fileDescription = document.getElementById('fileDescription').value.trim();
-            
-            if (!fileName) {
-                showNotification('Введите название файла', true);
-                return;
-            }
-            
-            // Имитация размера файла (от 0.1 до 20 MB)
-            const fileSize = Math.random() * 20 + 0.1;
-            const fileType = getFileType(fileName);
-            
-            // Создаем URL для скачивания
-            const fileUrl = `https://telefiles.example.com/download/${Date.now()}_${encodeURIComponent(fileName)}`;
-            
-            if (addFile(fileName, fileDescription, fileSize, fileType, fileUrl)) {
-                showNotification('Файл успешно загружен! Теперь вы можете отправить его боту.');
-                closeUploadModal();
-            }
-        });
-        
-        // Удаление файла
-        deleteBtn.addEventListener('click', () => {
-            if (selectedFile) {
-                if (confirm(`Вы уверены, что хотите удалить файл "${selectedFile.name}"?`)) {
-                    removeFile(selectedFile.id);
-                }
-            }
-        });
-        
-        // Скачивание файла (имитация)
-        downloadBtn.addEventListener('click', () => {
-            if (selectedFile) {
-                // Создаем временную ссылку для скачивания
-                const link = document.createElement('a');
-                link.href = selectedFile.url;
-                link.download = selectedFile.name;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showNotification(`Начато скачивание файла "${selectedFile.name}"`);
-            }
-        });
-        
-        // Отправить файл боту
-        sendToBotBtn.addEventListener('click', sendToBot);
-        
-        // Поделиться через бота
-        shareBtn.addEventListener('click', sendToBot);
-        
-        // Переключение боковой панели
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromStorage();
-            initFileList();
-            updateStorageInfo();
-            initPaperclipAnimation();
-            
-            // Выбираем первый файл если есть
-            if (filesData.length > 0) {
-                selectFile(filesData[0].id);
-            }
-        });
-        
-        // API для работы с ботом (упрощенная версия для GitHub Pages)
-        window.TeleFilesBot = {
-            // Получить информацию о боте
-            getBotInfo: function() {
-                return {
-                    username: TELEGRAM_BOT_USERNAME,
-                    link: `https://t.me/${TELEGRAM_BOT_USERNAME}`,
-                    userChatId: USER_CHAT_ID
-                };
-            },
-            
-            // Отправить файл в бота (симуляция)
-            sendFile: async function(fileId) {
-                const file = filesData.find(f => f.id === fileId);
-                if (!file) {
-                    throw new Error('Файл не найден');
-                }
-                
-                // В реальном приложении здесь был бы fetch к вашему серверу
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve({
-                            success: true,
-                            message: `Файл "${file.name}" отправлен в бота @${TELEGRAM_BOT_USERNAME}`,
-                            botLink: `https://t.me/${TELEGRAM_BOT_USERNAME}`
-                        });
-                    }, 1500);
-                });
-            },
-            
-            // Получить статью о функциях бота
-            getArticleUrl: function() {
-                return "https://telegra.ph/Funkcii-bota-02-01";
-            }
-        };
+
+            // Для дополнительной защиты от случайного двойного нажатия, 
+            // но оставим возможность видеть, что блок открыт.
+            // Можно добавить небольшой эффект при загрузке (нет необходимости)
+        })();
     </script>
+
+    <!-- пояснение: скрытая надпись падает (появляется) после нажатия, 
+         текст точно соответствует заданию, кнопка большая и заметная -->
 </body>
-    </html>
+</html>
