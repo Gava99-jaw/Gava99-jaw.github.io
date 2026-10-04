@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>V1 OBBY // ULTRAKILL STYLE</title>
+<style>
+  * { margin: 0; padding: 0; overflow: hidden; }
+  body { background: #000; font-family: 'Courier New', monospace; }
+  canvas { display: block; image-rendering: pixelated; }
+  #crosshair {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff0033; font-size: 22px; pointer-events: none;
+    text-shadow: 0 0 6px #ff0033; z-index: 10;
+    font-weight: bold;
+  }
+  #hud {
+    position: fixed; bottom: 20px; left: 20px;
+    color: #ff0033; font-size: 20px; pointer-events: none;
+    text-shadow: 0 0 6px #ff0033; z-index: 10;
+    letter-spacing: 3px; font-weight: bold;
+  }
+  #info {
+    position: fixed; top: 20px; left: 20px;
+    color: #ff0033; font-size: 14px; pointer-events: none;
+    text-shadow: 0 0 4px #ff0033; z-index: 10;
+    line-height: 1.6; letter-spacing: 1px;
+  }
+  #deathScreen {
+    position: fixed; inset: 0; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.92); z-index: 50;
+    pointer-events: none;
+  }
+  #deathScreen canvas {
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 20px #ff0033);
+  }
+  #deathText {
+    color: #ff0033; font-size: 48px; letter-spacing: 12px;
+    margin-top: 20px; text-shadow: 0 0 20px #ff0033;
+    font-weight: bold;
+  }
+  #deathSub {
+    color: #883333; font-size: 16px; letter-spacing: 4px;
+    margin-top: 20px;
+  }
+  #winScreen {
+    position: fixed; inset: 0; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(0,20,10,0.9); z-index: 50; pointer-events: none;
+  }
+  #winText {
+    color: #00ff88; font-size: 56px; letter-spacing: 12px;
+    text-shadow: 0 0 30px #00ff88; font-weight: bold;
+  }
+  #winSub {
+    color: #008855; font-size: 16px; letter-spacing: 4px; margin-top: 20px;
+  }
+  #start {
+    position: fixed; inset: 0; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    background: #000; color: #ff0033; z-index: 100;
+    cursor: pointer; text-align: center;
+  }
+  #start h1 { font-size: 72px; letter-spacing: 12px; text-shadow: 0 0 30px #ff0033; }
+  #start h2 { font-size: 20px; letter-spacing: 6px; margin-top: 10px; opacity: 0.7; }
+  #start p { margin-top: 40px; font-size: 14px; opacity: 0.8; line-height: 2; letter-spacing: 2px; }
+  .blink { animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  #dmgOverlay {
+    position: fixed; inset: 0; background: #ff0033;
+    opacity: 0; pointer-events: none; z-index: 20;
+    transition: opacity 0.2s;
+  }
+</style>
+</head>
+<body>
+<div id="start">
+  <h1>V1 // OBBY</h1>
+  <h2>MANKIND IS DEAD. BLOOD IS FUEL. HELL IS FULL.</h2>
+  <p>КЛИКНИ ЧТОБЫ НАЧАТЬ<br><br>
+  WASD — движение | SPACE — двойной прыжок<br>
+  SHIFT — рывок | ЛКМ — стрелять<br>
+  МЫШЬ — камера</p>
+  <p class="blink" style="margin-top:40px">[ НАЖМИ ДЛЯ ЗАПУСКА ]</p>
+</div>
+<div id="crosshair">+</div>
+<div id="hud">HP: <span id="hp">100</span></div>
+<div id="info"></div>
+<div id="dmgOverlay"></div>
+
+<div id="deathScreen">
+  <canvas id="skullCanvas" width="160" height="180"></canvas>
+  <div id="deathText">YOU DIED</div>
+  <div id="deathSub">MANKIND IS DEAD · ОБНОВИ СТРАНИЦУ</div>
+</div>
+
+<div id="winScreen">
+  <div id="winText">OBBY COMPLETE</div>
+  <div id="winSub">V1 ДОСТИГ ВЕРШИНЫ · HELL IS FULL</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ============================================================
+//  ПРОЦЕДУРНЫЕ ТЕКСТУРЫ (PS1 STYLE — как у Hakita)
+// ============================================================
+function makeCanvas(size = 64) {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  return { c, ctx: c.getContext('2d') };
+}
+
+function toTexture(c) {
+  const tex = new THREE.CanvasTexture(c);
+  tex.magFilter = THREE.NearestFilter;
+  tex.minFilter = THREE.NearestFilter;
+  tex.generateMipmaps = false;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+// --- Кирпич (стены ада) ---
+function texBrick() {
+  const { c, ctx } = makeCanvas(64);
+  ctx.fillStyle = '#1a0808'; ctx.fillRect(0, 0, 64, 64);
+  const brickH = 8, brickW = 16;
+  for (let y = 0; y < 64; y += brickH) {
+    const offset = ((y / brickH) % 2) * (brickW / 2);
+    for (let x = -brickW; x < 64; x += brickW) {
+      const bx = x + offset, by = y;
+      const shade = 40 + Math.floor(Math.random() * 30);
+      ctx.fillStyle = `rgb(${shade + 20}, ${shade / 3}, ${shade / 3})`;
+      ctx.fillRect(bx + 1, by + 1, brickW - 2, brickH - 2);
+      // блик сверху
+      ctx.fillStyle = `rgba(255,80,80,0.15)`;
+      ctx.fillRect(bx + 1, by + 1, brickW - 2, 1);
+    }
+  }
+  // грязь
+  for (let i = 0; i < 80; i++) {
+    ctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.4})`;
+    ctx.fillRect(Math.random()*64|0, Math.random()*64|0, 2, 2);
+  }
+  return c;
+}
+
+// --- Металлическая панель с болтами ---
+function texMetal() {
+  const { c, ctx } = makeCanvas(64);
+  ctx.fillStyle = '#2a2a30'; ctx.fillRect(0, 0, 64, 64);
+  // текстура металла — горизонтальные штрихи
+  for (let i = 0; i < 200; i++) {
+    const y = Math.random() * 64 | 0;
+    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.08})`;
+    ctx.fillRect(0, y, 64, 1);
+  }
+  // контур панели
+  ctx.strokeStyle = '#0a0a0a'; ctx.lineWidth = 2;
+  ctx.strokeRect(2, 2, 60, 60);
+  ctx.strokeStyle = '#555'; ctx.lineWidth = 1;
+  ctx.strokeRect(4, 4, 56, 56);
+  // болты по углам
+  const bolt = (x, y) => {
+    ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#888'; ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fill();
+  };
+  bolt(8, 8); bolt(56, 8); bolt(8, 56); bolt(56, 56);
+  // царапины
+  for (let i = 0; i < 8; i++) {
+    ctx.strokeStyle = `rgba(200,200,200,${Math.random() * 0.3})`;
+    ctx.beginPath();
+    const x = Math.random()*64, y = Math.random()*64;
+    ctx.moveTo(x, y); ctx.lineTo(x + (Math.random()-0.5)*20, y + (Math.random()-0.5)*20);
+    ctx.stroke();
+  }
+  return c;
+}
+
+// --- Пол (грязный бетон с трещинами) ---
+function texFloor() {
+  const { c, ctx } = makeCanvas(64);
+  // база — бетон
+  for (let y = 0; y < 64; y++) {
+    for (let x = 0; x < 64; x++) {
+      const v = 30 + Math.random() * 20;
+      ctx.fillStyle = `rgb(${v},${v - 5},${v - 8})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+  // трещины
+  for (let i = 0; i < 6; i++) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.7)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    let x = Math.random() * 64, y = Math.random() * 64;
+    ctx.moveTo(x, y);
+    for (let s = 0; s < 6; s++) {
+      x += (Math.random() - 0.5) * 12;
+      y += (Math.random() - 0.5) * 12;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  // красные подтёки крови
+  for (let i = 0; i < 20; i++) {
+    ctx.fillStyle = `rgba(${120 + Math.random()*80|0}, 10, 10, ${Math.random() * 0.4})`;
+    ctx.fillRect(Math.random()*64|0, Math.random()*64|0, 2 + Math.random()*3|0, 1 + Math.random()*2|0);
+  }
+  return c;
+}
+
+// --- Ловушка (шипы) ---
+function texTrap() {
+  const { c, ctx } = makeCanvas(64);
+  ctx.fillStyle = '#0a0000'; ctx.fillRect(0, 0, 64, 64);
+  // сетка шипов
+  for (let y = 0; y < 64; y += 16) {
+    for (let x = 0; x < 64; x += 16) {
+      ctx.fillStyle = '#ff0033';
+      ctx.beginPath();
+      ctx.moveTo(x + 8, y + 2);
+      ctx.lineTo(x + 14, y + 14);
+      ctx.lineTo(x + 2, y + 14);
+      ctx.closePath();
+      ctx.fill();
+      // блик
+      ctx.fillStyle = 'rgba(255,200,200,0.5)';
+      ctx.beginPath();
+      ctx.moveTo(x + 8, y + 2);
+      ctx.lineTo(x + 11, y + 8);
+      ctx.lineTo(x + 8, y + 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  return c;
+}
+
+// --- Движущаяся платформа (жёлто-чёрная опасность) ---
+function texMoving() {
+  const { c, ctx } = makeCanvas(64);
+  for (let i = -64; i < 64; i += 16) {
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath();
+    ctx.moveTo(i, 0); ctx.lineTo(i + 8, 0);
+    ctx.lineTo(i + 8 + 64, 64); ctx.lineTo(i + 64, 64);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(i + 8, 0); ctx.lineTo(i + 16, 0);
+    ctx.lineTo(i + 16 + 64, 64); ctx.lineTo(i + 8 + 64, 64);
+    ctx.closePath(); ctx.fill();
+  }
+  return c;
+}
+
+// --- Финиш (неоновая сетка) ---
+function texFinish() {
+  const { c, ctx } = makeCanvas(64);
+  ctx.fillStyle = '#001a0d'; ctx.fillRect(0, 0, 64, 64);
+  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 64; i += 8) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 64); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(64, i); ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(0,255,136,0.15)';
+  ctx.fillRect(0, 0, 64, 64);
+  return c;
+}
+
+const texBrickT   = toTexture(texBrick());
+const texMetalT   = toTexture(texMetal());
+const texFloorT   = toTexture(texFloor());
+const texTrapT    = toTexture(texTrap());
+const texMovingT  = toTexture(texMoving());
+const texFinishT  = toTexture(texFinish());
+
+// ============================================================
+//  СЦЕНА
+// ============================================================
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0000);
+scene.fog = new THREE.Fog(0x0a0000, 25, 130);
+
+const camera = new THREE.PerspectiveCamera(90, innerWidth/innerHeight, 0.1, 500);
+const renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(1);
+document.body.appendChild(renderer.domElement);
+
+// ============================================================
+//  ОСВЕЩЕНИЕ
+// ============================================================
+scene.add(new THREE.AmbientLight(0x884444, 0.9));
+const dir = new THREE.DirectionalLight(0xff6644, 0.7);
+dir.position.set(15, 40, 15);
+scene.add(dir);
+const backLight = new THREE.DirectionalLight(0x4400ff, 0.4);
+backLight.position.set(-15, 20, -20);
+scene.add(backLight);
+
+// ============================================================
+//  КАРТА
+// ============================================================
+const platforms = [];
+
+function addPlatform(x, y, z, w, h, d, type = 'floor') {
+  const texMap = {
+    floor: texFloorT,
+    wall:  texBrickT,
+    metal: texMetalT,
+    trap:  texTrapT,
+    moving: texMovingT,
+    finish: texFinishT
+  };
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mat = new THREE.MeshLambertMaterial({ map: texMap[type] });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
+  platforms.push({
+    mesh, w, h, d, type,
+    moving: type === 'moving',
+    origin: { x, y, z },
+    phase: Math.random() * Math.PI * 2
+  });
+  return mesh;
+}
+
+// Стартовая площадка
+addPlatform(0, -1, 0, 22, 2, 22, 'floor');
+
+// Обби — спираль вверх
+const obbyPositions = [
+  [0, 1, -14], [5, 3, -20], [-3, 5, -26], [4, 7, -32],
+  [-4, 9, -38], [6, 11, -44], [-2, 13, -50], [3, 15, -56],
+  [-5, 17, -62], [5, 19, -68], [0, 21, -74], [-4, 23, -80],
+  [4, 25, -86], [-2, 27, -92], [3, 29, -98], [0, 31, -104]
+];
+
+obbyPositions.forEach((p, i) => {
+  const isMoving = i % 3 === 2;
+  addPlatform(p[0], p[1], p[2], 4, 0.5, 4, isMoving ? 'moving' : 'metal');
+});
+
+// Ловушки
+addPlatform(8, 5, -22, 3, 0.5, 3, 'trap');
+addPlatform(-8, 11, -42, 3, 0.5, 3, 'trap');
+addPlatform(7, 17, -60, 3, 0.5, 3, 'trap');
+addPlatform(-6, 25, -84, 3, 0.5, 3, 'trap');
+
+// Колонны-декор
+addPlatform(-10, 3, -30, 2, 8, 2, 'wall');
+addPlatform(10, 3, -40, 2, 8, 2, 'wall');
+addPlatform(-10, 15, -70, 2, 8, 2, 'wall');
+addPlatform(10, 20, -90, 2, 8, 2, 'wall');
+
+// Финиш
+addPlatform(0, 33, -110, 10, 1, 10, 'finish');
+const finishLight = new THREE.PointLight(0x00ff88, 4, 25);
+finishLight.position.set(0, 35, -110);
+scene.add(finishLight);
+
+// ============================================================
+//  ВРАГИ
+// ============================================================
+const enemies = [];
+const enemyGeo = new THREE.BoxGeometry(1.2, 2, 1.2);
+const enemyMat = new THREE.MeshLambertMaterial({ map: texMetalT });
+
+function spawnEnemy(x, y, z) {
+  const e = new THREE.Mesh(enemyGeo, enemyMat);
+  e.position.set(x, y, z);
+  e.userData = { hp: 3, alive: true, speed: 3, shootTimer: 1 + Math.random() };
+  // глаза
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0033 });
+  const eye = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.15, 0.05), eyeMat);
+  eye.position.set(0, 0.5, 0.61);
+  e.add(eye);
+  scene.add(e);
+  enemies.push(e);
+  return e;
+}
+
+spawnEnemy(0, 3, -16);
+spawnEnemy(-4, 7, -36);
+spawnEnemy(5, 15, -58);
+spawnEnemy(-3, 23, -82);
+
+// ============================================================
+//  ИГРОК V1
+// ============================================================
+const player = {
+  pos: new THREE.Vector3(0, 2, 0),
+  vel: new THREE.Vector3(0, 0, 0),
+  yaw: 0, pitch: 0,
+  onGround: false,
+  hp: 100,
+  jumpsLeft: 2,
+  canDash: true,
+  dashCooldown: 0,
+  radius: 0.4,
+  height: 1.8,
+  dead: false,
+  win: false
+};
+
+// --- Модель V1 (детальнее, PS1-style) ---
+const v1Body = new THREE.Group();
+const v1Mat   = new THREE.MeshLambertMaterial({ color: 0xaa1818 });
+const v1Dark  = new THREE.MeshLambertMaterial({ color: 0x330505 });
+const v1Eye   = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+
+// Голова
+const head = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 0.55), v1Mat);
+head.position.y = 0.75;
+v1Body.add(head);
+// Козырёк/визор
+const visor = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.05), v1Eye);
+visor.position.set(0, 0.8, -0.29);
+v1Body.add(visor);
+// Торс
+const torso = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.85, 0.45), v1Mat);
+torso.position.y = 0.05;
+v1Body.add(torso);
+// Грудь-пластина
+const chest = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.05), v1Dark);
+chest.position.set(0, 0.15, -0.25);
+v1Body.add(chest);
+// Ноги
+const legGeo = new THREE.BoxGeometry(0.22, 0.7, 0.22);
+const legL = new THREE.Mesh(legGeo, v1Dark);
+legL.position.set(-0.16, -0.75, 0);
+v1Body.add(legL);
+const legR = new THREE.Mesh(legGeo, v1Dark);
+legR.position.set(0.16, -0.75, 0);
+v1Body.add(legR);
+// Рука-пушка (правая)
+const armR = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.9), v1Mat);
+armR.position.set(0.45, 0.15, -0.35);
+v1Body.add(armR);
+// Ствол
+const barrel = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.35), v1Dark);
+barrel.position.set(0.45, 0.15, -0.95);
+v1Body.add(barrel);
+// Левая рука
+const armL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.7, 0.2), v1Mat);
+armL.position.set(-0.45, 0, -0.1);
+v1Body.add(armL);
+// Крылья (декор)
+const wing = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.4, 0.7), v1Eye);
+wing.position.set(-0.42, 0.2, 0.1);
+v1Body.add(wing);
+
+scene.add(v1Body);
+
+// ============================================================
+//  МУЗЫКА (Web Audio API — индастриал-бит)
+// ============================================================
+let audioCtx = null;
+let musicOn = false;
+
+function initMusic() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const master = audioCtx.createGain();
+  master.gain.value = 0.35;
+  master.connect(audioCtx.destination);
+
+  // Реверб через delay
+  const delay = audioCtx.createDelay();
+  delay.delayTime.value = 0.25;
+  const fb = audioCtx.createGain();
+  fb.gain.value = 0.35;
+  delay.connect(fb); fb.connect(delay);
+  delay.connect(master);
+
+  // --- БАС-БОЧКА (kick) ---
+  function kick(time) {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(140, time);
+    o.frequency.exponentialRampToValueAtTime(40, time + 0.12);
+    g.gain.setValueAtTime(0.9, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
+    o.connect(g); g.connect(master);
+    o.start(time); o.stop(time + 0.3);
+  }
+
+  // --- ХЭТ (hi-hat) ---
+  function hat(time, open = false) {
+    const bufSize = audioCtx.sampleRate * 0.05;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const hp = audioCtx.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 7000;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(open ? 0.15 : 0.25, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time + (open ? 0.15 : 0.05));
+    src.connect(hp); hp.connect(g); g.connect(master);
+    src.start(time); src.stop(time + 0.2);
+  }
+
+  // --- SNARE (clap) ---
+  function snare(time) {
+    const bufSize = audioCtx.sampleRate * 0.2;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 0.8;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.35, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time + 0.18);
+    src.connect(bp); bp.connect(g); g.connect(master);
+    g.connect(delay);
+    src.start(time); src.stop(time + 0.25);
+  }
+
+  // --- БАС-ЛИНИЯ (индастриал riff) ---
+  function bass(time, freq, dur = 0.15) {
+    const o = audioCtx.createOscillator();
+    o.type = 'sawtooth';
+    o.frequency.value = freq;
+    const lp = audioCtx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 700; lp.Q.value = 6;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0, time);
+    g.gain.linearRampToValueAtTime(0.25, time + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, time + dur);
+    o.connect(lp); lp.connect(g); g.connect(master);
+    o.start(time); o.stop(time + dur + 0.05);
+  }
+
+  // --- ПАТТЕРН (циклично) ---
+  const bpm = 140;
+  const beat = 60 / bpm;
+  let step = 0;
+  let nextTime = audioCtx.currentTime + 0.1;
+
+  // Бас-риф: нота ми минор
+  const bassNotes = [55, 55, 82.4, 55, 73.4, 55, 65.4, 55]; // E1 E1 E2 E1 D2 E1 C2 E1
+
+  function schedule() {
+    while (nextTime < audioCtx.currentTime + 0.2) {
+      const t = nextTime;
+      const s = step % 16;
+
+      // Kick: 4/4 бочка на 0,4,8,12 + синкопа на 14
+      if (s === 0 || s === 4 || s === 8 || s === 12 || s === 14) kick(t);
+      // Snare: 4 и 12
+      if (s === 4 || s === 12) snare(t);
+      // Hat: каждый второй шаг
+      if (s % 2 === 0) hat(t, s % 8 === 6);
+      // Bass: на каждый второй шаг
+      if (s % 2 === 0) bass(t, bassNotes[(step / 2) % 8], beat * 0.9);
+
+      nextTime += beat / 2; // 8th notes
+      step++;
+    }
+  }
+
+  setInterval(schedule, 50);
+  musicOn = true;
+}
+
+// Звук выстрела
+function playShootSound() {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'square';
+  o.frequency.setValueAtTime(800, t);
+  o.frequency.exponentialRampToValueAtTime(100, t + 0.08);
+  g.gain.setValueAtTime(0.15, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(t); o.stop(t + 0.15);
+}
+
+// Звук смерти
+function playDeathSound() {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(300, t);
+  o.frequency.exponentialRampToValueAtTime(30, t + 1.2);
+  g.gain.setValueAtTime(0.4, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(t); o.stop(t + 1.6);
+}
+
+// ============================================================
+//  УПРАВЛЕНИЕ
+// ============================================================
+const keys = {};
+let mouseLocked = false;
+
+document.getElementById('start').addEventListener('click', () => {
+  document.getElementById('start').style.display = 'none';
+  renderer.domElement.requestPointerLock();
+  if (!musicOn) initMusic();
+});
+
+document.addEventListener('pointerlockchange', () => {
+  mouseLocked = document.pointerLockElement === renderer.domElement;
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!mouseLocked) return;
+  player.yaw   -= e.movementX * 0.002;
+  player.pitch -= e.movementY * 0.002;
+  player.pitch = Math.max(-Math.PI/2 + 0.01, Math.min(Math.PI/2 - 0.01, player.pitch));
+});
+
+addEventListener('keydown', e => { keys[e.code] = true; });
+addEventListener('keyup',   e => { keys[e.code] = false; });
+addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// ============================================================
+//  СТРЕЛЬБА
+// ============================================================
+const bullets = [];
+const bulletGeo = new THREE.SphereGeometry(0.15, 4, 4);
+const bulletMat = new THREE.MeshBasicMaterial({ color: 0xffee00 });
+
+function shoot() {
+  const dirVec = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+  const b = new THREE.Mesh(bulletGeo, bulletMat);
+  b.position.copy(player.pos).add(dirVec.clone().multiplyScalar(1));
+  b.userData = { vel: dirVec.clone().multiplyScalar(60), life: 2 };
+  scene.add(b);
+  bullets.push(b);
+  playShootSound();
+}
+
+document.addEventListener('mousedown', (e) => {
+  if (!mouseLocked || player.dead || player.win) return;
+  if (e.button === 0) shoot();
+});
+
+// ============================================================
+//  ФИЗИКА
+// ============================================================
+const GRAVITY = 30;
+const JUMP_FORCE = 12;
+const MOVE_SPEED = 8;
+const DASH_FORCE = 25;
+
+function checkCollision(newPos) {
+  for (const p of platforms) {
+    const m = p.mesh.position;
+    const halfW = p.w/2, halfH = p.h/2, halfD = p.d/2;
+    if (newPos.x > m.x - halfW - player.radius && newPos.x < m.x + halfW + player.radius &&
+        newPos.z > m.z - halfD - player.radius && newPos.z < m.z + halfD + player.radius &&
+        newPos.y > m.y - halfH - player.height && newPos.y < m.y + halfH) {
+      if (player.vel.y <= 0 && player.pos.y >= m.y + halfH - 0.5) {
+        return { hit: 'top', y: m.y + halfH, platform: p };
+      }
+      return { hit: 'side', platform: p };
+    }
+  }
+  return null;
+}
+
+function updatePlayer(dt) {
+  if (player.dead || player.win) return;
+
+  const forward = new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+  const right   = new THREE.Vector3(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
+  const input = new THREE.Vector3();
+  if (keys['KeyW']) input.add(forward);
+  if (keys['KeyS']) input.sub(forward);
+  if (keys['KeyD']) input.add(right);
+  if (keys['KeyA']) input.sub(right);
+  if (input.length() > 0) input.normalize();
+
+  player.vel.x = input.x * MOVE_SPEED;
+  player.vel.z = input.z * MOVE_SPEED;
+
+  player.dashCooldown -= dt;
+  if (keys['ShiftLeft'] && player.canDash && player.dashCooldown <= 0 && input.length() > 0) {
+    player.vel.x += input.x * DASH_FORCE;
+    player.vel.z += input.z * DASH_FORCE;
+    player.canDash = false;
+    player.dashCooldown = 1.5;
+  }
+  if (player.dashCooldown <= 0) player.canDash = true;
+
+  player.vel.y -= GRAVITY * dt;
+
+  if (keys['Space']) {
+    if (player.jumpsLeft > 0 && !keys['_spaceHeld']) {
+      player.vel.y = JUMP_FORCE;
+      player.jumpsLeft--;
+      keys['_spaceHeld'] = true;
+    }
+  } else {
+    keys['_spaceHeld'] = false;
+  }
+
+  let newPos = player.pos.clone();
+  newPos.x += player.vel.x * dt;
+  let col = checkCollision(newPos);
+  if (!col || col.hit === 'top') player.pos.x = newPos.x;
+  else player.vel.x = 0;
+
+  newPos = player.pos.clone();
+  newPos.z += player.vel.z * dt;
+  col = checkCollision(newPos);
+  if (!col || col.hit === 'top') player.pos.z = newPos.z;
+  else player.vel.z = 0;
+
+  newPos = player.pos.clone();
+  newPos.y += player.vel.y * dt;
+  col = checkCollision(newPos);
+  if (col) {
+    if (col.hit === 'top') {
+      player.pos.y = col.y;
+      player.vel.y = 0;
+      if (!player.onGround) {
+        player.jumpsLeft = 2;
+        player.onGround = true;
+      }
+    } else player.vel.y = 0;
+  } else {
+    player.pos.y = newPos.y;
+    player.onGround = false;
+  }
+
+  if (player.pos.y < -20) die();
+
+  // Ловушки
+  for (const p of platforms) {
+    if (p.type !== 'trap') continue;
+    const m = p.mesh.position;
+    if (Math.abs(player.pos.x - m.x) < p.w/2 + player.radius &&
+        Math.abs(player.pos.z - m.z) < p.d/2 + player.radius &&
+        Math.abs(player.pos.y - m.y) < 1.5) {
+      die();
+    }
+  }
+
+  // Победа
+  if (player.pos.distanceTo(new THREE.Vector3(0, 34, -110)) < 3) {
+    player.win = true;
+    document.getElementById('winScreen').style.display = 'flex';
+  }
+
+  // Модель
+  v1Body.position.copy(player.pos);
+  v1Body.position.y -= 0.9;
+  v1Body.rotation.y = player.yaw + Math.PI;
+}
+
+// ============================================================
+//  ВРАГИ AI
+// ============================================================
+function updateEnemies(dt) {
+  for (const e of enemies) {
+    if (!e.userData.alive) continue;
+    const toPlayer = new THREE.Vector3().subVectors(player.pos, e.position);
+    toPlayer.y = 0;
+    const dist = toPlayer.length();
+    toPlayer.normalize();
+
+    if (dist > 8) {
+      e.position.x += toPlayer.x * e.userData.speed * dt;
+      e.position.z += toPlayer.z * e.userData.speed * dt;
+    } else {
+      e.userData.shootTimer -= dt;
+      if (e.userData.shootTimer <= 0) {
+        e.userData.shootTimer = 1.5;
+        if (dist < 15) {
+          player.hp -= 8;
+          flashDamage();
+          if (player.hp <= 0) die();
+        }
+      }
+    }
+    e.rotation.y = Math.atan2(toPlayer.x, toPlayer.z);
+  }
+}
+
+// ============================================================
+//  ПУЛИ
+// ============================================================
+function updateBullets(dt) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i];
+    b.position.add(b.userData.vel.clone().multiplyScalar(dt));
+    b.userData.life -= dt;
+    let remove = b.userData.life <= 0;
+
+    for (const e of enemies) {
+      if (!e.userData.alive) continue;
+      if (b.position.distanceTo(e.position) < 1.2) {
+        e.userData.hp--;
+        remove = true;
+        if (e.userData.hp <= 0) {
+          e.userData.alive = false;
+          scene.remove(e);
+        }
+        break;
+      }
+    }
+
+    if (!remove) {
+      for (const p of platforms) {
+        const m = p.mesh.position;
+        if (Math.abs(b.position.x - m.x) < p.w/2 &&
+            Math.abs(b.position.y - m.y) < p.h/2 &&
+            Math.abs(b.position.z - m.z) < p.d/2) {
+          remove = true;
+          break;
+        }
+      }
+    }
+
+    if (remove) {
+      scene.remove(b);
+      bullets.splice(i, 1);
+    }
+  }
+}
+
+// ============================================================
+//  ДВИЖУЩИЕСЯ ПЛАТФОРМЫ
+// ============================================================
+let time = 0;
+function updatePlatforms(dt) {
+  time += dt;
+  for (const p of platforms) {
+    if (!p.moving) continue;
+    p.mesh.position.y = p.origin.y + Math.sin(time * 2 + p.phase) * 1.5;
+    p.mesh.position.x = p.origin.x + Math.cos(time * 1.5 + p.phase) * 1.5;
+  }
+}
+
+// ============================================================
+//  КАМЕРА
+// ============================================================
+function updateCamera() {
+  camera.position.copy(player.pos);
+  camera.position.y += 0.6;
+  const dir = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(player.pitch, player.yaw, 0, 'YXZ'));
+  camera.lookAt(camera.position.clone().add(dir));
+}
+
+// ============================================================
+//  HUD + DAMAGE FLASH
+// ============================================================
+const hpEl = document.getElementById('hp');
+const infoEl = document.getElementById('info');
+const dmgEl = document.getElementById('dmgOverlay');
+
+function flashDamage() {
+  dmgEl.style.opacity = '0.35';
+  setTimeout(() => dmgEl.style.opacity = '0', 150);
+}
+
+function updateHUD() {
+  hpEl.textContent = Math.max(0, player.hp);
+  if (player.dead || player.win) return;
+  const alt = Math.round(player.pos.y);
+  infoEl.textContent = `ALT: ${alt}m | JUMPS: ${player.jumpsLeft} | ${player.canDash ? 'DASH: READY' : 'DASH: ' + player.dashCooldown.toFixed(1)}`;
+}
+
+// ============================================================
+//  РИСОВАННЫЙ ЧЕРЕП (canvas) — по мотивам ULTRAKILL
+// ============================================================
+function drawSkull() {
+  const cv = document.getElementById('skullCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2;
+  const cy = H / 2 - 10;
+  const R = 60;
+
+  // Свечение
+  const grad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 110);
+  grad.addColorStop(0, 'rgba(255,0,51,0.35)');
+  grad.addColorStop(1, 'rgba(255,0,51,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // --- ЧЕРЕП (черепная коробка) ---
+  ctx.fillStyle = '#e8e0d8';
+  ctx.beginPath();
+  ctx.moveTo(cx - R, cy - 10);
+  ctx.bezierCurveTo(cx - R, cy - R - 20, cx + R, cy - R - 20, cx + R, cy - 10);
+  ctx.bezierCurveTo(cx + R, cy + 30, cx + R*0.55, cy + 45, cx + R*0.55, cy + 55);
+  ctx.lineTo(cx - R*0.55, cy + 55);
+  ctx.bezierCurveTo(cx - R*0.55, cy + 45, cx - R, cy + 30, cx - R, cy - 10);
+  ctx.closePath();
+  ctx.fill();
+  // Тень под черепом
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + 62, R * 0.7, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // --- ГЛАЗНИЦЫ ---
+  ctx.fillStyle = '#0a0000';
+  // левая
+  ctx.beginPath();
+  ctx.ellipse(cx - 26, cy - 5, 18, 20, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // правая
+  ctx.beginPath();
+  ctx.ellipse(cx + 26, cy - 5, 18, 20, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Зрачки — светящиеся красные
+  ctx.fillStyle = '#ff0033';
+  ctx.beginPath(); ctx.arc(cx - 26, cy - 3, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 26, cy - 3, 6, 0, Math.PI * 2); ctx.fill();
+  // блики в глазах
+  ctx.fillStyle = '#ffaaaa';
+  ctx.beginPath(); ctx.arc(cx - 28, cy - 5, 2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 24, cy - 5, 2, 0, Math.PI * 2); ctx.fill();
+
+  // --- НОС (треугольник) ---
+  ctx.fillStyle = '#0a0000';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + 8);
+  ctx.lineTo(cx - 8, cy + 24);
+  ctx.lineTo(cx + 8, cy + 24);
+  ctx.closePath();
+  ctx.fill();
+
+  // --- ЧЕЛЮСТЬ / ЗУБЫ ---
+  ctx.fillStyle = '#0a0000';
+  ctx.beginPath();
+  ctx.rect(cx - 26, cy + 30, 52, 18);
+  ctx.fill();
+
+  // Зубы
+  ctx.fillStyle = '#e8e0d8';
+  for (let i = 0; i < 7; i++) {
+    const x = cx - 26 + i * 7.4;
+    ctx.fillRect(x + 1, cy + 31, 5, 8);
+    ctx.fillRect(x + 1, cy + 42, 5, 5);
+  }
+
+  // --- ТРЕЩИНЫ на черепе ---
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - 40, cy - 30);
+  ctx.lineTo(cx - 30, cy - 20);
+  ctx.lineTo(cx - 35, cy - 5);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx + 35, cy - 35);
+  ctx.lineTo(cx + 42, cy - 22);
+  ctx.stroke();
+
+  // --- КРЕСТ ИЗ КОСТЕЙ ПОД ЧЕРЕПОМ ---
+  ctx.save();
+  ctx.translate(cx, cy + 95);
+  ctx.rotate(-0.3);
+  drawBone(ctx);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, cy + 95);
+  ctx.rotate(0.3);
+  drawBone(ctx);
+  ctx.restore();
+}
+
+function drawBone(ctx) {
+  const len = 80;
+  // Сама кость
+  ctx.fillStyle = '#e8e0d8';
+  ctx.beginPath();
+  ctx.roundRect(-len/2, -4, len, 8, 4);
+  ctx.fill();
+  // Шарики на концах
+  ctx.beginPath(); ctx.arc(-len/2, -6, 6, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(-len/2,  6, 6, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc( len/2, -6, 6, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc( len/2,  6, 6, 0, Math.PI*2); ctx.fill();
+}
+
+// ============================================================
+//  СМЕРТЬ / ПОБЕДА
+// ============================================================
+function die() {
+  if (player.dead) return;
+  player.dead = true;
+  player.hp = 0;
+  playDeathSound();
+  drawSkull();
+  document.getElementById('deathScreen').style.display = 'flex';
+  if (document.pointerLockElement) document.exitPointerLock();
+}
+
+// ============================================================
+//  ГЛАВНЫЙ ЦИКЛ
+// ============================================================
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  updatePlatforms(dt);
+  updatePlayer(dt);
+  updateEnemies(dt);
+  updateBullets(dt);
+  updateCamera();
+  updateHUD();
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
